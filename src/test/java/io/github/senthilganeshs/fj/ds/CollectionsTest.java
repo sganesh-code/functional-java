@@ -73,6 +73,29 @@ public class CollectionsTest {
     }
 
     @Test
+    public void testGenericCollectionAPIs() throws Exception {
+        List<Integer> list = List.of(1, 2, 3, 4, 5);
+        
+        // headOption
+        Assert.assertEquals(list.headOption().fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertNull(List.nil().headOption().fromMaybe(null));
+        
+        // any / all
+        Assert.assertTrue(list.any(i -> i > 4));
+        Assert.assertFalse(list.any(i -> i > 5));
+        Assert.assertTrue(list.all(i -> i > 0));
+        Assert.assertFalse(list.all(i -> i < 5));
+        
+        // reduce
+        Assert.assertEquals(list.reduce(Integer::sum).fromMaybe(-1), Integer.valueOf(15));
+        Assert.assertNull(List.<Integer>nil().reduce(Integer::sum).fromMaybe(null));
+        
+        // mkString
+        Assert.assertEquals(list.mkString(","), "1,2,3,4,5");
+        Assert.assertEquals(list.mkString("<", "|", ">"), "<1|2|3|4|5>");
+    }
+
+    @Test
     public void testPriorityQueue() throws Exception {
         PriorityQueue<Integer> pq = PriorityQueue.of(3, 1, 4, 1, 5);
         Assert.assertEquals(pq.findMin().fromMaybe(-1), Integer.valueOf(1));

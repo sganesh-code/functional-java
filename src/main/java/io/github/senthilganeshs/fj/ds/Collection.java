@@ -160,6 +160,41 @@ public interface Collection<T> {
         return foldl(0, (count, t) -> count + 1);
     }
 
+    default boolean isEmpty() {
+        return length() == 0;
+    }
+
+    @SuppressWarnings("unchecked")
+    default Maybe<T> headOption() {
+        return (Maybe<T>) take(1).foldl(Maybe.nothing(), (acc, t) -> Maybe.some(t));
+    }
+
+    default boolean any(Predicate<T> pred) {
+        return foldl(false, (acc, t) -> acc || pred.test(t));
+    }
+
+    default boolean all(Predicate<T> pred) {
+        return foldl(true, (acc, t) -> acc && pred.test(t));
+    }
+
+    @SuppressWarnings("unchecked")
+    default Maybe<T> reduce(BiFunction<T, T, T> fn) {
+        Maybe<T> head = headOption();
+        if (head.isEmpty()) return head;
+        
+        return (Maybe<T>) drop(1).foldl((Collection<T>) head, (acc, t) -> 
+            (Collection<T>) ((Maybe<T>)acc).map(v -> fn.apply(v, t))
+        );
+    }
+
+    default String mkString(String start, String sep, String end) {
+        return foldl(start, (acc, t) -> acc + (acc.equals(start) ? "" : sep) + t) + end;
+    }
+
+    default String mkString(String sep) {
+        return mkString("", sep, "");
+    }
+
     public static <S, R extends Collection<S>> Collection<S> flatten(Collection<R> rs) {
         return rs.flatMap(id -> id);
     }
