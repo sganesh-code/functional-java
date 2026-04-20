@@ -25,6 +25,10 @@ public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable
     static <R extends Comparable<R>> Set<R> nil() {
         return (Set<R>) EMPTY;
     }
+
+    static <R extends Comparable<R>> Set<R> empty() {
+        return nil();
+    }
     
     static <R extends Comparable<R>> Set<R> of(final Collection<R> values) {
         return values.foldl(nil(), (r, t) -> r.build(t));

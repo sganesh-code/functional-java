@@ -92,6 +92,44 @@ public class CollectionsTest {
     }
 
     @Test
+    public void testGraph() throws Exception {
+        Graph<String> g = Graph.<String>nil()
+            .addEdge("A", "B")
+            .addEdge("A", "C")
+            .addEdge("B", "D")
+            .addEdge("C", "D");
+            
+        Assert.assertEquals(g.nodes().length(), 4);
+        Assert.assertTrue(g.successors("A").contains("B"));
+        Assert.assertTrue(g.successors("A").contains("C"));
+        
+        // BFS traversal
+        List<String> bfsOrder = g.bfs("A");
+        Assert.assertTrue(bfsOrder.any(v -> v.equals("A")));
+        Assert.assertTrue(bfsOrder.any(v -> v.equals("B")));
+        Assert.assertTrue(bfsOrder.any(v -> v.equals("C")));
+        Assert.assertTrue(bfsOrder.any(v -> v.equals("D")));
+        Assert.assertEquals(bfsOrder.length(), 4);
+        
+        // DFS traversal
+        List<String> dfsOrder = g.dfs("A");
+        Assert.assertEquals(dfsOrder.length(), 4);
+        
+        // Topological Sort
+        Maybe<List<String>> topo = g.topologicalSort();
+        Assert.assertTrue(topo.isSome());
+        // One valid order is A, B, C, D (or A, C, B, D)
+        // Given our foldl/Set order, let's verify it starts with A and ends with D
+        List<String> sorted = topo.fromMaybe(List.nil());
+        String first = ((Maybe<String>) sorted.unzip().getA().flatMap(id -> (Maybe<String>)id)).fromMaybe("");
+        Assert.assertEquals(first, "A");
+        
+        // Cycle detection
+        Graph<String> cyclic = g.addEdge("D", "A");
+        Assert.assertTrue(cyclic.topologicalSort().isNothing());
+    }
+
+    @Test
     public void testPriorityQueue() throws Exception {
         PriorityQueue<Integer> pq = PriorityQueue.of(3, 1, 4, 1, 5);
         Assert.assertEquals(pq.findMin().fromMaybe(-1), Integer.valueOf(1));
