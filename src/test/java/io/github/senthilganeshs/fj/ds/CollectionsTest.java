@@ -13,7 +13,6 @@ public class CollectionsTest {
         Assert.assertEquals(q.toString(), "[1,2,3]");
         
         Maybe<Tuple<Integer, Queue<Integer>>> d1 = q.dequeue();
-        Assert.assertTrue(d1.isSome());
         Tuple<Integer, Queue<Integer>> t1 = d1.fromMaybe(null);
         Assert.assertNotNull(t1);
         Assert.assertEquals(t1.getA().fromMaybe(-1), Integer.valueOf(1));
@@ -25,14 +24,15 @@ public class CollectionsTest {
         Assert.assertEquals(q3.toString(), "[2,3,4]");
         
         // Test empty queue dequeue
-        Assert.assertTrue(Queue.nil().dequeue().isNothing());
+        Assert.assertNull(Queue.nil().dequeue().fromMaybe(null));
         
         // Test single element queue
         Queue<Integer> single = Queue.of(10);
         Maybe<Tuple<Integer, Queue<Integer>>> dSingle = single.dequeue();
-        Assert.assertTrue(dSingle.isSome());
-        Assert.assertEquals(dSingle.fromMaybe(null).getA().fromMaybe(-1), Integer.valueOf(10));
-        Assert.assertEquals(dSingle.fromMaybe(null).getB().fromMaybe(null).length(), 0);
+        Tuple<Integer, Queue<Integer>> tSingle = dSingle.fromMaybe(null);
+        Assert.assertNotNull(tSingle);
+        Assert.assertEquals(tSingle.getA().fromMaybe(-1), Integer.valueOf(10));
+        Assert.assertEquals(tSingle.getB().fromMaybe(null).length(), 0);
     }
 
     @Test
@@ -41,7 +41,7 @@ public class CollectionsTest {
         Assert.assertEquals(v.toString(), "[1,2,3]");
         Assert.assertEquals(v.at(0).fromMaybe(-1), Integer.valueOf(1));
         Assert.assertEquals(v.at(2).fromMaybe(-1), Integer.valueOf(3));
-        Assert.assertTrue(v.at(3).isNothing());
+        Assert.assertNull(v.at(3).fromMaybe(null));
         
         Vector<Integer> v2 = v.update(1, 20);
         Assert.assertEquals(v2.toString(), "[1,20,3]");

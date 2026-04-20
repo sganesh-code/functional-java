@@ -55,10 +55,9 @@ public interface Queue<T> extends Collection<T> {
         
         // Internal balance check
         private Queue<T> check(Stack<T> f, Stack<T> r) {
-            if (f.head().isNothing()) {
-                return new BankersQueue<>((Stack<T>) r.reverse(), Stack.emptyStack());
-            }
-            return new BankersQueue<>(f, r);
+            return ((Maybe<Queue<T>>) f.head()
+                .map(h -> (Queue<T>) new BankersQueue<>(f, r)))
+                .fromMaybe(new BankersQueue<>((Stack<T>) r.reverse(), Stack.emptyStack()));
         }
 
         @Override

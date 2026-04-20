@@ -111,20 +111,20 @@ public interface LazyList<T> extends Collection<T> {
 
         @Override
         public String toString() {
-            // We can't safely call length() here if it might be infinite.
-            // Let's just limit toString to 10 elements and only add ... if there's more.
+            // toString is dangerous for infinite lists, so we limit it to 10
             StringBuilder sb = new StringBuilder("[");
-            LazyList<T> current = this;
-            int count = 0;
-            while (current.head().isSome() && count < 10) {
-                if (count > 0) sb.append(",");
-                sb.append(current.head().fromMaybe(null));
-                current = current.tail();
-                count++;
-            }
-            if (current.head().isSome()) {
+            
+            // We can use take(11) to see if there's more than 10 elements
+            // and foldl to build the string
+            String content = take(10).foldl("", (r, t) -> r + (r.isEmpty() ? "" : ",") + t);
+            sb.append(content);
+            
+            // To check if there is an 11th element without isSome, we can try to take(11) 
+            // and see if it's longer than take(10), or just check if the 11th head exists
+            if (((Maybe<Boolean>) drop(10).head().map(h -> true)).fromMaybe(false)) {
                 sb.append(",...");
             }
+            
             sb.append("]");
             return sb.toString();
         }
