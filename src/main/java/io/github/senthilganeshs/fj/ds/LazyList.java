@@ -3,10 +3,32 @@ package io.github.senthilganeshs.fj.ds;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-public interface LazyList<T> extends Collection<T> {
+public interface LazyList<T> extends List<T> {
 
     Maybe<T> head();
     LazyList<T> tail();
+
+    @Override
+    default List<T> build(T input) {
+        return (List<T>) concat(LazyList.of(input));
+    }
+
+    @Override
+    default Tuple<Maybe<T>, List<T>> unzip() {
+        return Tuple.of(head(), tail());
+    }
+
+    @Override
+    default <R> List<Tuple<T, R>> zip(List<R> other) {
+        T h = head().fromMaybe(null);
+        if (h == null) return List.nil();
+        
+        Tuple<Maybe<R>, List<R>> otherUnzipped = other.unzip();
+        R oh = ((Maybe<R>) otherUnzipped.getA()).fromMaybe(null);
+        if (oh == null) return List.nil();
+        
+        return cons(Tuple.of(h, oh), () -> (LazyList<Tuple<T, R>>) tail().zip(otherUnzipped.getB().fromMaybe(List.nil())));
+    }
 
     @Override
     default <R> LazyList<R> map(java.util.function.Function<T, R> fn) {
@@ -93,13 +115,6 @@ public interface LazyList<T> extends Collection<T> {
         }
 
         @Override
-        public Collection<T> build(T input) {
-            // build for LazyList is like snoc, which is expensive for a ConsList
-            // but we implement it for Collection compatibility
-            return concat(LazyList.of(input));
-        }
-
-        @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
             return tail().foldl(fn.apply(seed, head), fn);
         }
@@ -147,7 +162,7 @@ public interface LazyList<T> extends Collection<T> {
         }
 
         @Override
-        public Collection<T> build(T input) {
+        public List<T> build(T input) {
             return cons(input, () -> this);
         }
 

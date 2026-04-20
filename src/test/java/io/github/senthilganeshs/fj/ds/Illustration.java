@@ -1,176 +1,85 @@
 package io.github.senthilganeshs.fj.ds;
 
-import java.util.*;
-import java.util.function.Function;
-
+/**
+ * A realistic example of using functional data structures to process a product catalog 
+ * and validate customer orders.
+ */
 public class Illustration {
 
+    record Product(String id, String name, double price) {}
+    record OrderItem(String productId, int quantity) {}
+    record Order(String orderId, String customerId, Collection<OrderItem> items) {}
+
     public static void main(String[] args) {
-        System.out.println("Using Lift");
-        List.of(1,2,3).liftA2(Integer::sum, List.of(5, 6)).forEach(System.out::println);
-        System.out.println("Using Apply");
-        List.of(1,2,3).apply(List.of(i -> i + 5, i -> i + 6)).forEach(System.out::println);
-        System.out.println("Using Traverse");
-        List.of(1,2,3).traverse(i -> List.of(i + 5, i + 6)).forEach(System.out::println);
-        System.out.println("Using Sequence");
-        Collection.sequence(List.of(List.of(2,3), List.of(4,5), List.of(6, 7))).forEach(System.out::println);
+        // 1. Setup a product catalog using our HAMT-based HashMap
+        HashMap<String, Product> catalog = HashMap.<String, Product>nil()
+            .put("P1", new Product("P1", "Laptop", 1200.0))
+            .put("P2", new Product("P2", "Mouse", 25.0))
+            .put("P3", new Product("P3", "Keyboard", 75.0));
 
+        // 2. A list of orders to process - using generic List interface
+        List<Order> orders = List.of(
+            new Order("O1", "C1", List.of(new OrderItem("P1", 1), new OrderItem("P2", 2))),
+            new Order("O2", "C2", List.of(new OrderItem("P3", 1))),
+            new Order("O3", "C1", List.of(new OrderItem("P2", 5))),
+            new Order("O4", "C3", List.of(new OrderItem("INVALID", 1))) // This will fail validation
+        );
+
+        System.out.println("--- 1. Order Processing Summary ---");
+        
+        // Use HashMap to accumulate total spend per customer
+        HashMap<String, Double> customerSpend = orders.foldl(HashMap.nil(), (acc, order) -> {
+            double orderTotal = calculateOrderTotal(catalog, order).fromMaybe(0.0);
+            double currentTotal = acc.get(order.customerId).fromMaybe(0.0);
+            return acc.put(order.customerId, currentTotal + orderTotal);
+        });
+
+        customerSpend.forEach(entry -> 
+            System.out.println("Customer " + entry.key() + " total spend: $" + entry.value())
+        );
+
+        System.out.println("\n--- 2. Detailed Order Validation ---");
+        
+        // Validate each order and use Either to handle success/failure cases
+        orders.forEach(order -> {
+            validateOrder(catalog, order).either(
+                error -> {
+                    System.out.println("[FAILED]  Order " + order.orderId + ": " + error);
+                    return null;
+                },
+                total -> {
+                    System.out.println("[SUCCESS] Order " + order.orderId + ": Processed $" + total);
+                    return null;
+                }
+            );
+        });
+
+        System.out.println("\n--- 3. Lazy sequence of Transaction IDs ---");
+        
+        // Use List interface even for lazy implementations
+        List<String> txIds = LazyList.iterate(1001, i -> i + 1).map(i -> "TX-" + i);
+        System.out.println("Next 5 Transaction IDs: " + txIds.take(5));
     }
 
-    class RawContact {
-        final String name;
-        final java.util.List<String> phoneParts;
-        final java.util.List<String> tags;
-        final String referrerOrNull; // null if none
-
-        RawContact(String name, java.util.List<String> phoneParts,
-                   java.util.List<String> tags, String referrerOrNull) {
-            this.name = name;
-            this.phoneParts = phoneParts;
-            this.tags = tags;
-            this.referrerOrNull = referrerOrNull;
-        }
+    /**
+     * Calculates the total price of an order. 
+     * Returns Maybe.nothing() if any product in the order is not in the catalog.
+     */
+    private static Maybe<Double> calculateOrderTotal(HashMap<String, Product> catalog, Order order) {
+        return (Maybe<Double>) order.items.foldl(Maybe.some(0.0), (accMaybe, item) -> 
+            (Maybe<Double>) accMaybe.flatMap(acc -> 
+                catalog.get(item.productId).map(p -> acc + (p.price() * item.quantity()))
+            )
+        );
     }
 
-    static class ContactSummary {
-        final String name;
-        final String phone;
-        final String tagsCSV;
-        ContactSummary(String name, String phone, String tagsCSV) {
-            this.name = name; this.phone = phone; this.tagsCSV = tagsCSV;
-        }
-        public String toString() { return name + " | " + phone + " | " + tagsCSV; }
+    /**
+     * Validates an order and returns Either the total price or an error message.
+     */
+    private static Either<String, Double> validateOrder(HashMap<String, Product> catalog, Order order) {
+        return calculateOrderTotal(catalog, order).foldl(
+            Either.left("Invalid product ID found in order " + order.orderId),
+            (acc, total) -> Either.right(total)
+        );
     }
-
-
-    class ImperativeSolution {
-        static boolean isDigitsOrPlusFirst(java.util.List<String> parts) {
-            if (parts.isEmpty()) return false;
-            String first = parts.get(0);
-            if (!first.startsWith("+") || first.length() < 2 || !first.substring(1).chars().allMatch(Character::isDigit)) return false;
-            for (int i = 1; i < parts.size(); i++) {
-                if (!parts.get(i).chars().allMatch(Character::isDigit)) return false;
-            }
-            return true;
-        }
-
-        static String formatPhone(java.util.List<String> parts) {
-            return String.join("-", parts); // simple; doesn’t add plus—already in first part
-        }
-
-        static String enrichName(RawContact rc) {
-            return rc.referrerOrNull == null ? rc.name : rc.name + " (ref:" + rc.referrerOrNull + ")";
-        }
-
-        static String tagsCSV(java.util.List<String> tags) {
-            return String.join(",", tags);
-        }
-
-        static class Error { final String name; final String reason;
-            Error(String n, String r){name=n;reason=r;}
-            public String toString(){return name+": "+reason;}
-        }
-
-        static void run(java.util.List<RawContact> input) {
-            java.util.Map<String, ContactSummary> dedup = new LinkedHashMap<>();
-            java.util.List<Error> errors = new ArrayList<>();
-            java.util.Set<String> countryCodes = new TreeSet<>(); // sorted
-
-            for (RawContact rc : input) {
-                // validation
-                if (rc.tags.stream().anyMatch(t -> t.equalsIgnoreCase("spam"))) {
-                    errors.add(new Error(rc.name, "contact is spam"));
-                    continue;
-                }
-                if (!isDigitsOrPlusFirst(rc.phoneParts)) {
-                    errors.add(new Error(rc.name, "invalid phone parts"));
-                    continue;
-                }
-
-                // success path
-                String phone = formatPhone(rc.phoneParts);
-                String name = enrichName(rc);
-                String tagsCSV = tagsCSV(rc.tags);
-
-                // dedupe by name (first wins)
-                dedup.putIfAbsent(name, new ContactSummary(name, phone, tagsCSV));
-
-                // country code (first part)
-                countryCodes.add(rc.phoneParts.get(0));
-            }
-
-            // sorted list of summaries by name
-            java.util.List<ContactSummary> summaries = new ArrayList<>(dedup.values());
-            summaries.sort(Comparator.comparing(cs -> cs.name));
-
-            System.out.println("Summaries:");
-            summaries.forEach(System.out::println);
-
-            System.out.println("Country codes: " + countryCodes);
-            System.out.println("Errors: " + errors);
-        }
-
-        class DeclarativeSolution {
-
-            class RawContact {
-                final String name;
-                final List<String> phoneParts;
-                final List<String> tags;
-                final String referrerOrNull; // null if none
-
-                RawContact(String name,
-                           List<String> phoneParts,
-                           List<String> tags,
-                           String referrerOrNull) {
-                    this.name = name;
-                    this.phoneParts = phoneParts;
-                    this.tags = tags;
-                    this.referrerOrNull = referrerOrNull;
-                }
-            }
-
-            static class ContactSummary {
-                final String name;
-                final String phone;
-                final String tagsCSV;
-                ContactSummary(String name, String phone, String tagsCSV) {
-                    this.name = name; this.phone = phone; this.tagsCSV = tagsCSV;
-                }
-                public String toString() { return name + " | " + phone + " | " + tagsCSV; }
-            }
-
-            static void run(List<RawContact> input) {
-
-
-            }
-
-
-
-            private static Collection<Error> checkForPhoneParts(RawContact rc) {
-                 return rc.phoneParts
-                        .take(1).flatMap(first ->
-                                (first.startsWith("+") && first.substring(1).chars().allMatch(Character::isDigit))
-                                        ? Maybe.some(first)
-                                        : Maybe.nothing()
-                        ).concat(
-                                rc.phoneParts.drop(1).traverse(p -> p.chars().allMatch(Character::isDigit) ? Maybe.some(p) : Maybe.nothing())
-                                        .map(ignored -> "+") // dummy map to keep type; success is enough
-                        ).foldl(Maybe.some(new Error(rc.name, "invalid phone parts")),
-                                 (error, parts) -> Maybe.nothing());
-            }
-
-            private static Collection<Error> checkForSpam(RawContact rc) {
-                return rc.tags.find(DeclarativeSolution::isSpam)
-                               .map(tag -> new Error(rc.name, "contact is spam"));
-            }
-
-            private static Boolean isSpam(String t) {
-                return t.equalsIgnoreCase("spam");
-            }
-
-
-        }
-
-    }
-
 }
