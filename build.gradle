@@ -1,0 +1,89 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id "me.champeau.jmh" version "0.7.2"
+}
+
+group = 'io.github.senthilganeshs'
+version = '1.0.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    withSourcesJar()
+    withJavadocJar()
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.testng:testng:6.14.3'
+    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'org.openjdk.jmh:jmh-core:1.20'
+    testAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.20'
+    
+    // JMH dependencies for the jmh plugin
+    jmh 'org.openjdk.jmh:jmh-core:1.20'
+    jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.20'
+}
+
+test {
+    useTestNG()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            pom {
+                name = 'functional-java'
+                description = 'functional-java is an object oriented library which provides functional APIs for different data-structures.'
+                url = 'https://github.com/senthilganeshs/functional-java'
+                licenses {
+                    license {
+                        name = 'GPL-v3.0'
+                        url = 'http://www.gnu.org/licenses/gpl-3.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'senthilganeshs'
+                        name = 'Senthil Ganesh S'
+                        email = 'sesas.senthil@gmail.com'
+                        organization = 'Informatica'
+                        roles = ['Java Developer']
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/senthilganeshs/functional-java.git'
+                    developerConnection = 'scm:git:senthilganeshs@github.com:functional-java/functional-java.git'
+                    url = 'https://github.com/senthilganeshs/functional-java'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            def stagingUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+            url = version.endsWith('SNAPSHOT') ? snapshotsUrl : stagingUrl
+            credentials {
+                username = project.findProperty("ossrhUsername")
+                password = project.findProperty("ossrhPassword")
+            }
+        }
+    }
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("publish") }
+    sign publishing.publications.mavenJava
+}
+
+jmh {
+    jmhVersion = '1.20'
+}

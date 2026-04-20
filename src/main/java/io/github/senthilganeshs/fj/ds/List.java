@@ -6,6 +6,11 @@ import java.util.function.BiFunction;
 public interface List<T> extends Collection<T> {
     
     @Override List<T> build(final T input);
+
+    Tuple<Maybe<T>, List<T>> unzip();
+
+
+    <R> List<Tuple<T, R>> zip(List<R> other);
     
     static <R> List<R> of (final java.util.List<R> list) {
         return list.stream().reduce(nil(), (rs, r) ->rs.build(r), (r1, r2) -> r2);
@@ -57,7 +62,18 @@ public interface List<T> extends Collection<T> {
         public List<T> build(T input) {
             return new LinkedList<>(this, input);
         }
-        
+
+        @Override
+        public Tuple<Maybe<T>, List<T>> unzip() {
+            return Tuple.of();
+        }
+
+
+        @Override
+        public <R> List<Tuple<T, R>> zip(List<R> other) {
+            return List.of();
+        }
+
         @Override
         public String toString() {
             return "";
@@ -96,6 +112,18 @@ public interface List<T> extends Collection<T> {
         @Override
         public List<T> build(T input) {
             return cons(this, input);
+        }
+
+        @Override
+        public Tuple<Maybe<T>, List<T>> unzip() {
+            return Tuple.of(
+                    head.take(1).find(i -> true),
+                    (List<T>) head.drop(1).build(tail));
+        }
+
+        @Override
+        public <R> List<Tuple<T, R>> zip(List<R> other) {
+             return List.of();
         }
 
         @Override

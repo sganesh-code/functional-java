@@ -5,6 +5,8 @@ Functional Java is an initiative to bring functional APIs to JAVA without compro
 
 Maven repository
 https://mvnrepository.com/artifact/io.github.senthilganeshs/functional-java/1.0.0
+
+### Maven
 ```xml
 <!-- https://mvnrepository.com/artifact/io.github.senthilganeshs/functional-java -->
 <dependency>
@@ -12,6 +14,11 @@ https://mvnrepository.com/artifact/io.github.senthilganeshs/functional-java/1.0.
     <artifactId>functional-java</artifactId>
     <version>1.0.0</version>
 </dependency>
+```
+
+### Gradle
+```gradle
+implementation 'io.github.senthilganeshs:functional-java:1.0.0'
 ```
 
 
