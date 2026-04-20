@@ -73,6 +73,28 @@ public class CollectionsTest {
     }
 
     @Test
+    public void testPriorityQueue() throws Exception {
+        PriorityQueue<Integer> pq = PriorityQueue.of(3, 1, 4, 1, 5);
+        Assert.assertEquals(pq.findMin().fromMaybe(-1), Integer.valueOf(1));
+        
+        PriorityQueue<Integer> pq2 = pq.deleteMin().fromMaybe(PriorityQueue.nil());
+        // There were two 1s, so the next min is still 1
+        Assert.assertEquals(pq2.findMin().fromMaybe(-1), Integer.valueOf(1));
+        
+        PriorityQueue<Integer> pq3 = pq2.deleteMin().fromMaybe(PriorityQueue.nil());
+        Assert.assertEquals(pq3.findMin().fromMaybe(-1), Integer.valueOf(3));
+        
+        PriorityQueue<Integer> pq4 = pq3.deleteMin().fromMaybe(PriorityQueue.nil());
+        Assert.assertEquals(pq4.findMin().fromMaybe(-1), Integer.valueOf(4));
+        
+        PriorityQueue<Integer> pq5 = pq4.deleteMin().fromMaybe(PriorityQueue.nil());
+        Assert.assertEquals(pq5.findMin().fromMaybe(-1), Integer.valueOf(5));
+        
+        PriorityQueue<Integer> pq6 = pq5.deleteMin().fromMaybe(PriorityQueue.nil());
+        Assert.assertNull(pq6.findMin().fromMaybe(null));
+    }
+
+    @Test
     public void testMap() throws Exception {
         List.of(10).map(i -> i + 10).forEach(i -> Assert.assertTrue(i == 20));
         Maybe.some(10).map(i -> i + 10).forEach(i -> Assert.assertTrue(i == 20));
