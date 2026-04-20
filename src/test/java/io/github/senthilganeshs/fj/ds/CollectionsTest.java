@@ -95,6 +95,26 @@ public class CollectionsTest {
     }
 
     @Test
+    public void testHashMap() throws Exception {
+        HashMap<String, Integer> map = HashMap.nil();
+        map = map.put("one", 1).put("two", 2).put("three", 3);
+        
+        Assert.assertEquals(map.get("one").fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(map.get("two").fromMaybe(-1), Integer.valueOf(2));
+        Assert.assertEquals(map.get("three").fromMaybe(-1), Integer.valueOf(3));
+        Assert.assertNull(map.get("four").fromMaybe(null));
+        
+        HashMap<String, Integer> map2 = map.remove("two");
+        Assert.assertNull(map2.get("two").fromMaybe(null));
+        Assert.assertEquals(map.get("two").fromMaybe(-1), Integer.valueOf(2)); // Immutability
+        
+        // Test update
+        HashMap<String, Integer> map3 = map.put("one", 10);
+        Assert.assertEquals(map3.get("one").fromMaybe(-1), Integer.valueOf(10));
+        Assert.assertEquals(map.get("one").fromMaybe(-1), Integer.valueOf(1));
+    }
+
+    @Test
     public void testMap() throws Exception {
         List.of(10).map(i -> i + 10).forEach(i -> Assert.assertTrue(i == 20));
         Maybe.some(10).map(i -> i + 10).forEach(i -> Assert.assertTrue(i == 20));
