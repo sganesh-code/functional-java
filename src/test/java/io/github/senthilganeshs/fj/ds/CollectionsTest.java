@@ -82,6 +82,10 @@ public class CollectionsTest {
         Assert.assertTrue(list.all(i -> i > 0));
         Assert.assertFalse(list.all(i -> i < 5));
         
+        // reduce
+        Assert.assertEquals(list.reduce(Integer::sum).fromMaybe(-1), Integer.valueOf(15));
+        Assert.assertNull(List.<Integer>nil().reduce(Integer::sum).fromMaybe(null));
+        
         // mkString
         Assert.assertEquals(list.mkString(","), "1,2,3,4,5");
         Assert.assertEquals(list.mkString("<", "|", ">"), "<1|2|3|4|5>");

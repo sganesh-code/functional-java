@@ -168,6 +168,15 @@ public interface Collection<T> {
         return foldl(true, (acc, t) -> acc && pred.test(t));
     }
 
+    @SuppressWarnings("unchecked")
+    default Maybe<T> reduce(BiFunction<T, T, T> fn) {
+        return (Maybe<T>) foldl((Collection<T>) Maybe.nothing(), (acc, t) -> {
+            Maybe<T> maybeAcc = (Maybe<T>) acc;
+            Maybe<T> res = (Maybe<T>) maybeAcc.flatMap(v -> Maybe.some(fn.apply(v, t)));
+            return (Collection<T>) (res.isNothing() ? Maybe.some(t) : res);
+        });
+    }
+
     default String mkString(String start, String sep, String end) {
         return foldl(start, (acc, t) -> acc + (acc.equals(start) ? "" : sep) + t) + end;
     }

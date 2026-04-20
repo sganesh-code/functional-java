@@ -16,6 +16,14 @@ public interface Maybe<T> extends Collection<T> {
         return new Some<>(value);
     }
 
+    default boolean isSome() {
+        return this instanceof Some;
+    }
+
+    default boolean isNothing() {
+        return this instanceof Nothing;
+    }
+
     default T fromMaybe(T def) {
         return foldl(def, (__, t) -> t);
     }
