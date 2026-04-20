@@ -131,7 +131,7 @@ public interface LazyList<T> extends List<T> {
             
             // We can use take(11) to see if there's more than 10 elements
             // and foldl to build the string
-            String content = take(10).foldl("", (r, t) -> r + (r.isEmpty() ? "" : ",") + t);
+            String content = take(10).foldl("", (r, t) -> r + (r.equals("") ? "" : ",") + t);
             sb.append(content);
             
             // To check if there is an 11th element without isSome, we can try to take(11) 
