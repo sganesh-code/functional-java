@@ -1,5 +1,13 @@
 language: java
+jdk:
+  - openjdk16
+
+script:
+  - ./gradlew test
+
 before_install:
   - pip install --user codecov
+  - chmod +x gradlew
+
 after_success:
   - codecov --file coverage/lcov.info --disable search
