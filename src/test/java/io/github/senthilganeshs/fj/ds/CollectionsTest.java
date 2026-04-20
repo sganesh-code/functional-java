@@ -8,6 +8,71 @@ public class CollectionsTest {
 
     
     @Test
+    public void testQueue() throws Exception {
+        Queue<Integer> q = Queue.of(1, 2, 3);
+        Assert.assertEquals(q.toString(), "[1,2,3]");
+        
+        Maybe<Tuple<Integer, Queue<Integer>>> d1 = q.dequeue();
+        Assert.assertTrue(d1.isSome());
+        Tuple<Integer, Queue<Integer>> t1 = d1.fromMaybe(null);
+        Assert.assertNotNull(t1);
+        Assert.assertEquals(t1.getA().fromMaybe(-1), Integer.valueOf(1));
+        
+        Queue<Integer> q2 = t1.getB().fromMaybe(Queue.nil());
+        Assert.assertEquals(q2.toString(), "[2,3]");
+        
+        Queue<Integer> q3 = (Queue<Integer>) q2.build(4);
+        Assert.assertEquals(q3.toString(), "[2,3,4]");
+        
+        // Test empty queue dequeue
+        Assert.assertTrue(Queue.nil().dequeue().isNothing());
+        
+        // Test single element queue
+        Queue<Integer> single = Queue.of(10);
+        Maybe<Tuple<Integer, Queue<Integer>>> dSingle = single.dequeue();
+        Assert.assertTrue(dSingle.isSome());
+        Assert.assertEquals(dSingle.fromMaybe(null).getA().fromMaybe(-1), Integer.valueOf(10));
+        Assert.assertEquals(dSingle.fromMaybe(null).getB().fromMaybe(null).length(), 0);
+    }
+
+    @Test
+    public void testVector() throws Exception {
+        Vector<Integer> v = Vector.of(1, 2, 3);
+        Assert.assertEquals(v.toString(), "[1,2,3]");
+        Assert.assertEquals(v.at(0).fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(v.at(2).fromMaybe(-1), Integer.valueOf(3));
+        Assert.assertTrue(v.at(3).isNothing());
+        
+        Vector<Integer> v2 = v.update(1, 20);
+        Assert.assertEquals(v2.toString(), "[1,20,3]");
+        Assert.assertEquals(v.toString(), "[1,2,3]"); // Immutability check
+        
+        // Test large vector to trigger trie
+        Vector<Integer> large = Vector.nil();
+        for (int i = 0; i < 100; i++) {
+            large = (Vector<Integer>) large.build(i);
+        }
+        Assert.assertEquals(large.length(), 100);
+        Assert.assertEquals(large.at(50).fromMaybe(-1), Integer.valueOf(50));
+        Assert.assertEquals(large.at(99).fromMaybe(-1), Integer.valueOf(99));
+    }
+
+    @Test
+    public void testLazyList() throws Exception {
+        LazyList<Integer> l = LazyList.of(1, 2, 3);
+        Assert.assertEquals(l.toString(), "[1,2,3]");
+        
+        // Infinite list test
+        LazyList<Integer> infinite = LazyList.iterate(1, i -> i + 1);
+        Collection<Integer> firstFive = infinite.take(5);
+        Assert.assertEquals(firstFive.toString(), "[1,2,3,4,5]");
+        
+        // Map on infinite list (lazy)
+        Collection<Integer> doubled = infinite.map(i -> i * 2).take(3);
+        Assert.assertEquals(doubled.toString(), "[2,4,6]");
+    }
+
+    @Test
     public void testMap() throws Exception {
         List.of(10).map(i -> i + 10).forEach(i -> Assert.assertTrue(i == 20));
         Maybe.some(10).map(i -> i + 10).forEach(i -> Assert.assertTrue(i == 20));
