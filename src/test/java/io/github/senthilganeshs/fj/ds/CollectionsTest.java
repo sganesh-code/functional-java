@@ -115,6 +115,44 @@ public class CollectionsTest {
     }
 
     @Test
+    public void testDeque() throws Exception {
+        Deque<Integer> d = Deque.of(1, 2, 3);
+        Assert.assertEquals(d.toString(), "[1,2,3]");
+        
+        Deque<Integer> d2 = d.pushFront(0);
+        Assert.assertEquals(d2.toString(), "[0,1,2,3]");
+        
+        Tuple<Integer, Deque<Integer>> pop1 = d2.popFront().fromMaybe(null);
+        Assert.assertEquals(pop1.getA().fromMaybe(-1), Integer.valueOf(0));
+        Assert.assertEquals(pop1.getB().fromMaybe(null).toString(), "[1,2,3]");
+        
+        Tuple<Integer, Deque<Integer>> pop2 = d2.popBack().fromMaybe(null);
+        Assert.assertEquals(pop2.getA().fromMaybe(-1), Integer.valueOf(3));
+        Assert.assertEquals(pop2.getB().fromMaybe(null).toString(), "[0,1,2]");
+    }
+
+    @Test
+    public void testRoseTree() throws Exception {
+        RoseTree<String> tree = RoseTree.of("root", 
+            List.of(
+                RoseTree.of("child1"),
+                RoseTree.of("child2", List.of(RoseTree.of("grandchild1")))
+            )
+        );
+        
+        // Test foldl (pre-order: root, child1, child2, grandchild1)
+        String traversal = tree.foldl("", (r, t) -> r + (r.isEmpty() ? "" : ",") + t);
+        Assert.assertEquals(traversal, "root,child1,child2,grandchild1");
+        
+        // Test map
+        RoseTree<Integer> lengths = (RoseTree<Integer>) tree.map(String::length);
+        Assert.assertEquals(lengths.value(), Integer.valueOf(4));
+        
+        String lengthsTraversal = lengths.foldl("", (r, t) -> r + (r.isEmpty() ? "" : ",") + t);
+        Assert.assertEquals(lengthsTraversal, "4,6,6,11");
+    }
+
+    @Test
     public void testMap() throws Exception {
         List.of(10).map(i -> i + 10).forEach(i -> Assert.assertTrue(i == 20));
         Maybe.some(10).map(i -> i + 10).forEach(i -> Assert.assertTrue(i == 20));
