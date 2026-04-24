@@ -1,4 +1,4 @@
-![build](https://travis-ci.org/senthilganeshs/functional-java.svg?branch=master)
+![build](https://travis-ci.org/sganesh-code/functional-java.svg?branch=master)
 # functional-java
 
 Functional Java is an initiative to bring functional APIs to Java without compromising on object-oriented programming principles. It provides purely functional, immutable data structures with an API inspired by Haskell.
@@ -54,20 +54,20 @@ The library provides a variety of persistent data structures optimized for funct
 
 ## Usage
 
-### Installation (Version 1.2.0)
+### Installation (Version 1.0.0)
 
 #### Maven
 ```xml
 <dependency>
-    <groupId>io.github.senthilganeshs</groupId>
+    <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.2.0</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.senthilganeshs:functional-java:1.2.0'
+implementation 'io.github.sganesh-code:functional-java:1.0.0'
 ```
 
 ---
