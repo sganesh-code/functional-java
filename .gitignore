@@ -1,2 +1,11 @@
-.gradle/\n.idea/\nbuild/
-bin/\ngradle.properties
+.gradle/
+.idea/
+build/
+bin/
+out/
+gradle.properties
+*.class
+*.iml
+*.iws
+*.ipr
+.DS_Store
