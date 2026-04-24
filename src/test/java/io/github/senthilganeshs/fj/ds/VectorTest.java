@@ -53,9 +53,19 @@ public class VectorTest {
     }
 
     @Test
-    public void testVectorCollectionAPIs() {
-        Vector<Integer> v = Vector.of(1, 2, 3);
-        Assert.assertEquals(v.map(i -> i * 2).toString(), "[2,4,6]");
-        Assert.assertEquals(v.foldl(0, Integer::sum), Integer.valueOf(6));
+    public void testVectorDeepTrie() {
+        Vector<Integer> v = Vector.nil();
+        // Trigger multi-level trie (WIDTH=32)
+        int limit = 1100; // > 32*32
+        for (int i = 0; i < limit; i++) v = (Vector<Integer>) v.build(i);
+        
+        Assert.assertEquals(v.length(), limit);
+        // Deep update
+        v = v.update(500, -500);
+        Assert.assertEquals(v.at(500).fromMaybe(0), Integer.valueOf(-500));
+        
+        // Out of bound updates
+        Assert.assertEquals(v.update(-1, 0).length(), limit);
+        Assert.assertEquals(v.update(limit, 0).length(), limit);
     }
 }

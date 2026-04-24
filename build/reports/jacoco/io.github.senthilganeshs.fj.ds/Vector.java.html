@@ -61,7 +61,7 @@ public interface Vector&lt;T&gt; extends Collection&lt;T&gt; {
 
         @Override
         public Vector&lt;T&gt; update(int index, T value) {
-<span class="pc bpc" id="L64" title="1 of 4 branches missed.">            if (index &lt; 0 || index &gt;= size) return this;</span>
+<span class="fc bfc" id="L64" title="All 4 branches covered.">            if (index &lt; 0 || index &gt;= size) return this;</span>
 <span class="fc bfc" id="L65" title="All 2 branches covered.">            if (index &gt;= tailOffset()) {</span>
 <span class="fc" id="L66">                Object[] newTail = new Object[tail.length];</span>
 <span class="fc" id="L67">                System.arraycopy(tail, 0, newTail, 0, tail.length);</span>
@@ -84,7 +84,7 @@ public interface Vector&lt;T&gt; extends Collection&lt;T&gt; {
 
         @Override
         public &lt;R&gt; Collection&lt;R&gt; empty() {
-<span class="fc" id="L87">            return Vector.nil();</span>
+<span class="nc" id="L87">            return Vector.nil();</span>
         }
 
         @Override

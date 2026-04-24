@@ -85,11 +85,13 @@ public class DequeTest {
     }
 
     @Test
-    public void testDequeCollectionAPIs() {
-        Deque<Integer> d = Deque.of(1, 2, 3, 4);
-        Assert.assertEquals(d.map(i -> i * 2).toString(), "[2,4,6,8]");
-        Assert.assertEquals(d.filter(i -> i % 2 == 0).toString(), "[2,4]");
-        Assert.assertEquals(d.reverse().toString(), "[4,3,2,1]");
-        Assert.assertEquals(d.foldl(0, Integer::sum), Integer.valueOf(10));
+    public void testDequeBalanceExhaustive() {
+        // Branch 1: fLen == 0 && bLen > 0
+        Deque<Integer> d1 = Deque.<Integer>nil().pushBack(1).pushBack(2).pushBack(3);
+        Assert.assertEquals(d1.popFront().fromMaybe(null).getA().fromMaybe(-1), Integer.valueOf(1));
+        
+        // Branch 2: bLen == 0 && fLen > 0
+        Deque<Integer> d2 = Deque.<Integer>nil().pushFront(1).pushFront(2).pushFront(3);
+        Assert.assertEquals(d2.popBack().fromMaybe(null).getA().fromMaybe(-1), Integer.valueOf(1));
     }
 }

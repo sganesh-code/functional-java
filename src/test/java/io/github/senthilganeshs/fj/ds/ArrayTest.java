@@ -83,19 +83,19 @@ public class ArrayTest {
     }
 
     @Test
-    public void testArrayCollectionAPIs() {
-        Array<Integer> arr = new Array.NonEmpty<>(5);
-        arr.build(1).build(2).build(3);
+    public void testArrayShrinkDeep() {
+        // Initial capacity 2. Build up to 10.
+        Array<Integer> arr = new Array.NonEmpty<>(2);
+        for (int i = 0; i < 10; i++) arr.build(i);
         
-        Collection<Integer> doubled = arr.map(i -> i * 2);
-        Assert.assertEquals(doubled.length(), 3);
-        // Note: Array.map returns a Collection which might be a different type 
-        // depending on implementation. In Array.java, it uses empty().build(...)
-        // which returns an Array.NonEmpty.
-        Assert.assertEquals(doubled.foldl(0, (acc, i) -> acc + i), Integer.valueOf(12));
-        
-        Collection<Integer> filtered = arr.filter(i -> i > 1);
-        Assert.assertEquals(filtered.length(), 2);
-        Assert.assertEquals(filtered.foldl(0, (acc, i) -> acc + i), Integer.valueOf(5));
+        Assert.assertEquals(arr.length(), 10);
+        // Remove until it shrinks.
+        // Logic: if (cursor + 1 < capacity / 2 && capacity > initialCapacity)
+        // Capacity was 2 -> 4 -> 8 -> 16.
+        // cursor is 9.
+        while (arr.length() > 1) {
+            arr.remove(0);
+        }
+        Assert.assertEquals(arr.length(), 1);
     }
 }

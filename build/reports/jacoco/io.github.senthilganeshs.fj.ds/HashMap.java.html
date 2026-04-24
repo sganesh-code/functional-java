@@ -57,7 +57,7 @@ public interface HashMap&lt;K, V&gt; extends Collection&lt;HashMap.Entry&lt;K, V
 
         @Override
         public &lt;R&gt; Collection&lt;R&gt; empty() {
-<span class="fc" id="L60">            return List.nil();</span>
+<span class="nc" id="L60">            return List.nil();</span>
         }
 
         @Override
@@ -145,9 +145,9 @@ public interface HashMap&lt;K, V&gt; extends Collection&lt;HashMap.Entry&lt;K, V
 
         @Override
         public &lt;K, V&gt; Node put(int shift, int hash, K key, V value) {
-<span class="nc bnc" id="L148" title="All 2 branches missed.">            if (this.hash == hash) {</span>
-<span class="nc bnc" id="L149" title="All 2 branches missed.">                List&lt;Entry&lt;?, ?&gt;&gt; filtered = (List&lt;Entry&lt;?, ?&gt;&gt;) entries.filter(e -&gt; !e.key().equals(key));</span>
-<span class="nc" id="L150">                return new CollisionNode(hash, (List&lt;Entry&lt;?, ?&gt;&gt;) filtered.build(new Entry&lt;&gt;(key, value)));</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">            if (this.hash == hash) {</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">                List&lt;Entry&lt;?, ?&gt;&gt; filtered = (List&lt;Entry&lt;?, ?&gt;&gt;) entries.filter(e -&gt; !e.key().equals(key));</span>
+<span class="fc" id="L150">                return new CollisionNode(hash, (List&lt;Entry&lt;?, ?&gt;&gt;) filtered.build(new Entry&lt;&gt;(key, value)));</span>
             }
 <span class="nc" id="L152">            return IndexedNode.fromNode(shift, this).put(shift, hash, key, value);</span>
         }
@@ -157,11 +157,11 @@ public interface HashMap&lt;K, V&gt; extends Collection&lt;HashMap.Entry&lt;K, V
 <span class="pc bpc" id="L157" title="1 of 2 branches missed.">            if (this.hash != hash) return this;</span>
 <span class="fc bfc" id="L158" title="All 2 branches covered.">            List&lt;Entry&lt;?, ?&gt;&gt; filtered = (List&lt;Entry&lt;?, ?&gt;&gt;) entries.filter(e -&gt; !e.key().equals(key));</span>
 <span class="pc bpc" id="L159" title="1 of 2 branches missed.">            if (filtered.length() == 0) return null;</span>
-<span class="pc bpc" id="L160" title="1 of 2 branches missed.">            if (filtered.length() == 1) {</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">            if (filtered.length() == 1) {</span>
 <span class="fc" id="L161">                Entry&lt;?, ?&gt; e = filtered.foldl(null, (acc, entry) -&gt; entry);</span>
 <span class="fc" id="L162">                return new LeafNode(hash, e.key(), e.value());</span>
             }
-<span class="nc" id="L164">            return new CollisionNode(hash, filtered);</span>
+<span class="fc" id="L164">            return new CollisionNode(hash, filtered);</span>
         }
 
         @Override

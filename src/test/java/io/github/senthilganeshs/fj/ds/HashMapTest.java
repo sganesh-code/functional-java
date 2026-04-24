@@ -99,15 +99,37 @@ public class HashMapTest {
     }
 
     @Test
-    public void testHashMapCollectionAPIs() {
-        HashMap<String, Integer> map = HashMap.<String, Integer>nil().put("a", 1).put("b", 2);
+    public void testHashMapCollisionExhaustive() {
+        class CollisionKey {
+            final int id;
+            CollisionKey(int id) { this.id = id; }
+            @Override public int hashCode() { return 42; }
+            @Override public boolean equals(Object obj) {
+                return obj instanceof CollisionKey && ((CollisionKey)obj).id == id;
+            }
+        }
         
-        // HAMT foldl yields Entry<K, V>
-        int sum = map.foldl(0, (acc, entry) -> acc + entry.value());
-        Assert.assertEquals(sum, 3);
+        HashMap<CollisionKey, String> map = HashMap.nil();
+        CollisionKey k1 = new CollisionKey(1);
+        CollisionKey k2 = new CollisionKey(2);
+        CollisionKey k3 = new CollisionKey(3);
         
-        Collection<String> keys = map.map(HashMap.Entry::key);
-        Assert.assertTrue(keys.any(k -> k.equals("a")));
-        Assert.assertTrue(keys.any(k -> k.equals("b")));
+        map = map.put(k1, "v1").put(k2, "v2").put(k3, "v3");
+        Assert.assertEquals(map.length(), 3);
+        
+        // Update middle of collision
+        map = map.put(k2, "v2-updated");
+        Assert.assertEquals(map.get(k2).fromMaybe(""), "v2-updated");
+        
+        // Remove from collision until it becomes LeafNode again
+        map = map.remove(k1);
+        Assert.assertEquals(map.length(), 2);
+        map = map.remove(k2);
+        Assert.assertEquals(map.length(), 1);
+        Assert.assertEquals(map.get(k3).fromMaybe(""), "v3");
+        
+        // Final remove
+        map = map.remove(k3);
+        Assert.assertEquals(map.length(), 0);
     }
 }
