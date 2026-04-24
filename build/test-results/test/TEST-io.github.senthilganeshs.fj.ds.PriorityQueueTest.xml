@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.senthilganeshs.fj.ds.PriorityQueueTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-04-24T11:50:29" hostname="AMB-7533LK" time="0.001">
+  <properties/>
+  <testcase name="testPriorityQueueBasic" classname="io.github.senthilganeshs.fj.ds.PriorityQueueTest" time="0.0"/>
+  <testcase name="testPriorityQueueCollectionAPIs" classname="io.github.senthilganeshs.fj.ds.PriorityQueueTest" time="0.0"/>
+  <testcase name="testPriorityQueueDeleteMin" classname="io.github.senthilganeshs.fj.ds.PriorityQueueTest" time="0.0"/>
+  <testcase name="testPriorityQueueDuplicates" classname="io.github.senthilganeshs.fj.ds.PriorityQueueTest" time="0.0"/>
+  <testcase name="testPriorityQueueEmpty" classname="io.github.senthilganeshs.fj.ds.PriorityQueueTest" time="0.0"/>
+  <testcase name="testPriorityQueueMerge" classname="io.github.senthilganeshs.fj.ds.PriorityQueueTest" time="0.0"/>
+  <testcase name="testPriorityQueueMergeEmpty" classname="io.github.senthilganeshs.fj.ds.PriorityQueueTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

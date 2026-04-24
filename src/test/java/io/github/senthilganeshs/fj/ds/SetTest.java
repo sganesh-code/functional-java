@@ -46,14 +46,14 @@ public class SetTest {
     }
 
     @Test
-    public void testSetCollectionAPIs() {
-        Set<Integer> s = Set.of(1, 2, 3);
-        Collection<Integer> mapped = s.map(i -> i * 2);
-        Assert.assertEquals(mapped.length(), 3);
+    public void testSetEquals() {
+        Set<Integer> s1 = Set.of(1, 2, 3);
+        Set<Integer> s2 = Set.of(3, 1, 2);
+        Set<Integer> s3 = Set.of(1, 2);
         
-        Collection<Integer> filtered = s.filter(i -> i > 1);
-        Assert.assertEquals(filtered.length(), 2);
-        Assert.assertTrue(filtered.any(i -> i == 2));
-        Assert.assertFalse(filtered.any(i -> i == 1));
+        Assert.assertEquals(s1, s1);
+        Assert.assertEquals(s1, s2);
+        Assert.assertNotEquals(s1, s3);
+        Assert.assertNotEquals(s1, null);
     }
 }

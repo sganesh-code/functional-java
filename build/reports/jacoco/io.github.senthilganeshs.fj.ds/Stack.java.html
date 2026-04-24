@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Stack.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">functional-java</a> &gt; <a href="index.source.html" class="el_package">io.github.senthilganeshs.fj.ds</a> &gt; <span class="el_source">Stack.java</span></div><h1>Stack.java</h1><pre class="source lang-java linenums">package io.github.senthilganeshs.fj.ds;
+
+import java.util.Arrays;
+import java.util.function.BiFunction;
+
+public interface Stack&lt;T&gt; extends Collection&lt;T&gt;{
+
+    Maybe&lt;T&gt; head();
+    Maybe&lt;Stack&lt;T&gt;&gt; tail();
+
+    @Override
+    default Stack&lt;T&gt; take(int n) {
+<span class="fc bfc" id="L13" title="All 2 branches covered.">        if (n &lt;= 0) return emptyStack();</span>
+<span class="fc" id="L14">        return (Stack&lt;T&gt;) ((Maybe&lt;Stack&lt;T&gt;&gt;) head().flatMap(h -&gt; tail().map(t -&gt; (Stack&lt;T&gt;) new NonEmpty&lt;&gt;(h, t.take(n - 1))))).fromMaybe(this);</span>
+    }
+
+    @Override
+    default Stack&lt;T&gt; drop(int n) {
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        if (n &lt;= 0) return this;</span>
+<span class="fc" id="L20">        return (Stack&lt;T&gt;) ((Maybe&lt;Stack&lt;T&gt;&gt;) tail().flatMap(t -&gt; Maybe.some(t.drop(n - 1)))).fromMaybe(emptyStack());</span>
+    }
+
+    @Override
+    default Stack&lt;T&gt; reverse() {
+<span class="fc" id="L25">        return foldl(emptyStack(), (r, t) -&gt; (Stack&lt;T&gt;) r.build(t));</span>
+    }
+
+    static &lt;R&gt; Stack&lt;R&gt; emptyStack() {
+<span class="fc" id="L29">        return new Empty&lt;&gt;();</span>
+    }
+
+    static &lt;R&gt; Stack&lt;R&gt; newStack(R[] values) {
+<span class="nc" id="L33">        return Arrays.stream(values).reduce(emptyStack(), (stack, r) -&gt; (Stack&lt;R&gt;) stack.build(r), (a, b) -&gt; b);</span>
+    }
+
+    final static class NonEmpty&lt;T&gt; implements Stack&lt;T&gt; {
+
+        private Stack&lt;T&gt; tail;
+        private T head;
+
+<span class="fc" id="L41">        NonEmpty(T head, Stack&lt;T&gt; tail) {</span>
+<span class="fc" id="L42">            this.head = head;</span>
+<span class="fc" id="L43">            this.tail = tail;</span>
+<span class="fc" id="L44">        }</span>
+
+        @Override
+        public Maybe&lt;T&gt; head() {
+<span class="fc" id="L48">            return Maybe.some(head);</span>
+        }
+
+        @Override
+        public Maybe&lt;Stack&lt;T&gt;&gt; tail() {
+<span class="fc" id="L53">            return Maybe.some(tail);</span>
+        }
+
+        @Override
+        public &lt;R&gt; Collection&lt;R&gt; empty() {
+<span class="fc" id="L58">            return new Empty&lt;&gt;();</span>
+        }
+
+        @Override
+        public Collection&lt;T&gt; build(T input) {
+<span class="fc" id="L63">            return new NonEmpty&lt;T&gt;(input, this);</span>
+        }
+
+        @Override
+        public &lt;R&gt; R foldl(R seed, BiFunction&lt;R, T, R&gt; fn) {
+<span class="fc" id="L68">            return tail.foldl(fn.apply(seed, head), fn);</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            return foldl(&quot;[&quot;, (r, t) -&gt; r + (r.equals(&quot;[&quot;) ? &quot;&quot; : &quot;,&quot;) + t) + &quot;]&quot;;</span>
+        }
+    }
+
+
+<span class="fc" id="L78">    final static class Empty&lt;T&gt; implements Stack&lt;T&gt; {</span>
+
+        @Override
+        public Maybe&lt;T&gt; head() {
+<span class="fc" id="L82">            return Maybe.nothing();</span>
+        }
+
+        @Override
+        public Maybe&lt;Stack&lt;T&gt;&gt; tail() {
+<span class="fc" id="L87">            return Maybe.nothing();</span>
+        }
+
+        @Override
+        public &lt;R&gt; Collection&lt;R&gt; empty() {
+<span class="nc" id="L92">            return new Empty&lt;&gt;();</span>
+        }
+
+        @Override
+        public Collection&lt;T&gt; build(T input) {
+<span class="fc" id="L97">            return new NonEmpty&lt;T&gt;(input, this);</span>
+        }
+
+        @Override
+        public &lt;R&gt; R foldl(R seed, BiFunction&lt;R, T, R&gt; fn) {
+<span class="fc" id="L102">            return seed;</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="nc" id="L107">            return &quot;[]&quot;;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -53,8 +53,22 @@ public class MaybeTest {
     }
 
     @Test
-    public void testMaybeToString() {
-        Assert.assertEquals(Maybe.some(10).toString(), "Some (10)");
-        Assert.assertEquals(Maybe.nothing().toString(), "Nothing");
+    public void testMaybeEquals() {
+        Maybe<Integer> some1 = Maybe.some(10);
+        Maybe<Integer> some2 = Maybe.some(10);
+        Maybe<Integer> some3 = Maybe.some(20);
+        Maybe<Integer> nothing = Maybe.nothing();
+        
+        Assert.assertEquals(some1, some1);
+        Assert.assertEquals(some1, some2);
+        Assert.assertNotEquals(some1, some3);
+        Assert.assertNotEquals(some1, nothing);
+        Assert.assertNotEquals(some1, null);
+        Assert.assertNotEquals(some1, "not a maybe");
+        
+        Assert.assertEquals(nothing, Maybe.nothing());
+        Assert.assertEquals(nothing, nothing);
+        Assert.assertNotEquals(nothing, null);
+        Assert.assertNotEquals(nothing, some1);
     }
 }

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PriorityQueue.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">functional-java</a> &gt; <a href="index.source.html" class="el_package">io.github.senthilganeshs.fj.ds</a> &gt; <span class="el_source">PriorityQueue.java</span></div><h1>PriorityQueue.java</h1><pre class="source lang-java linenums">package io.github.senthilganeshs.fj.ds;
+
+import java.util.function.BiFunction;
+
+/**
+ * A purely functional Priority Queue implemented as a Leftist Heap.
+ * Supports O(1) findMin and O(log n) merge, insert, and deleteMin.
+ */
+public interface PriorityQueue&lt;T extends Comparable&lt;T&gt;&gt; extends Collection&lt;T&gt; {
+
+    Maybe&lt;T&gt; findMin();
+
+    Maybe&lt;PriorityQueue&lt;T&gt;&gt; deleteMin();
+
+    PriorityQueue&lt;T&gt; merge(PriorityQueue&lt;T&gt; other);
+
+    static &lt;R extends Comparable&lt;R&gt;&gt; PriorityQueue&lt;R&gt; nil() {
+<span class="fc" id="L18">        return new LeftistHeap&lt;&gt;();</span>
+    }
+
+    @SafeVarargs
+    static &lt;R extends Comparable&lt;R&gt;&gt; PriorityQueue&lt;R&gt; of(R... values) {
+<span class="fc" id="L23">        PriorityQueue&lt;R&gt; pq = nil();</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        for (R val : values) {</span>
+<span class="fc" id="L25">            pq = (PriorityQueue&lt;R&gt;) pq.build(val);</span>
+        }
+<span class="fc" id="L27">        return pq;</span>
+    }
+
+    final class LeftistHeap&lt;T extends Comparable&lt;T&gt;&gt; implements PriorityQueue&lt;T&gt; {
+        private final T value;
+        private final LeftistHeap&lt;T&gt; left;
+        private final LeftistHeap&lt;T&gt; right;
+        private final int rank;
+
+        // Empty heap constructor
+<span class="fc" id="L37">        LeftistHeap() {</span>
+<span class="fc" id="L38">            this.value = null;</span>
+<span class="fc" id="L39">            this.left = null;</span>
+<span class="fc" id="L40">            this.right = null;</span>
+<span class="fc" id="L41">            this.rank = 0;</span>
+<span class="fc" id="L42">        }</span>
+
+        // Non-empty heap constructor
+<span class="fc" id="L45">        private LeftistHeap(T value, LeftistHeap&lt;T&gt; left, LeftistHeap&lt;T&gt; right) {</span>
+<span class="fc" id="L46">            this.value = value;</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">            if (left.rank &gt;= right.rank) {</span>
+<span class="fc" id="L48">                this.left = left;</span>
+<span class="fc" id="L49">                this.right = right;</span>
+            } else {
+<span class="fc" id="L51">                this.left = right;</span>
+<span class="fc" id="L52">                this.right = left;</span>
+            }
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">            this.rank = (this.right == null ? 0 : this.right.rank) + 1;</span>
+<span class="fc" id="L55">        }</span>
+
+        @Override
+        public Maybe&lt;T&gt; findMin() {
+<span class="fc bfc" id="L59" title="All 2 branches covered.">            return value == null ? Maybe.nothing() : Maybe.some(value);</span>
+        }
+
+        @Override
+        public PriorityQueue&lt;T&gt; merge(PriorityQueue&lt;T&gt; other) {
+<span class="fc bfc" id="L64" title="All 2 branches covered.">            if (this.value == null) return other;</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">            if (other instanceof LeftistHeap) {</span>
+<span class="fc" id="L66">                LeftistHeap&lt;T&gt; o = (LeftistHeap&lt;T&gt;) other;</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">                if (o.value == null) return this;</span>
+
+<span class="fc bfc" id="L69" title="All 2 branches covered.">                if (this.value.compareTo(o.value) &lt;= 0) {</span>
+<span class="fc" id="L70">                    return new LeftistHeap&lt;&gt;(this.value, this.left, (LeftistHeap&lt;T&gt;) this.right.merge(o));</span>
+                } else {
+<span class="fc" id="L72">                    return new LeftistHeap&lt;&gt;(o.value, o.left, (LeftistHeap&lt;T&gt;) this.merge(o.right));</span>
+                }
+            }
+            // Fallback for different implementations if any
+<span class="nc" id="L76">            return other.foldl((PriorityQueue&lt;T&gt;) this, (pq, t) -&gt; (PriorityQueue&lt;T&gt;) pq.build(t));</span>
+        }
+
+        @Override
+        public Maybe&lt;PriorityQueue&lt;T&gt;&gt; deleteMin() {
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            return value == null ? Maybe.nothing() : Maybe.some(left.merge(right));</span>
+        }
+
+        @Override
+        public &lt;R&gt; Collection&lt;R&gt; empty() {
+<span class="fc" id="L86">            return List.nil();</span>
+        }
+
+        @Override
+        public Collection&lt;T&gt; build(T input) {
+<span class="fc" id="L91">            return merge(new LeftistHeap&lt;&gt;(input, new LeftistHeap&lt;&gt;(), new LeftistHeap&lt;&gt;()));</span>
+        }
+
+        @Override
+        public &lt;R&gt; R foldl(R seed, BiFunction&lt;R, T, R&gt; fn) {
+<span class="fc bfc" id="L96" title="All 2 branches covered.">            if (value == null) return seed;</span>
+            // Pre-order traversal for foldl
+<span class="fc" id="L98">            R res = fn.apply(seed, value);</span>
+<span class="fc" id="L99">            res = left.foldl(res, fn);</span>
+<span class="fc" id="L100">            return right.foldl(res, fn);</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="nc bnc" id="L105" title="All 2 branches missed.">            if (value == null) return &quot;[]&quot;;</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">            return foldl(&quot;[&quot;, (r, t) -&gt; r + (r.equals(&quot;[&quot;) ? &quot;&quot; : &quot;,&quot;) + t) + &quot;]&quot;;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

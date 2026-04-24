@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Set.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">functional-java</a> &gt; <a href="index.source.html" class="el_package">io.github.senthilganeshs.fj.ds</a> &gt; <span class="el_source">Set.java</span></div><h1>Set.java</h1><pre class="source lang-java linenums">package io.github.senthilganeshs.fj.ds;
+
+import java.util.Comparator;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+public interface Set &lt;T extends Comparable&lt;T&gt;&gt; extends Collection&lt;T&gt;, Comparable&lt;T&gt; {
+
+    @Override Set&lt;T&gt; build(final T value);
+
+    default Set&lt;T&gt; build (final T value, final Comparator&lt;T&gt; comparator) {
+<span class="nc" id="L12">        return build (value); //discard the comparator.        </span>
+    }
+
+    boolean contains(final T value);
+
+    static &lt;R extends Comparable&lt;R&gt;&gt; Collection&lt;R&gt; sort(Collection&lt;R&gt; collection) {
+<span class="fc" id="L18">        return of(collection).foldl(collection.empty(), (rs, t) -&gt; rs.build(t));</span>
+    }
+       
+<span class="fc" id="L21">    Set&lt;Integer&gt; EMPTY = new Empty&lt;&gt;();</span>
+    
+    @SuppressWarnings(&quot;unchecked&quot;)
+    @Deprecated
+    static &lt;R extends Comparable&lt;R&gt;&gt; Set&lt;R&gt; nil() {
+<span class="fc" id="L26">        return (Set&lt;R&gt;) EMPTY;</span>
+    }
+
+    static &lt;R extends Comparable&lt;R&gt;&gt; Set&lt;R&gt; empty() {
+<span class="fc" id="L30">        return nil();</span>
+    }
+    
+    static &lt;R extends Comparable&lt;R&gt;&gt; Set&lt;R&gt; of(final Collection&lt;R&gt; values) {
+<span class="fc" id="L34">        return values.foldl(nil(), (r, t) -&gt; r.build(t));</span>
+    }
+    
+    static &lt;R extends Comparable&lt;R&gt;&gt; Set&lt;R&gt; of(final java.util.Collection&lt;R&gt; values) {
+<span class="nc" id="L38">        Set&lt;R&gt; tree = nil();</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        for (final R value : values) {</span>
+<span class="nc" id="L40">            tree = tree.build(value);</span>
+<span class="nc" id="L41">        }</span>
+<span class="nc" id="L42">        return tree;</span>
+    }   
+    
+    @SuppressWarnings(&quot;unchecked&quot;)
+    static &lt;R extends Comparable&lt;R&gt;&gt; Set&lt;R&gt; of(R... values) {
+<span class="fc" id="L47">        Set&lt;R&gt; tree = nil();</span>
+<span class="pc bpc" id="L48" title="2 of 4 branches missed.">        if (values == null || values.length == 0)</span>
+<span class="nc" id="L49">            return tree;</span>
+        
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        for (final R value  : values) {</span>
+<span class="fc" id="L52">            tree = tree.build(value);            </span>
+        }
+<span class="fc" id="L54">        return tree;</span>
+    }
+
+    interface AVLTree &lt;T extends Comparable&lt;T&gt;&gt; extends Set&lt;T&gt; {
+        
+        @Override AVLTree&lt;T&gt; build(final T value);
+
+        AVLTree&lt;T&gt; replaceLeft(final Function&lt;AVLTree&lt;T&gt;, AVLTree&lt;T&gt;&gt; left);
+
+        AVLTree&lt;T&gt; replaceRight(final Function&lt;AVLTree&lt;T&gt;, AVLTree&lt;T&gt;&gt; right);
+
+        AVLTree&lt;T&gt; rotateLeft();
+
+        AVLTree&lt;T&gt; rotateRight();
+
+        int height();
+    }
+   
+    final class NonEmpty&lt;T extends Comparable&lt;T&gt;&gt; implements AVLTree&lt;T&gt; {
+
+        private final AVLTree&lt;T&gt; right;
+        private final AVLTree&lt;T&gt; left;
+        private final T value;
+
+<span class="fc" id="L78">        NonEmpty (final T value, final AVLTree&lt;T&gt; left, final AVLTree&lt;T&gt; right) {</span>
+<span class="fc" id="L79">            this.value = value;</span>
+<span class="fc" id="L80">            this.left = left;</span>
+<span class="fc" id="L81">            this.right = right;</span>
+<span class="fc" id="L82">        }</span>
+        
+        @Override
+        public &lt;R&gt; Collection&lt;R&gt; empty() {
+<span class="fc" id="L86">            return List.nil();</span>
+        }
+
+        @Override
+        public &lt;R&gt; R foldl(R seed, BiFunction&lt;R, T, R&gt; fn) {
+<span class="fc" id="L91">            return right.foldl(</span>
+<span class="fc" id="L92">                fn.apply(left.foldl(seed, fn), value), </span>
+                fn);
+        }
+                
+        @Override
+        public AVLTree&lt;T&gt; build(T other) {
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            if (this.value.compareTo(other) == 0)</span>
+<span class="fc" id="L99">                return new NonEmpty&lt;&gt;(other, left, right);</span>
+
+            AVLTree&lt;T&gt; lf;
+            AVLTree&lt;T&gt; rt;
+            
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            if (this.value.compareTo(other) &gt; 0) {</span>
+<span class="fc" id="L105">                lf = this.left.build(other);</span>
+<span class="fc" id="L106">                rt = this.right;</span>
+            } else {
+<span class="fc" id="L108">                lf = this.left;</span>
+<span class="fc" id="L109">                rt = right.build(other);</span>
+            }
+
+<span class="fc" id="L112">            int lfh = lf.height();</span>
+<span class="fc" id="L113">            int rth = rt.height();</span>
+
+<span class="fc" id="L115">            AVLTree&lt;T&gt; newNode =  new NonEmpty&lt;&gt;(value, lf, rt);;</span>
+
+<span class="fc bfc" id="L117" title="All 4 branches covered.">            if (lfh &gt; rth &amp;&amp; lfh - rth == 2) {</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">                if (lf.compareTo(other) &gt; 0) {</span>
+                    //single-left-rotation - Ex: [3 [2 [1]]]
+<span class="fc" id="L120">                    return newNode.rotateLeft();</span>
+                } else {
+                    //right-lfet-double rotation - Ex: [3 [1[][2]]]
+<span class="fc" id="L123">                    return newNode.replaceLeft(AVLTree::rotateRight).rotateLeft();</span>
+                }
+<span class="fc bfc" id="L125" title="All 4 branches covered.">            } else if (lfh &lt; rth &amp;&amp; rth - lfh == 2) {</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">                if (rt.compareTo(other) &lt; 0) {</span>
+                    //single-right-rotation - Ex: [1 [][2 [][3]]]
+<span class="fc" id="L128">                    return newNode.rotateRight();</span>
+                } else {
+                    //left-right-double rotation - Ex: [1 [][3 [2]]]
+<span class="fc" id="L131">                    return newNode.replaceRight(AVLTree::rotateLeft).rotateRight();</span>
+                }
+            } else {
+<span class="fc" id="L134">                return newNode;</span>
+            }
+        }
+
+        @Override
+        public AVLTree&lt;T&gt; replaceLeft(Function&lt;AVLTree&lt;T&gt;, AVLTree&lt;T&gt;&gt; left) {
+<span class="fc" id="L140">            return new NonEmpty&lt;&gt;(value, left.apply(this.left), right);</span>
+        }
+
+        @Override
+        public AVLTree&lt;T&gt; replaceRight(Function&lt;AVLTree&lt;T&gt;, AVLTree&lt;T&gt;&gt; right) {
+<span class="fc" id="L145">            return new NonEmpty&lt;&gt;(value, left, right.apply(this.right));</span>
+        }
+
+        @Override
+        public int compareTo(T other) {
+<span class="fc" id="L150">            return this.value.compareTo(other);</span>
+        }
+
+        @Override
+        public int height() {
+<span class="fc" id="L155">            return 1 + Math.max(left.height(), right.height());</span>
+        }
+        
+        @Override
+        public String toString() {
+<span class="fc" id="L160">            return String.format(</span>
+                &quot;{ Label : %s, left = %s, right = %s }&quot;,
+                value, left, right);
+        }
+
+        @Override
+        public AVLTree&lt;T&gt; rotateLeft() {
+<span class="fc" id="L167">            return left.replaceRight(lfrt -&gt; </span>
+<span class="fc" id="L168">                new NonEmpty&lt;&gt;(value, lfrt, right));</span>
+        }
+
+        @Override
+        public AVLTree&lt;T&gt; rotateRight() {
+<span class="fc" id="L173">            return right.replaceLeft(rtlf -&gt; </span>
+<span class="fc" id="L174">                new NonEmpty&lt;&gt;(value, left, rtlf));</span>
+        }
+
+        @Override
+        public boolean contains(T value) {
+<span class="fc bfc" id="L179" title="All 2 branches covered.">            if (this.value.compareTo(value) == 0)</span>
+<span class="fc" id="L180">                return true;</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">            if (this.value.compareTo(value) &gt; 0)</span>
+<span class="fc" id="L182">                return left.contains(value);</span>
+<span class="fc" id="L183">            return right.contains(value);</span>
+        }
+        
+        @SuppressWarnings(&quot;unchecked&quot;)
+        @Override
+        public boolean equals(final Object other) {
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">            if (other == null) return false;</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">            if (other == this) return true;</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">            if (other instanceof Set) {</span>
+<span class="fc" id="L192">                Set&lt;?&gt; o = (Set&lt;?&gt;) other;</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">                if (this.length() != o.length()) return false;</span>
+<span class="fc" id="L194">                return this.toString().equals(o.toString());</span>
+            }
+<span class="nc" id="L196">            return false;</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L201">            return toString().hashCode();</span>
+        }
+    }
+    
+<span class="fc" id="L205">    class Empty&lt;T extends Comparable&lt;T&gt;&gt; implements AVLTree&lt;T&gt; {</span>
+
+        @Override
+        public &lt;R&gt; Collection&lt;R&gt; empty() {
+<span class="nc" id="L209">            return List.nil();</span>
+        }
+
+        @Override
+        public &lt;R&gt; R foldl(R seed, BiFunction&lt;R, T, R&gt; fn) {
+<span class="fc" id="L214">            return seed;</span>
+        }
+
+        @SuppressWarnings(&quot;unchecked&quot;)
+        @Override
+        public AVLTree&lt;T&gt; build(T value) {
+<span class="fc" id="L220">            return new NonEmpty&lt;T&gt;(value, (AVLTree&lt;T&gt;) EMPTY, (AVLTree&lt;T&gt;) EMPTY);</span>
+        }
+        
+        @Override
+        public AVLTree&lt;T&gt; replaceLeft(Function&lt;AVLTree&lt;T&gt;, AVLTree&lt;T&gt;&gt; left) {
+<span class="nc" id="L225">            return left.apply(this);</span>
+        }
+
+        @Override
+        public AVLTree&lt;T&gt; replaceRight(Function&lt;AVLTree&lt;T&gt;, AVLTree&lt;T&gt;&gt; right) {
+<span class="nc" id="L230">            return right.apply(this);</span>
+        }
+
+        @Override
+        public int compareTo(T o) {
+<span class="nc" id="L235">            return -1;</span>
+        }
+
+        @Override
+        public int height() {
+<span class="fc" id="L240">            return 0;</span>
+        } 
+        
+        @Override
+        public String toString() {
+<span class="fc" id="L245">            return &quot;[]&quot;;</span>
+        }
+
+        @Override
+        public AVLTree&lt;T&gt; rotateLeft() {
+<span class="nc" id="L250">            return this;</span>
+        }
+
+        @Override
+        public AVLTree&lt;T&gt; rotateRight() {
+<span class="nc" id="L255">            return this;</span>
+        }
+
+        @Override
+        public boolean contains(T value) {
+<span class="fc" id="L260">            return false;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

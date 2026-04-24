@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.senthilganeshs.fj.ds.ArrayTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-24T11:50:29" hostname="AMB-7533LK" time="0.007">
+  <properties/>
+  <testcase name="testArrayBasic" classname="io.github.senthilganeshs.fj.ds.ArrayTest" time="0.005"/>
+  <testcase name="testArrayCollectionAPIs" classname="io.github.senthilganeshs.fj.ds.ArrayTest" time="0.0"/>
+  <testcase name="testArrayEdgeCases" classname="io.github.senthilganeshs.fj.ds.ArrayTest" time="0.0"/>
+  <testcase name="testArrayRemove" classname="io.github.senthilganeshs.fj.ds.ArrayTest" time="0.0"/>
+  <testcase name="testArrayResizing" classname="io.github.senthilganeshs.fj.ds.ArrayTest" time="0.0"/>
+  <testcase name="testArrayShift" classname="io.github.senthilganeshs.fj.ds.ArrayTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Maybe.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">functional-java</a> &gt; <a href="index.source.html" class="el_package">io.github.senthilganeshs.fj.ds</a> &gt; <span class="el_source">Maybe.java</span></div><h1>Maybe.java</h1><pre class="source lang-java linenums">package io.github.senthilganeshs.fj.ds;
+
+import java.util.function.BiFunction;
+
+
+public interface Maybe&lt;T&gt; extends Collection&lt;T&gt; {
+
+<span class="fc" id="L8">    final static Maybe&lt;Void&gt; NOTHING = new Nothing&lt;&gt;();</span>
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public static &lt;R&gt; Maybe&lt;R&gt; nothing () {
+<span class="fc" id="L12">        return (Maybe&lt;R&gt;) NOTHING;</span>
+    }
+
+    public static &lt;R&gt; Maybe&lt;R&gt; some (final R value) {
+<span class="fc" id="L16">        return new Some&lt;&gt;(value);</span>
+    }
+
+    default boolean isSome() {
+<span class="fc" id="L20">        return this instanceof Some;</span>
+    }
+
+    default boolean isNothing() {
+<span class="fc" id="L24">        return this instanceof Nothing;</span>
+    }
+
+    default T fromMaybe(T def) {
+<span class="fc" id="L28">        return foldl(def, (__, t) -&gt; t);</span>
+    }
+    
+<span class="fc" id="L31">    final static class Nothing&lt;T&gt; implements Maybe&lt;T&gt; {</span>
+
+        @Override
+        public &lt;R&gt; Maybe&lt;R&gt; empty() {
+<span class="fc" id="L35">            return Maybe.nothing();</span>
+        }
+
+        @Override
+        public Maybe&lt;T&gt; build(T input) {
+<span class="fc" id="L40">            return Maybe.some(input);</span>
+        }
+
+        @Override
+        public &lt;R&gt; R foldl(R seed, BiFunction&lt;R, T, R&gt; fn) {
+<span class="fc" id="L45">            return seed;</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="fc" id="L50">            return &quot;Nothing&quot;;</span>
+        }
+        
+        @Override
+        public boolean equals(final Object other) {
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">            if (other == null) return false;</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            if (other == this) return true;</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">            if (other instanceof Nothing) {</span>
+<span class="nc" id="L58">                return true;</span>
+            }
+<span class="fc" id="L60">            return false;</span>
+        }
+    }
+    
+    final static class Some&lt;T&gt; implements Maybe&lt;T&gt; {
+
+        private T value;
+
+<span class="fc" id="L68">        Some (final T value) {</span>
+<span class="fc" id="L69">            this.value = value;</span>
+<span class="fc" id="L70">        }</span>
+
+        @Override
+        public &lt;R&gt; Maybe&lt;R&gt; empty() {
+<span class="fc" id="L74">            return Maybe.nothing();</span>
+        }
+
+        @Override
+        public Maybe&lt;T&gt; build(T input) {
+<span class="fc" id="L79">            return new Some&lt;&gt;(input);</span>
+        }
+
+        @Override
+        public &lt;R&gt; R foldl(R seed, BiFunction&lt;R, T, R&gt; fn) {
+<span class="fc" id="L84">            return fn.apply(seed, value);</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="fc" id="L89">            return &quot;Some (&quot; + value + &quot;)&quot;;</span>
+        }
+        
+        @SuppressWarnings(&quot;unchecked&quot;)
+        @Override
+        public boolean equals(final Object other) {
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">            if (other == null) return false;</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">            if (other == this) return true;</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">            if (other instanceof Some) {</span>
+<span class="fc" id="L98">                Some&lt;T&gt; sOther = (Some&lt;T&gt;)other;</span>
+<span class="fc" id="L99">                return sOther.value.equals(value);</span>
+            }
+<span class="fc" id="L101">            return false;</span>
+        }
+    }
+ }
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

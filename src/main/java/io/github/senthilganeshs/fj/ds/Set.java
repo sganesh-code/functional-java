@@ -188,10 +188,17 @@ public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable
         public boolean equals(final Object other) {
             if (other == null) return false;
             if (other == this) return true;
-            if (other instanceof NonEmpty) {
-                return ((NonEmpty<T>) other).value.equals(value);
+            if (other instanceof Set) {
+                Set<?> o = (Set<?>) other;
+                if (this.length() != o.length()) return false;
+                return this.toString().equals(o.toString());
             }
             return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return toString().hashCode();
         }
     }
     

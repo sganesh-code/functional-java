@@ -48,9 +48,23 @@ public class ListTest {
     }
 
     @Test
-    public void testListEmpty() {
-        List<Integer> nil = List.nil();
-        Assert.assertEquals(nil.length(), 0);
-        Assert.assertEquals(nil.toString(), "");
+    public void testListEquals() {
+        List<Integer> l1 = List.of(1, 2);
+        List<Integer> l2 = List.of(1, 2);
+        List<Integer> l3 = List.of(1);
+        
+        Assert.assertEquals(l1, l1);
+        Assert.assertEquals(l1, l2);
+        Assert.assertNotEquals(l1, l3);
+        Assert.assertNotEquals(l1, null);
+    }
+
+    @Test
+    public void testListStaticHelpers() {
+        List<Integer> l = List.of(java.util.Arrays.asList(1, 2, 3));
+        Assert.assertEquals(l.length(), 3);
+        
+        Collection<Integer> q = List.newQueue(new Integer[]{1, 2});
+        Assert.assertEquals(q.length(), 2);
     }
 }

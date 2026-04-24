@@ -75,5 +75,19 @@ public interface RoseTree<T> extends Collection<T> {
             }
             return "Node(" + value + ", " + children + ")";
         }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == null) return false;
+            if (other == this) return true;
+            if (!(other instanceof RoseTree)) return false;
+            RoseTree<?> o = (RoseTree<?>) other;
+            return value.equals(o.value()) && children.equals(o.children());
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode() ^ children.hashCode();
+        }
     }
 }

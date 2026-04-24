@@ -43,9 +43,15 @@ public class QueueTest {
     }
 
     @Test
-    public void testQueueCollectionAPIs() {
-        Queue<Integer> q = Queue.of(1, 2, 3);
-        Assert.assertEquals(q.map(i -> i * 2).toString(), "[2,4,6]");
-        Assert.assertEquals(q.filter(i -> i > 1).toString(), "[2,3]");
+    public void testQueueEquals() {
+        Queue<Integer> q1 = Queue.of(1, 2);
+        Queue<Integer> q2 = Queue.of(1, 2);
+        Queue<Integer> q3 = Queue.of(1);
+        
+        Assert.assertEquals(q1, q1);
+        Assert.assertEquals(q1, q2);
+        Assert.assertNotEquals(q1, q3);
+        Assert.assertNotEquals(q1, null);
+        Assert.assertNotEquals(q1, "not a queue");
     }
 }

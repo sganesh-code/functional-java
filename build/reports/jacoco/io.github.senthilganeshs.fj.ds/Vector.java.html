@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Vector.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">functional-java</a> &gt; <a href="index.source.html" class="el_package">io.github.senthilganeshs.fj.ds</a> &gt; <span class="el_source">Vector.java</span></div><h1>Vector.java</h1><pre class="source lang-java linenums">package io.github.senthilganeshs.fj.ds;
+
+import java.util.function.BiFunction;
+
+/**
+ * Persistent Vector implementation using a Bitmapped Vector Trie.
+ */
+public interface Vector&lt;T&gt; extends Collection&lt;T&gt; {
+
+    Maybe&lt;T&gt; at(int index);
+
+    Vector&lt;T&gt; update(int index, T value);
+
+    static &lt;R&gt; Vector&lt;R&gt; nil() {
+<span class="fc" id="L15">        return new VectorImpl&lt;&gt;(0, 5, null, null);</span>
+    }
+
+    @SafeVarargs
+    static &lt;R&gt; Vector&lt;R&gt; of(R... values) {
+<span class="fc" id="L20">        Vector&lt;R&gt; v = nil();</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">        for (R val : values) {</span>
+<span class="fc" id="L22">            v = (Vector&lt;R&gt;) v.build(val);</span>
+        }
+<span class="fc" id="L24">        return v;</span>
+    }
+
+    final class VectorImpl&lt;T&gt; implements Vector&lt;T&gt; {
+        private static final int BITS = 5;
+        private static final int WIDTH = 1 &lt;&lt; BITS;
+        private static final int MASK = WIDTH - 1;
+
+        private final int size;
+        private final int shift;
+        private final Node root;
+        private final Object[] tail;
+
+<span class="fc" id="L37">        VectorImpl(int size, int shift, Node root, Object[] tail) {</span>
+<span class="fc" id="L38">            this.size = size;</span>
+<span class="fc" id="L39">            this.shift = shift;</span>
+<span class="fc" id="L40">            this.root = root;</span>
+<span class="fc" id="L41">            this.tail = tail;</span>
+<span class="fc" id="L42">        }</span>
+
+        private int tailOffset() {
+<span class="fc bfc" id="L45" title="All 2 branches covered.">            if (size &lt; WIDTH) return 0;</span>
+<span class="fc" id="L46">            return ((size - 1) &gt;&gt; BITS) &lt;&lt; BITS;</span>
+        }
+
+        @Override
+        public Maybe&lt;T&gt; at(int index) {
+<span class="fc bfc" id="L51" title="All 4 branches covered.">            if (index &lt; 0 || index &gt;= size) return Maybe.nothing();</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">            if (index &gt;= tailOffset()) {</span>
+<span class="fc" id="L53">                return Maybe.some((T) tail[index &amp; MASK]);</span>
+            }
+<span class="fc" id="L55">            Node node = root;</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            for (int level = shift; level &gt; 0; level -= BITS) {</span>
+<span class="fc" id="L57">                node = (Node) node.array[(index &gt;&gt; level) &amp; MASK];</span>
+            }
+<span class="fc" id="L59">            return Maybe.some((T) node.array[index &amp; MASK]);</span>
+        }
+
+        @Override
+        public Vector&lt;T&gt; update(int index, T value) {
+<span class="pc bpc" id="L64" title="1 of 4 branches missed.">            if (index &lt; 0 || index &gt;= size) return this;</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">            if (index &gt;= tailOffset()) {</span>
+<span class="fc" id="L66">                Object[] newTail = new Object[tail.length];</span>
+<span class="fc" id="L67">                System.arraycopy(tail, 0, newTail, 0, tail.length);</span>
+<span class="fc" id="L68">                newTail[index &amp; MASK] = value;</span>
+<span class="fc" id="L69">                return new VectorImpl&lt;&gt;(size, shift, root, newTail);</span>
+            }
+<span class="fc" id="L71">            return new VectorImpl&lt;&gt;(size, shift, doUpdate(shift, root, index, value), tail);</span>
+        }
+
+        private Node doUpdate(int level, Node node, int index, T value) {
+<span class="fc" id="L75">            Node newNode = new Node(node.array.clone());</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">            if (level == 0) {</span>
+<span class="fc" id="L77">                newNode.array[index &amp; MASK] = value;</span>
+            } else {
+<span class="fc" id="L79">                int subIndex = (index &gt;&gt; level) &amp; MASK;</span>
+<span class="fc" id="L80">                newNode.array[subIndex] = doUpdate(level - BITS, (Node) node.array[subIndex], index, value);</span>
+            }
+<span class="fc" id="L82">            return newNode;</span>
+        }
+
+        @Override
+        public &lt;R&gt; Collection&lt;R&gt; empty() {
+<span class="fc" id="L87">            return Vector.nil();</span>
+        }
+
+        @Override
+        public Collection&lt;T&gt; build(T input) {
+            // If tail is not full
+<span class="fc bfc" id="L93" title="All 2 branches covered.">            if (size - tailOffset() &lt; WIDTH) {</span>
+                Object[] newTail;
+<span class="fc bfc" id="L95" title="All 2 branches covered.">                if (tail == null) {</span>
+<span class="fc" id="L96">                    newTail = new Object[1];</span>
+<span class="fc" id="L97">                    newTail[0] = input;</span>
+                } else {
+<span class="fc" id="L99">                    newTail = new Object[tail.length + 1];</span>
+<span class="fc" id="L100">                    System.arraycopy(tail, 0, newTail, 0, tail.length);</span>
+<span class="fc" id="L101">                    newTail[tail.length] = input;</span>
+                }
+<span class="fc" id="L103">                return new VectorImpl&lt;&gt;(size + 1, shift, root, newTail);</span>
+            }
+
+            // Tail is full, push to trie
+            Node newRoot;
+<span class="fc" id="L108">            int newShift = shift;</span>
+<span class="fc" id="L109">            Node tailNode = new Node(tail);</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">            if ((size &gt;&gt; BITS) &gt; (1 &lt;&lt; newShift)) {</span>
+<span class="fc" id="L111">                newRoot = new Node(new Object[WIDTH]);</span>
+<span class="fc" id="L112">                newRoot.array[0] = root;</span>
+<span class="fc" id="L113">                newRoot.array[1] = newPath(newShift, tailNode);</span>
+<span class="fc" id="L114">                newShift += BITS;</span>
+            } else {
+<span class="fc" id="L116">                newRoot = pushTail(newShift, root, tailNode);</span>
+            }
+
+<span class="fc" id="L119">            Object[] newTail = new Object[1];</span>
+<span class="fc" id="L120">            newTail[0] = input;</span>
+<span class="fc" id="L121">            return new VectorImpl&lt;&gt;(size + 1, newShift, newRoot, newTail);</span>
+        }
+
+        private Node pushTail(int level, Node parent, Node tailNode) {
+<span class="fc" id="L125">            int subIndex = ((size - 1) &gt;&gt; level) &amp; MASK;</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">            Node newNode = new Node(parent == null ? new Object[WIDTH] : parent.array.clone());</span>
+            
+<span class="fc bfc" id="L128" title="All 2 branches covered.">            if (level == BITS) {</span>
+<span class="fc" id="L129">                newNode.array[subIndex] = tailNode;</span>
+            } else {
+<span class="fc" id="L131">                Node child = (Node) newNode.array[subIndex];</span>
+<span class="fc" id="L132">                newNode.array[subIndex] = pushTail(level - BITS, child, tailNode);</span>
+            }
+<span class="fc" id="L134">            return newNode;</span>
+        }
+
+        private Node newPath(int level, Node node) {
+<span class="fc bfc" id="L138" title="All 2 branches covered.">            if (level == 0) return node;</span>
+<span class="fc" id="L139">            Node ret = new Node(new Object[WIDTH]);</span>
+<span class="fc" id="L140">            ret.array[0] = newPath(level - BITS, node);</span>
+<span class="fc" id="L141">            return ret;</span>
+        }
+
+        @Override
+        public &lt;R&gt; R foldl(R seed, BiFunction&lt;R, T, R&gt; fn) {
+<span class="fc" id="L146">            R res = seed;</span>
+            // Iterate through trie
+<span class="fc bfc" id="L148" title="All 2 branches covered.">            if (root != null) {</span>
+<span class="fc" id="L149">                res = foldNode(shift, root, res, fn);</span>
+            }
+            // Iterate through tail
+<span class="fc bfc" id="L152" title="All 2 branches covered.">            if (tail != null) {</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">                for (Object o : tail) {</span>
+<span class="fc" id="L154">                    res = fn.apply(res, (T) o);</span>
+                }
+            }
+<span class="fc" id="L157">            return res;</span>
+        }
+
+        private &lt;R&gt; R foldNode(int level, Node node, R seed, BiFunction&lt;R, T, R&gt; fn) {
+<span class="fc" id="L161">            R res = seed;</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">            for (Object o : node.array) {</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">                if (o == null) break;</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                if (level == 0) {</span>
+<span class="fc" id="L165">                    res = fn.apply(res, (T) o);</span>
+                } else {
+<span class="fc" id="L167">                    res = foldNode(level - BITS, (Node) o, res, fn);</span>
+                }
+            }
+<span class="fc" id="L170">            return res;</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="fc bfc" id="L175" title="All 2 branches covered.">            return foldl(&quot;[&quot;, (r, t) -&gt; r + (r.equals(&quot;[&quot;) ? &quot;&quot; : &quot;,&quot;) + t) + &quot;]&quot;;</span>
+        }
+
+        private static class Node {
+            Object[] array;
+<span class="fc" id="L180">            Node(Object[] array) { this.array = array; }</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
