@@ -1,1 +1,2 @@
 .gradle/\n.idea/\nbuild/
+bin/\ngradle.properties

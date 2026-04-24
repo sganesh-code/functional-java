@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.github.senthilganeshs.fj.ds.MapTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-04-24T11:42:13" hostname="AMB-7533LK" time="0.001">
-  <properties/>
-  <testcase name="testMapBasic" classname="io.github.senthilganeshs.fj.ds.MapTest" time="0.001"/>
-  <testcase name="testMapKeysValuesEntries" classname="io.github.senthilganeshs.fj.ds.MapTest" time="0.0"/>
-  <testcase name="testMapUpdate" classname="io.github.senthilganeshs.fj.ds.MapTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
