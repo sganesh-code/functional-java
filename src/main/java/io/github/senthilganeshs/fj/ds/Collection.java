@@ -193,8 +193,8 @@ public interface Collection<T> {
         return rs.traverse(id -> id);
     }
 
-    public static <R extends Number> int sum(Collection<R> rs) {
-        return rs.foldl(0, (acc, r) -> acc + 1).intValue();
+    public static <R extends Number> double sum(Collection<R> rs) {
+        return rs.foldl(0.0, (acc, r) -> acc + r.doubleValue());
     }
  
 }

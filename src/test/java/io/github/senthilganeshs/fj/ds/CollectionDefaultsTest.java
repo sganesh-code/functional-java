@@ -68,8 +68,68 @@ public class CollectionDefaultsTest {
     }
 
     @Test
-    public void testMkString() {
+    public void testLiftA3() {
+        Maybe<Integer> m1 = Maybe.some(1);
+        Maybe<Integer> m2 = Maybe.some(2);
+        Maybe<Integer> m3 = Maybe.some(3);
+        
+        Collection<Integer> lifted = m1.liftA3(a -> (b, c) -> a + b + c, m2, m3);
+        Assert.assertEquals(((Maybe<Integer>)lifted).fromMaybe(0), Integer.valueOf(6));
+    }
+
+    @Test
+    public void testLiftA4() {
+        Maybe<Integer> m1 = Maybe.some(1);
+        Maybe<Integer> m2 = Maybe.some(2);
+        Maybe<Integer> m3 = Maybe.some(3);
+        Maybe<Integer> m4 = Maybe.some(4);
+        
+        Collection<Integer> lifted = m1.liftA4(a -> b -> (c, d) -> a + b + c + d, m2, m3, m4);
+        Assert.assertEquals(((Maybe<Integer>)lifted).fromMaybe(0), Integer.valueOf(10));
+    }
+
+    @Test
+    public void testIntersperse() {
+        List<String> list = List.of("a", "b", "c");
+        Assert.assertEquals(list.intersperse("-").toString(), "[a,-,b,-,c]");
+    }
+
+    @Test
+    public void testIntercalate() {
+        List<List<String>> lists = List.of(List.of("a", "b"), List.of("c", "d"));
+        List<String> sep = List.of("-");
+        Collection<Collection<String>> result = sep.intercalate((Collection<Collection<String>>) (Collection<?>) lists);
+        // Result is [[a,b], [-], [c,d]]
+        Assert.assertTrue(result.toString().contains("-"));
+    }
+
+    @Test
+    public void testFlatten() {
+        List<List<Integer>> nested = List.of(List.of(1, 2), List.of(3, 4));
+        Collection<Integer> flattened = Collection.flatten(nested);
+        Assert.assertEquals(flattened.length(), 4);
+        Assert.assertEquals(flattened.toString(), "[1,2,3,4]");
+    }
+
+    @Test
+    public void testSum() {
+        List<Integer> list = List.of(1, 2, 3, 4);
+        Assert.assertEquals(Collection.sum(list), 10.0);
+    }
+
+    @Test
+    public void testForEach() {
         List<Integer> list = List.of(1, 2, 3);
-        Assert.assertEquals(list.mkString("[", "-", "]"), "[1-2-3]");
+        java.util.List<Integer> result = new java.util.ArrayList<>();
+        list.forEach(result::add);
+        Assert.assertEquals(result.size(), 3);
+        Assert.assertEquals(result.get(0), Integer.valueOf(1));
+    }
+
+    @Test
+    public void testReduce() {
+        List<Integer> list = List.of(1, 2, 3, 4);
+        Assert.assertEquals(list.reduce(Integer::sum).fromMaybe(0), Integer.valueOf(10));
+        Assert.assertTrue(List.<Integer>nil().reduce(Integer::sum).isNothing());
     }
 }

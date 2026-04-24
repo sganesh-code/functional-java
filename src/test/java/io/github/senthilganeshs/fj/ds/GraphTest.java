@@ -88,6 +88,8 @@ public class GraphTest {
     @Test
     public void testGraphEmptyNew() {
         Graph<String> emptyGraph = Graph.nil();
+        Assert.assertEquals(emptyGraph.count(), 0);
+        Assert.assertEquals(emptyGraph.length(), 0);
         Assert.assertEquals(emptyGraph.toString(), "Graph{}");
     }
 
