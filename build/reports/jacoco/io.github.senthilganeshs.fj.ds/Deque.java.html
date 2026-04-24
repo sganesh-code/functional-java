@@ -104,6 +104,21 @@ public interface Deque&lt;T&gt; extends Collection&lt;T&gt; {
         public String toString() {
 <span class="fc bfc" id="L105" title="All 2 branches covered.">            return foldl(&quot;[&quot;, (r, t) -&gt; r + (r.equals(&quot;[&quot;) ? &quot;&quot; : &quot;,&quot;) + t) + &quot;]&quot;;</span>
         }
+
+        @Override
+        public boolean equals(Object other) {
+<span class="nc bnc" id="L110" title="All 2 branches missed.">            if (other == null) return false;</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">            if (other == this) return true;</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">            if (!(other instanceof Deque)) return false;</span>
+<span class="nc" id="L113">            Deque&lt;?&gt; o = (Deque&lt;?&gt;) other;</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">            if (this.length() != o.length()) return false;</span>
+<span class="nc" id="L115">            return this.toString().equals(o.toString());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L120">            return toString().hashCode();</span>
+        }
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

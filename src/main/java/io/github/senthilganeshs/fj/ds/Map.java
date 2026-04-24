@@ -47,5 +47,19 @@ public interface Map<K extends Comparable<K>, V> {
         public Collection<Entry<K, V>> entries() {
             return entries;
         }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == null) return false;
+            if (other == this) return true;
+            if (!(other instanceof Map)) return false;
+            Map<?, ?> o = (Map<?, ?>) other;
+            return entries.equals(o.entries());
+        }
+
+        @Override
+        public int hashCode() {
+            return entries.hashCode();
+        }
     }
 }

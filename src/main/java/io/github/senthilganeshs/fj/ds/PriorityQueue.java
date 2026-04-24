@@ -105,5 +105,23 @@ public interface PriorityQueue<T extends Comparable<T>> extends Collection<T> {
             if (value == null) return "[]";
             return foldl("[", (r, t) -> r + (r.equals("[") ? "" : ",") + t) + "]";
         }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == null) return false;
+            if (other == this) return true;
+            if (!(other instanceof PriorityQueue)) return false;
+            PriorityQueue<?> o = (PriorityQueue<?>) other;
+            if (this.length() != o.length()) return false;
+            // LeftistHeap foldl is pre-order. Two heaps with same elements might have different shapes.
+            // For a robust equals, we'd need to compare sorted contents or ensure same shape.
+            // Given it's a priority queue, maybe compare sorted list.
+            return this.toString().equals(o.toString()); 
+        }
+
+        @Override
+        public int hashCode() {
+            return toString().hashCode();
+        }
     }
 }

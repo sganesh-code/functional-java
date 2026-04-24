@@ -92,6 +92,10 @@ public interface Either<A, B> extends Collection<B> {
             }
             return false;
         }
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
     }
     
     final static class Right<A, B> implements Either <A, B> {
@@ -137,6 +141,10 @@ public interface Either<A, B> extends Collection<B> {
                 return rOther.value.equals(value);
             }
             return false;
+        }
+        @Override
+        public int hashCode() {
+            return value.hashCode();
         }
     }
 }

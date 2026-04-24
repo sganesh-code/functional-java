@@ -59,46 +59,54 @@ public interface Maybe&lt;T&gt; extends Collection&lt;T&gt; {
             }
 <span class="fc" id="L60">            return false;</span>
         }
+        @Override
+        public int hashCode() {
+<span class="nc" id="L64">            return 0;</span>
+        }
     }
     
     final static class Some&lt;T&gt; implements Maybe&lt;T&gt; {
 
         private T value;
 
-<span class="fc" id="L68">        Some (final T value) {</span>
-<span class="fc" id="L69">            this.value = value;</span>
-<span class="fc" id="L70">        }</span>
+<span class="fc" id="L72">        Some (final T value) {</span>
+<span class="fc" id="L73">            this.value = value;</span>
+<span class="fc" id="L74">        }</span>
 
         @Override
         public &lt;R&gt; Maybe&lt;R&gt; empty() {
-<span class="fc" id="L74">            return Maybe.nothing();</span>
+<span class="fc" id="L78">            return Maybe.nothing();</span>
         }
 
         @Override
         public Maybe&lt;T&gt; build(T input) {
-<span class="fc" id="L79">            return new Some&lt;&gt;(input);</span>
+<span class="fc" id="L83">            return new Some&lt;&gt;(input);</span>
         }
 
         @Override
         public &lt;R&gt; R foldl(R seed, BiFunction&lt;R, T, R&gt; fn) {
-<span class="fc" id="L84">            return fn.apply(seed, value);</span>
+<span class="fc" id="L88">            return fn.apply(seed, value);</span>
         }
 
         @Override
         public String toString() {
-<span class="fc" id="L89">            return &quot;Some (&quot; + value + &quot;)&quot;;</span>
+<span class="fc" id="L93">            return &quot;Some (&quot; + value + &quot;)&quot;;</span>
         }
         
         @SuppressWarnings(&quot;unchecked&quot;)
         @Override
         public boolean equals(final Object other) {
-<span class="pc bpc" id="L95" title="1 of 2 branches missed.">            if (other == null) return false;</span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">            if (other == this) return true;</span>
-<span class="fc bfc" id="L97" title="All 2 branches covered.">            if (other instanceof Some) {</span>
-<span class="fc" id="L98">                Some&lt;T&gt; sOther = (Some&lt;T&gt;)other;</span>
-<span class="fc" id="L99">                return sOther.value.equals(value);</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">            if (other == null) return false;</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            if (other == this) return true;</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            if (other instanceof Some) {</span>
+<span class="fc" id="L102">                Some&lt;T&gt; sOther = (Some&lt;T&gt;)other;</span>
+<span class="fc" id="L103">                return sOther.value.equals(value);</span>
             }
-<span class="fc" id="L101">            return false;</span>
+<span class="fc" id="L105">            return false;</span>
+        }
+        @Override
+        public int hashCode() {
+<span class="nc" id="L109">            return value.hashCode();</span>
         }
     }
  }

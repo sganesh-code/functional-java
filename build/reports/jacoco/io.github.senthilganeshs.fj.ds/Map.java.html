@@ -47,6 +47,20 @@ public interface Map&lt;K extends Comparable&lt;K&gt;, V&gt; {
         public Collection&lt;Entry&lt;K, V&gt;&gt; entries() {
 <span class="fc" id="L48">            return entries;</span>
         }
+
+        @Override
+        public boolean equals(Object other) {
+<span class="nc bnc" id="L53" title="All 2 branches missed.">            if (other == null) return false;</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            if (other == this) return true;</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">            if (!(other instanceof Map)) return false;</span>
+<span class="nc" id="L56">            Map&lt;?, ?&gt; o = (Map&lt;?, ?&gt;) other;</span>
+<span class="nc" id="L57">            return entries.equals(o.entries());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L62">            return entries.hashCode();</span>
+        }
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

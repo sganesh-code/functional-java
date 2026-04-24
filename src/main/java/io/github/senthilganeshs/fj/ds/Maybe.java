@@ -59,6 +59,10 @@ public interface Maybe<T> extends Collection<T> {
             }
             return false;
         }
+        @Override
+        public int hashCode() {
+            return 0;
+        }
     }
     
     final static class Some<T> implements Maybe<T> {
@@ -99,6 +103,10 @@ public interface Maybe<T> extends Collection<T> {
                 return sOther.value.equals(value);
             }
             return false;
+        }
+        @Override
+        public int hashCode() {
+            return value.hashCode();
         }
     }
  }

@@ -80,6 +80,11 @@ public interface List<T> extends Collection<T> {
         }
         
         @Override
+        public int hashCode() {
+            return 0;
+        }
+        
+        @Override
         public boolean equals(final Object other) {
             if (other == null)
                 return false;

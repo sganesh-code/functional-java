@@ -104,5 +104,20 @@ public interface Deque<T> extends Collection<T> {
         public String toString() {
             return foldl("[", (r, t) -> r + (r.equals("[") ? "" : ",") + t) + "]";
         }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == null) return false;
+            if (other == this) return true;
+            if (!(other instanceof Deque)) return false;
+            Deque<?> o = (Deque<?>) other;
+            if (this.length() != o.length()) return false;
+            return this.toString().equals(o.toString());
+        }
+
+        @Override
+        public int hashCode() {
+            return toString().hashCode();
+        }
     }
 }

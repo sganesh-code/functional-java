@@ -46,6 +46,20 @@ public interface Tuple<A, B> {
         public Maybe<B> getB() {
             return b;
         }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == null) return false;
+            if (other == this) return true;
+            if (!(other instanceof Tuple)) return false;
+            Tuple<?, ?> o = (Tuple<?, ?>) other;
+            return a.equals(o.getA()) && b.equals(o.getB());
+        }
+
+        @Override
+        public int hashCode() {
+            return a.hashCode() ^ b.hashCode();
+        }
     }
 
 }

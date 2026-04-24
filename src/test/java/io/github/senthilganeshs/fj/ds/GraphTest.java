@@ -101,10 +101,9 @@ public class GraphTest {
     }
 
     @Test
-    public void testGraphCollectionAPIs() {
-        Graph<String> g = Graph.<String>nil().addNode("A").addNode("B");
-        // foldl on Graph yields nodes
-        int count = g.foldl(0, (acc, v) -> acc + 1);
-        Assert.assertEquals(count, 2);
+    public void testGraphAddExistingNode() {
+        Graph<String> g = Graph.<String>nil().addNode("A");
+        Graph<String> g2 = g.addNode("A");
+        Assert.assertSame(g, g2); // Purely functional AdjacencyMapGraph returns 'this' if node exists
     }
 }

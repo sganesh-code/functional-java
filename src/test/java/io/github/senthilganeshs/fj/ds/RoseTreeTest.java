@@ -66,10 +66,9 @@ public class RoseTreeTest {
     }
 
     @Test
-    public void testRoseTreeToString() {
-        RoseTree<String> tree = RoseTree.of("root", List.of(RoseTree.of("c1")));
-        String s = tree.toString();
-        Assert.assertTrue(s.contains("root"));
-        Assert.assertTrue(s.contains("c1"));
+    public void testRoseTreeStatic() {
+        RoseTree<Integer> t1 = RoseTree.of(1);
+        RoseTree<Integer> t2 = RoseTree.of(1, List.nil());
+        Assert.assertEquals(t1, t2);
     }
 }

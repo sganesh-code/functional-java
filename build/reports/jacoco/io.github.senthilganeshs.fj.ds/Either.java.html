@@ -92,51 +92,59 @@ public interface Either&lt;A, B&gt; extends Collection&lt;B&gt; {
             }
 <span class="fc" id="L93">            return false;</span>
         }
+        @Override
+        public int hashCode() {
+<span class="nc" id="L97">            return value.hashCode();</span>
+        }
     }
     
     final static class Right&lt;A, B&gt; implements Either &lt;A, B&gt; {
 
         private final B value;
 
-<span class="fc" id="L101">        Right (final B value) {</span>
-<span class="fc" id="L102">            this.value = value;</span>
-<span class="fc" id="L103">        }</span>
+<span class="fc" id="L105">        Right (final B value) {</span>
+<span class="fc" id="L106">            this.value = value;</span>
+<span class="fc" id="L107">        }</span>
         
         @Override
         public &lt;R&gt; Collection&lt;R&gt; empty() {
-<span class="fc" id="L107">            return new Left&lt;&gt;(value);</span>
+<span class="fc" id="L111">            return new Left&lt;&gt;(value);</span>
         }
 
         @Override
         public &lt;R&gt; R foldl(final R seed, final BiFunction&lt;R, B, R&gt; fn) {
-<span class="fc" id="L112">            return fn.apply(seed, value);</span>
+<span class="fc" id="L116">            return fn.apply(seed, value);</span>
         }
 
         @Override
         public Either&lt;A, B&gt; build(final B value) {
             //lose the old value.
-<span class="nc" id="L118">            return new Right&lt;&gt;(value);</span>
+<span class="nc" id="L122">            return new Right&lt;&gt;(value);</span>
         }
 
         @Override
         public &lt;R&gt; R either(Function&lt;A, R&gt; fa, Function&lt;B, R&gt; fb) {
-<span class="fc" id="L123">            return fb.apply(value);</span>
+<span class="fc" id="L127">            return fb.apply(value);</span>
         }
         
         @Override
         public String toString() {
-<span class="fc" id="L128">            return &quot;Right &quot; + value;</span>
+<span class="fc" id="L132">            return &quot;Right &quot; + value;</span>
         }
         @SuppressWarnings(&quot;unchecked&quot;)
         @Override
         public boolean equals (final Object other) {
-<span class="pc bpc" id="L133" title="1 of 2 branches missed.">            if (other == null) return false;</span>
-<span class="fc bfc" id="L134" title="All 2 branches covered.">            if (other == this) return true;</span>
-<span class="pc bpc" id="L135" title="1 of 2 branches missed.">            if (other instanceof Right) {</span>
-<span class="fc" id="L136">                Right&lt;A, B&gt; rOther = ((Right&lt;A,B&gt;) other);</span>
-<span class="fc" id="L137">                return rOther.value.equals(value);</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">            if (other == null) return false;</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">            if (other == this) return true;</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">            if (other instanceof Right) {</span>
+<span class="fc" id="L140">                Right&lt;A, B&gt; rOther = ((Right&lt;A,B&gt;) other);</span>
+<span class="fc" id="L141">                return rOther.value.equals(value);</span>
             }
-<span class="nc" id="L139">            return false;</span>
+<span class="nc" id="L143">            return false;</span>
+        }
+        @Override
+        public int hashCode() {
+<span class="nc" id="L147">            return value.hashCode();</span>
         }
     }
 }

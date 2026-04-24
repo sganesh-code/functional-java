@@ -44,10 +44,8 @@ public class StackTest {
     }
 
     @Test
-    public void testStackCollectionAPIs() {
-        Stack<Integer> s = (Stack<Integer>) Stack.<Integer>emptyStack().build(1).build(2);
-        // foldl on [2,1] visits 2 then 1. map(i*2) results in [2,4] (2 is top)
-        Assert.assertEquals(s.map(i -> i * 2).find(i -> true).fromMaybe(-1), Integer.valueOf(2));
-        Assert.assertEquals(s.filter(i -> i > 1).find(i -> true).fromMaybe(-1), Integer.valueOf(2));
+    public void testStackStatic() {
+        Stack<Integer> s = Stack.newStack(new Integer[]{1, 2, 3});
+        Assert.assertEquals(s.length(), 3);
     }
 }

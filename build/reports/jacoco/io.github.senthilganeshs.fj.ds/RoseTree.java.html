@@ -70,19 +70,19 @@ public interface RoseTree&lt;T&gt; extends Collection&lt;T&gt; {
 
         @Override
         public String toString() {
-<span class="fc bfc" id="L73" title="All 2 branches covered.">            if (children.length() == 0) {</span>
-<span class="fc" id="L74">                return &quot;Node(&quot; + value + &quot;)&quot;;</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            if (children.length() == 0) {</span>
+<span class="nc" id="L74">                return &quot;Node(&quot; + value + &quot;)&quot;;</span>
             }
-<span class="fc" id="L76">            return &quot;Node(&quot; + value + &quot;, &quot; + children + &quot;)&quot;;</span>
+<span class="nc" id="L76">            return &quot;Node(&quot; + value + &quot;, &quot; + children + &quot;)&quot;;</span>
         }
 
         @Override
         public boolean equals(Object other) {
-<span class="nc bnc" id="L81" title="All 2 branches missed.">            if (other == null) return false;</span>
-<span class="nc bnc" id="L82" title="All 2 branches missed.">            if (other == this) return true;</span>
-<span class="nc bnc" id="L83" title="All 2 branches missed.">            if (!(other instanceof RoseTree)) return false;</span>
-<span class="nc" id="L84">            RoseTree&lt;?&gt; o = (RoseTree&lt;?&gt;) other;</span>
-<span class="nc bnc" id="L85" title="All 4 branches missed.">            return value.equals(o.value()) &amp;&amp; children.equals(o.children());</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">            if (other == null) return false;</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">            if (other == this) return true;</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">            if (!(other instanceof RoseTree)) return false;</span>
+<span class="fc" id="L84">            RoseTree&lt;?&gt; o = (RoseTree&lt;?&gt;) other;</span>
+<span class="pc bpc" id="L85" title="2 of 4 branches missed.">            return value.equals(o.value()) &amp;&amp; children.equals(o.children());</span>
         }
 
         @Override

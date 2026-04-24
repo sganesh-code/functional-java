@@ -173,7 +173,7 @@ public interface Graph&lt;V extends Comparable&lt;V&gt;&gt; extends Collection&l
 
         @Override
         public &lt;R&gt; R foldl(R seed, BiFunction&lt;R, V, R&gt; fn) {
-<span class="fc" id="L176">            return adjacencyMap.foldl(seed, (acc, entry) -&gt; fn.apply(acc, entry.key()));</span>
+<span class="pc" id="L176">            return adjacencyMap.foldl(seed, (acc, entry) -&gt; fn.apply(acc, entry.key()));</span>
         }
 
         @Override
