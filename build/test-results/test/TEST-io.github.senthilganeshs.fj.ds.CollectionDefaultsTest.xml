@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2026-04-24T11:56:35" hostname="AMB-7533LK" time="0.008">
+<testsuite name="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2026-04-24T11:58:16" hostname="AMB-7533LK" time="0.009">
   <properties/>
-  <testcase name="testAnyAll" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.001"/>
+  <testcase name="testAnyAll" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.002"/>
   <testcase name="testFlatten" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.002"/>
-  <testcase name="testFoldr" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.0"/>
+  <testcase name="testFoldr" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.001"/>
   <testcase name="testForEach" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.0"/>
-  <testcase name="testIntercalate" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.0"/>
-  <testcase name="testIntersperse" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.001"/>
+  <testcase name="testIntercalate" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.001"/>
+  <testcase name="testIntersperse" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.0"/>
   <testcase name="testLiftA2" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.0"/>
-  <testcase name="testLiftA3" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.001"/>
+  <testcase name="testLiftA3" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.0"/>
   <testcase name="testLiftA4" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.0"/>
-  <testcase name="testReduce" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.001"/>
+  <testcase name="testReduce" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.0"/>
   <testcase name="testSequence" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.0"/>
   <testcase name="testSum" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.0"/>
-  <testcase name="testTakeDropSlice" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.0"/>
+  <testcase name="testTakeDropSlice" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.001"/>
   <testcase name="testTraverse" classname="io.github.senthilganeshs.fj.ds.CollectionDefaultsTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

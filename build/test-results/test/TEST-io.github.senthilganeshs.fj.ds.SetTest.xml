@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.github.senthilganeshs.fj.ds.SetTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-24T11:56:35" hostname="AMB-7533LK" time="0.0">
+<testsuite name="io.github.senthilganeshs.fj.ds.SetTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-24T11:58:16" hostname="AMB-7533LK" time="0.001">
   <properties/>
   <testcase name="testSetBalance" classname="io.github.senthilganeshs.fj.ds.SetTest" time="0.0"/>
   <testcase name="testSetBalanceExhaustive" classname="io.github.senthilganeshs.fj.ds.SetTest" time="0.0"/>
   <testcase name="testSetBasic" classname="io.github.senthilganeshs.fj.ds.SetTest" time="0.0"/>
   <testcase name="testSetDuplicates" classname="io.github.senthilganeshs.fj.ds.SetTest" time="0.0"/>
-  <testcase name="testSetEmpty" classname="io.github.senthilganeshs.fj.ds.SetTest" time="0.0"/>
+  <testcase name="testSetEmpty" classname="io.github.senthilganeshs.fj.ds.SetTest" time="0.001"/>
   <testcase name="testSetSort" classname="io.github.senthilganeshs.fj.ds.SetTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

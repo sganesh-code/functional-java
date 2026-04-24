@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="io.github.senthilganeshs.fj.ds.LazyListTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-04-24T11:56:35" hostname="AMB-7533LK" time="0.001">
+<testsuite name="io.github.senthilganeshs.fj.ds.LazyListTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-04-24T11:58:16" hostname="AMB-7533LK" time="0.001">
   <properties/>
   <testcase name="testLazyListBasic" classname="io.github.senthilganeshs.fj.ds.LazyListTest" time="0.0"/>
   <testcase name="testLazyListCollectionAPIs" classname="io.github.senthilganeshs.fj.ds.LazyListTest" time="0.0"/>
   <testcase name="testLazyListEmpty" classname="io.github.senthilganeshs.fj.ds.LazyListTest" time="0.0"/>
-  <testcase name="testLazyListInfinite" classname="io.github.senthilganeshs.fj.ds.LazyListTest" time="0.001"/>
+  <testcase name="testLazyListInfinite" classname="io.github.senthilganeshs.fj.ds.LazyListTest" time="0.0"/>
   <testcase name="testLazyListLazyEvaluation" classname="io.github.senthilganeshs.fj.ds.LazyListTest" time="0.0"/>
   <testcase name="testLazyListToStringInfinite" classname="io.github.senthilganeshs.fj.ds.LazyListTest" time="0.0"/>
   <testcase name="testLazyListUnzip" classname="io.github.senthilganeshs.fj.ds.LazyListTest" time="0.0"/>
