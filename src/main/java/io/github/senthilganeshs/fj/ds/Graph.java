@@ -153,9 +153,7 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
 
         @Override
         public Set<V> nodes() {
-            // Correct way to get all keys as a Set
-            Collection<V> emptySet = (Collection<V>) Set.<V>empty();
-            return (Set<V>) adjacencyMap.foldl(emptySet, (acc, entry) -> (Collection<V>) ((Set<V>)acc).build(entry.key()));
+            return adjacencyMap.foldl(Set.<V>empty(), (acc, entry) -> acc.build(entry.key()));
         }
 
         @Override
@@ -165,7 +163,7 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
 
         @Override
         public <R> Collection<R> empty() {
-            return (Collection<R>) Graph.nil();
+            return List.nil();
         }
 
         @Override

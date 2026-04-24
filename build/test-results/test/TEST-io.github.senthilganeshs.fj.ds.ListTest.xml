@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.senthilganeshs.fj.ds.ListTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-24T11:42:13" hostname="AMB-7533LK" time="0.0">
+  <properties/>
+  <testcase name="testListBasic" classname="io.github.senthilganeshs.fj.ds.ListTest" time="0.0"/>
+  <testcase name="testListCollectionAPIs" classname="io.github.senthilganeshs.fj.ds.ListTest" time="0.0"/>
+  <testcase name="testListCons" classname="io.github.senthilganeshs.fj.ds.ListTest" time="0.0"/>
+  <testcase name="testListEmpty" classname="io.github.senthilganeshs.fj.ds.ListTest" time="0.0"/>
+  <testcase name="testListUnzipReal" classname="io.github.senthilganeshs.fj.ds.ListTest" time="0.0"/>
+  <testcase name="testListZipUnzip" classname="io.github.senthilganeshs.fj.ds.ListTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.senthilganeshs.fj.ds.GraphTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-04-24T11:42:13" hostname="AMB-7533LK" time="0.002">
+  <properties/>
+  <testcase name="testGraphBFS" classname="io.github.senthilganeshs.fj.ds.GraphTest" time="0.0"/>
+  <testcase name="testGraphBasic" classname="io.github.senthilganeshs.fj.ds.GraphTest" time="0.0"/>
+  <testcase name="testGraphCollectionAPIs" classname="io.github.senthilganeshs.fj.ds.GraphTest" time="0.0"/>
+  <testcase name="testGraphCyclic" classname="io.github.senthilganeshs.fj.ds.GraphTest" time="0.001"/>
+  <testcase name="testGraphDFS" classname="io.github.senthilganeshs.fj.ds.GraphTest" time="0.0"/>
+  <testcase name="testGraphDisconnected" classname="io.github.senthilganeshs.fj.ds.GraphTest" time="0.0"/>
+  <testcase name="testGraphEmptyNew" classname="io.github.senthilganeshs.fj.ds.GraphTest" time="0.0"/>
+  <testcase name="testGraphSelfLoop" classname="io.github.senthilganeshs.fj.ds.GraphTest" time="0.0"/>
+  <testcase name="testGraphTopologicalSort" classname="io.github.senthilganeshs.fj.ds.GraphTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

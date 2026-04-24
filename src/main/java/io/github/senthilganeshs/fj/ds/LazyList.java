@@ -21,11 +21,11 @@ public interface LazyList<T> extends List<T> {
     @Override
     default <R> List<Tuple<T, R>> zip(List<R> other) {
         T h = head().fromMaybe(null);
-        if (h == null) return List.nil();
+        if (h == null) return LazyList.nil();
         
         Tuple<Maybe<R>, List<R>> otherUnzipped = other.unzip();
-        R oh = ((Maybe<R>) otherUnzipped.getA()).fromMaybe(null);
-        if (oh == null) return List.nil();
+        R oh = ((Maybe<R>) otherUnzipped.getA().fromMaybe(Maybe.nothing())).fromMaybe(null);
+        if (oh == null) return LazyList.nil();
         
         return cons(Tuple.of(h, oh), () -> (LazyList<Tuple<T, R>>) tail().zip(otherUnzipped.getB().fromMaybe(List.nil())));
     }

@@ -81,10 +81,9 @@ public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable
             this.right = right;
         }
         
-        @SuppressWarnings("unchecked")
         @Override
         public <R> Collection<R> empty() {
-            return (Collection<R>) nil();
+            return List.nil();
         }
 
         @Override
@@ -97,7 +96,7 @@ public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable
         @Override
         public AVLTree<T> build(T other) {
             if (this.value.compareTo(other) == 0)
-                return this;
+                return new NonEmpty<>(other, left, right);
 
             AVLTree<T> lf;
             AVLTree<T> rt;
@@ -198,10 +197,9 @@ public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable
     
     class Empty<T extends Comparable<T>> implements AVLTree<T> {
 
-        @SuppressWarnings("unchecked")
         @Override
         public <R> Collection<R> empty() {
-            return (Collection<R>) nil();
+            return List.nil();
         }
 
         @Override

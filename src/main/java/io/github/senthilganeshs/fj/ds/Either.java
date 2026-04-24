@@ -44,6 +44,11 @@ public interface Either<A, B> extends Collection<B> {
         return either (a -> false, b -> true);
     }
     
+    @Override
+    default <R> Collection<R> flatMap(Function<B, Collection<R>> fn) {
+        return either(Either::left, fn::apply);
+    }
+
     final static class Left <A, B> implements Either <A, B> {
         private final A value;
 

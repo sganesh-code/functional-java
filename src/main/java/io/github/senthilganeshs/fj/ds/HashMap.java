@@ -57,7 +57,7 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
 
         @Override
         public <R> Collection<R> empty() {
-            return (Collection<R>) HashMap.nil();
+            return List.nil();
         }
 
         @Override
@@ -105,10 +105,14 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
 
         @Override
         public <K, V> Node put(int shift, int hash, K key, V value) {
-            if (this.hash == hash && this.key.equals(key)) {
-                return new LeafNode(hash, key, value);
+            if (this.hash == hash) {
+                if (this.key.equals(key)) {
+                    return new LeafNode(hash, key, value);
+                } else {
+                    return new CollisionNode(hash, List.of(new Entry<>((K)this.key, (V)this.value), new Entry<>(key, value)));
+                }
             }
-            // Collision or deeper level
+            // Deeper level
             return IndexedNode.fromLeaf(shift, this).put(shift, hash, key, value);
         }
 
@@ -124,6 +128,48 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
         }
     }
 
+    final class CollisionNode implements Node {
+        final int hash;
+        final List<Entry<?, ?>> entries;
+
+        CollisionNode(int hash, List<Entry<?, ?>> entries) {
+            this.hash = hash;
+            this.entries = entries;
+        }
+
+        @Override
+        public <K, V> Maybe<V> get(int shift, int hash, K key) {
+            if (this.hash != hash) return Maybe.nothing();
+            return (Maybe<V>) entries.filter(e -> e.key().equals(key)).map(Entry::value).find(v -> true);
+        }
+
+        @Override
+        public <K, V> Node put(int shift, int hash, K key, V value) {
+            if (this.hash == hash) {
+                List<Entry<?, ?>> filtered = (List<Entry<?, ?>>) entries.filter(e -> !e.key().equals(key));
+                return new CollisionNode(hash, (List<Entry<?, ?>>) filtered.build(new Entry<>(key, value)));
+            }
+            return IndexedNode.fromNode(shift, this).put(shift, hash, key, value);
+        }
+
+        @Override
+        public <K, V> Node remove(int shift, int hash, K key) {
+            if (this.hash != hash) return this;
+            List<Entry<?, ?>> filtered = (List<Entry<?, ?>>) entries.filter(e -> !e.key().equals(key));
+            if (filtered.length() == 0) return null;
+            if (filtered.length() == 1) {
+                Entry<?, ?> e = filtered.foldl(null, (acc, entry) -> entry);
+                return new LeafNode(hash, e.key(), e.value());
+            }
+            return new CollisionNode(hash, filtered);
+        }
+
+        @Override
+        public <K, V, R> R foldl(R seed, BiFunction<R, Entry<K, V>, R> fn) {
+            return (R) entries.foldl(seed, (acc, e) -> fn.apply((R) acc, (Entry<K, V>) e));
+        }
+    }
+
     final class IndexedNode implements Node {
         private final int bitmap;
         private final Node[] children;
@@ -136,6 +182,16 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
         static IndexedNode fromLeaf(int shift, LeafNode leaf) {
             int bit = 1 << ((leaf.hash >>> shift) & 0x1f);
             return new IndexedNode(bit, new Node[]{leaf});
+        }
+
+        static IndexedNode fromNode(int shift, Node node) {
+            int hash;
+            if (node instanceof LeafNode) hash = ((LeafNode)node).hash;
+            else if (node instanceof CollisionNode) hash = ((CollisionNode)node).hash;
+            else return null; // Should not happen
+            
+            int bit = 1 << ((hash >>> shift) & 0x1f);
+            return new IndexedNode(bit, new Node[]{node});
         }
 
         @Override

@@ -116,14 +116,27 @@ public interface List<T> extends Collection<T> {
 
         @Override
         public Tuple<Maybe<T>, List<T>> unzip() {
+            Maybe<T> first = head.find(i -> true);
+            if (first.isNothing()) {
+                return Tuple.of(Maybe.some(tail), List.nil());
+            }
             return Tuple.of(
-                    head.take(1).find(i -> true),
+                    first,
                     (List<T>) head.drop(1).build(tail));
         }
 
         @Override
         public <R> List<Tuple<T, R>> zip(List<R> other) {
-             return List.of();
+             Tuple<Maybe<T>, List<T>> thisUnzipped = this.unzip();
+             Tuple<Maybe<R>, List<R>> otherUnzipped = other.unzip();
+             
+             Maybe<T> h = thisUnzipped.getA().fromMaybe(Maybe.nothing());
+             Maybe<R> oh = otherUnzipped.getA().fromMaybe(Maybe.nothing());
+             
+             if (h.isNothing() || oh.isNothing()) return List.nil();
+             
+             List<Tuple<T, R>> rest = thisUnzipped.getB().fromMaybe(List.nil()).zip(otherUnzipped.getB().fromMaybe(List.nil()));
+             return (List<Tuple<T, R>>) List.of(Tuple.of(h.fromMaybe(null), oh.fromMaybe(null))).concat(rest);
         }
 
         @Override

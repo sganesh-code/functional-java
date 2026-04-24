@@ -9,6 +9,18 @@ public interface Stack<T> extends Collection<T>{
     Maybe<Stack<T>> tail();
 
     @Override
+    default Stack<T> take(int n) {
+        if (n <= 0) return emptyStack();
+        return (Stack<T>) ((Maybe<Stack<T>>) head().flatMap(h -> tail().map(t -> (Stack<T>) new NonEmpty<>(h, t.take(n - 1))))).fromMaybe(this);
+    }
+
+    @Override
+    default Stack<T> drop(int n) {
+        if (n <= 0) return this;
+        return (Stack<T>) ((Maybe<Stack<T>>) tail().flatMap(t -> Maybe.some(t.drop(n - 1)))).fromMaybe(emptyStack());
+    }
+
+    @Override
     default Stack<T> reverse() {
         return foldl(emptyStack(), (r, t) -> (Stack<T>) r.build(t));
     }
@@ -55,6 +67,11 @@ public interface Stack<T> extends Collection<T>{
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
             return tail.foldl(fn.apply(seed, head), fn);
         }
+
+        @Override
+        public String toString() {
+            return foldl("[", (r, t) -> r + (r.equals("[") ? "" : ",") + t) + "]";
+        }
     }
 
 
@@ -83,6 +100,11 @@ public interface Stack<T> extends Collection<T>{
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
             return seed;
+        }
+
+        @Override
+        public String toString() {
+            return "[]";
         }
     }
 }

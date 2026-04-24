@@ -83,7 +83,7 @@ public interface PriorityQueue<T extends Comparable<T>> extends Collection<T> {
 
         @Override
         public <R> Collection<R> empty() {
-            return (Collection<R>) PriorityQueue.nil();
+            return List.nil();
         }
 
         @Override

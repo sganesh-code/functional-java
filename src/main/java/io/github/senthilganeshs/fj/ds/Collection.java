@@ -59,7 +59,7 @@ public interface Collection<T> {
 
     @SuppressWarnings("unchecked")
     default Maybe<T> find(final Predicate<T> pred) {
-        return (Maybe<T>) filter(pred).apply(Maybe.some(t -> t));
+        return foldl(Maybe.nothing(), (acc, t) -> acc.isSome() ? acc : (pred.test(t) ? Maybe.some(t) : acc));
     }
 
     default <R, S> Collection<S> liftA2 (final Function<T, Function<R, S>> fn, final Collection<R> rs) {
