@@ -4,7 +4,7 @@ import java.util.function.BiFunction;
 
 /**
  * A purely functional Directed Graph implementation.
- * Represented as an Adjacency Map: HashMap<V, Set<V>>.
+ * Represented as an Adjacency Map: {@code HashMap<V, Set<V>>}.
  */
 public interface Graph<V extends Comparable<V>> extends Collection<V> {
 
