@@ -1,0 +1,23 @@
+Benchmark                                                (size)  Mode  Cnt      Score      Error  Units
+CollectionsBenchmark.iterableSet                         100000  avgt    3  14142.339 ± 3466.676  ms/op
+CollectionsBenchmark.iterableSetFind                     100000  avgt    3  14219.451 ± 7328.267  ms/op
+CollectionsBenchmark.javaUtilTreeSet                     100000  avgt    3     14.733 ±    1.188  ms/op
+CollectionsBenchmark.javaUtilTreeSetFind                 100000  avgt    3     14.821 ±    3.218  ms/op
+ComprehensiveCollectionsBenchmark.fj_buildHashMap          1000  avgt    3     24.185 ±    4.049  us/op
+ComprehensiveCollectionsBenchmark.fj_buildList             1000  avgt    3      1.334 ±    0.210  us/op
+ComprehensiveCollectionsBenchmark.fj_buildVector           1000  avgt    3      8.011 ±    1.034  us/op
+ComprehensiveCollectionsBenchmark.fj_foldlList             1000  avgt    3   1861.920 ±  462.005  us/op
+ComprehensiveCollectionsBenchmark.fj_hashMapLookup         1000  avgt    3      0.004 ±    0.001  us/op
+ComprehensiveCollectionsBenchmark.fj_priorityQueueOps      1000  avgt    3     59.163 ±    7.972  us/op
+ComprehensiveCollectionsBenchmark.fj_queueMixedOps         1000  avgt    3   3181.569 ± 5777.131  us/op
+ComprehensiveCollectionsBenchmark.fj_roseTreeFold          1000  avgt    3   1874.102 ±  328.142  us/op
+ComprehensiveCollectionsBenchmark.fj_setContains           1000  avgt    3      0.011 ±    0.001  us/op
+ComprehensiveCollectionsBenchmark.fj_vectorAccess          1000  avgt    3      0.003 ±    0.001  us/op
+ComprehensiveCollectionsBenchmark.java_arrayDequeOps       1000  avgt    3      3.324 ±    0.587  us/op
+ComprehensiveCollectionsBenchmark.java_arrayListAccess     1000  avgt    3      0.002 ±    0.001  us/op
+ComprehensiveCollectionsBenchmark.java_buildArrayList      1000  avgt    3      2.011 ±    0.288  us/op
+ComprehensiveCollectionsBenchmark.java_buildHashMap        1000  avgt    3      5.591 ±    0.365  us/op
+ComprehensiveCollectionsBenchmark.java_hashMapLookup       1000  avgt    3      0.003 ±    0.001  us/op
+ComprehensiveCollectionsBenchmark.java_priorityQueueOps    1000  avgt    3     20.187 ±    4.368  us/op
+ComprehensiveCollectionsBenchmark.java_streamReduceList    1000  avgt    3      1.498 ±    0.148  us/op
+ComprehensiveCollectionsBenchmark.java_treeSetContains     1000  avgt    3      0.006 ±    0.001  us/op
