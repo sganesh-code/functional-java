@@ -6,8 +6,8 @@ plugins {
     id 'jacoco'
 }
 
-group = 'io.github.senthilganeshs'
-version = '1.0.0-SNAPSHOT'
+group = 'io.github.sganesh-code'
+version = '1.0.0'
 
 java {
     toolchain {
@@ -54,7 +54,7 @@ publishing {
             pom {
                 name = 'functional-java'
                 description = 'functional-java is an object oriented library which provides functional APIs for different data-structures.'
-                url = 'https://github.com/senthilganeshs/functional-java'
+                url = 'https://github.com/sganesh-code/functional-java'
                 licenses {
                     license {
                         name = 'GPL-v3.0'
@@ -63,7 +63,7 @@ publishing {
                 }
                 developers {
                     developer {
-                        id = 'senthilganeshs'
+                        id = 'sganesh-code'
                         name = 'Senthil Ganesh S'
                         email = 'sesas.senthil@gmail.com'
                         organization = 'Informatica'
@@ -71,18 +71,16 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'scm:git:git://github.com/senthilganeshs/functional-java.git'
-                    developerConnection = 'scm:git:senthilganeshs@github.com:functional-java/functional-java.git'
-                    url = 'https://github.com/senthilganeshs/functional-java'
+                    connection = 'scm:git:git://github.com/sganesh-code/functional-java.git'
+                    developerConnection = 'scm:git:sganesh-code@github.com:sganesh-code/functional-java.git'
+                    url = 'https://github.com/sganesh-code/functional-java'
                 }
             }
         }
     }
     repositories {
         maven {
-            def stagingUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            def snapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots"
-            url = version.endsWith('SNAPSHOT') ? snapshotsUrl : stagingUrl
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
             credentials {
                 username = project.findProperty("ossrhUsername")
                 password = project.findProperty("ossrhPassword")

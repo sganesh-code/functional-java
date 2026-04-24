@@ -9,3 +9,5 @@ gradle.properties
 *.iws
 *.ipr
 .DS_Store
+*.gpg
+bundle.zip
