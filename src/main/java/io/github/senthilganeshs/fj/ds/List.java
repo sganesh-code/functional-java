@@ -1,6 +1,8 @@
 package io.github.senthilganeshs.fj.ds;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.function.BiFunction;
 
 public interface List<T> extends Collection<T> {
@@ -112,7 +114,18 @@ public interface List<T> extends Collection<T> {
         }
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-            return fn.apply(head.foldl(seed, (r, t) -> fn.apply(r, t)), tail);
+            java.util.Deque<T> stack = new java.util.ArrayDeque<>();
+            List<T> curr = this;
+            while (curr instanceof LinkedList) {
+                LinkedList<T> ll = (LinkedList<T>) curr;
+                stack.push(ll.tail);
+                curr = ll.head;
+            }
+            R acc = seed;
+            while (!stack.isEmpty()) {
+                acc = fn.apply(acc, stack.pop());
+            }
+            return acc;
         }
         @Override
         public List<T> build(T input) {

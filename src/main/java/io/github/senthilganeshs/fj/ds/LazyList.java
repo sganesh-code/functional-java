@@ -116,7 +116,13 @@ public interface LazyList<T> extends List<T> {
 
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-            return tail().foldl(fn.apply(seed, head), fn);
+            R acc = seed;
+            LazyList<T> curr = this;
+            while (curr instanceof NonEmpty) {
+                acc = fn.apply(acc, curr.head().fromMaybe(null));
+                curr = curr.tail();
+            }
+            return acc;
         }
 
         @Override

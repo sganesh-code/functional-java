@@ -1,5 +1,7 @@
 package io.github.senthilganeshs.fj.ds;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.function.BiFunction;
 
 /**
@@ -93,11 +95,18 @@ public interface PriorityQueue<T extends Comparable<T>> extends Collection<T> {
 
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-            if (value == null) return seed;
-            // Pre-order traversal for foldl
-            R res = fn.apply(seed, value);
-            res = left.foldl(res, fn);
-            return right.foldl(res, fn);
+            R acc = seed;
+            Deque<LeftistHeap<T>> stack = new ArrayDeque<>();
+            stack.push(this);
+            while (!stack.isEmpty()) {
+                LeftistHeap<T> curr = stack.pop();
+                if (curr.value != null) {
+                    acc = fn.apply(acc, curr.value);
+                    if (curr.right != null) stack.push(curr.right);
+                    if (curr.left != null) stack.push(curr.left);
+                }
+            }
+            return acc;
         }
 
         @Override

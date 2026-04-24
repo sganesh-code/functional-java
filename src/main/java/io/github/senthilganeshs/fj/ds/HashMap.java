@@ -1,5 +1,7 @@
 package io.github.senthilganeshs.fj.ds;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.function.BiFunction;
 
 /**
@@ -68,7 +70,21 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
         @Override
         public <R> R foldl(R seed, BiFunction<R, Entry<K, V>, R> fn) {
             if (root == null) return seed;
-            return root.foldl(seed, fn);
+            R acc = seed;
+            Deque<Node> stack = new ArrayDeque<>();
+            stack.push(root);
+            while (!stack.isEmpty()) {
+                Node curr = stack.pop();
+                if (curr instanceof IndexedNode) {
+                    IndexedNode in = (IndexedNode) curr;
+                    for (int i = in.children.length - 1; i >= 0; i--) {
+                        stack.push(in.children[i]);
+                    }
+                } else {
+                    acc = curr.foldl(acc, fn);
+                }
+            }
+            return acc;
         }
 
         @Override

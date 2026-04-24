@@ -1,5 +1,7 @@
 package io.github.senthilganeshs.fj.ds;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.function.BiFunction;
 
 /**
@@ -146,7 +148,24 @@ public interface Vector<T> extends Collection<T> {
             R res = seed;
             // Iterate through trie
             if (root != null) {
-                res = foldNode(shift, root, res, fn);
+                Deque<LevelNode> stack = new ArrayDeque<>();
+                stack.push(new LevelNode(shift, root));
+                while (!stack.isEmpty()) {
+                    LevelNode ln = stack.pop();
+                    if (ln.level == 0) {
+                        for (Object o : ln.node.array) {
+                            if (o == null) break;
+                            res = fn.apply(res, (T) o);
+                        }
+                    } else {
+                        for (int i = ln.node.array.length - 1; i >= 0; i--) {
+                            Object o = ln.node.array[i];
+                            if (o != null) {
+                                stack.push(new LevelNode(ln.level - BITS, (Node) o));
+                            }
+                        }
+                    }
+                }
             }
             // Iterate through tail
             if (tail != null) {
@@ -157,17 +176,13 @@ public interface Vector<T> extends Collection<T> {
             return res;
         }
 
-        private <R> R foldNode(int level, Node node, R seed, BiFunction<R, T, R> fn) {
-            R res = seed;
-            for (Object o : node.array) {
-                if (o == null) break;
-                if (level == 0) {
-                    res = fn.apply(res, (T) o);
-                } else {
-                    res = foldNode(level - BITS, (Node) o, res, fn);
-                }
+        private static class LevelNode {
+            final int level;
+            final Node node;
+            LevelNode(int level, Node node) {
+                this.level = level;
+                this.node = node;
             }
-            return res;
         }
 
         @Override

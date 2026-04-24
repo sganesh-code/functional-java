@@ -65,7 +65,14 @@ public interface Stack<T> extends Collection<T>{
 
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-            return tail.foldl(fn.apply(seed, head), fn);
+            R acc = seed;
+            Stack<T> curr = this;
+            while (curr instanceof NonEmpty) {
+                NonEmpty<T> ne = (NonEmpty<T>) curr;
+                acc = fn.apply(acc, ne.head);
+                curr = ne.tail;
+            }
+            return acc;
         }
 
         @Override

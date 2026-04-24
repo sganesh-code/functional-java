@@ -1,6 +1,8 @@
 package io.github.senthilganeshs.fj.ds;
 
+import java.util.ArrayDeque;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -88,9 +90,20 @@ public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable
 
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-            return right.foldl(
-                fn.apply(left.foldl(seed, fn), value), 
-                fn);
+            R acc = seed;
+            Deque<AVLTree<T>> stack = new ArrayDeque<>();
+            AVLTree<T> curr = this;
+            while (curr instanceof NonEmpty || !stack.isEmpty()) {
+                while (curr instanceof NonEmpty) {
+                    stack.push(curr);
+                    curr = ((NonEmpty<T>) curr).left;
+                }
+                curr = stack.pop();
+                NonEmpty<T> ne = (NonEmpty<T>) curr;
+                acc = fn.apply(acc, ne.value);
+                curr = ne.right;
+            }
+            return acc;
         }
                 
         @Override
