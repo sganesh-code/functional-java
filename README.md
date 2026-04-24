@@ -86,30 +86,77 @@ List.of(1,2,3).flatMap(i -> List.of(i, i * 10));
 // > [1, 10, 2, 20, 3, 30]
 ```
 
-### Advanced Functional Patterns
+## Showcase: The Declarative Advantage
+
+While standard Java has introduced `Stream` and `Optional`, they often remain verbose for complex logic. `functional-java` allows you to express "The What" rather than "The How."
+
+### 1. Atomic Batch Retrieval (`traverse`)
+Fetching metadata for a list of IDs and requiring **all** to exist (Atomic Success) or failing entirely.
+
+**Standard Java:**
 ```java
-// Applicative Functor: Apply a list of functions to a list of values
-List.of(1,2,3).apply(List.of(i -> i + 1, i -> i + 10));
-// > [2, 3, 4, 11, 12, 13]
-
-// Traverse: Map a function that returns a Collection, then turn it "inside out"
-List.of(1,2,3).traverse(i -> Maybe.some(i + 1));
-// > Some([2, 3, 4])
-
-// Sequence: Turn a Collection of Collections inside out
-Collection.sequence(List.of(Maybe.some(1), Maybe.some(2)));
-// > Some([1, 2])
+List<Profile> results = new ArrayList<>();
+for (String id : ids) {
+    Profile p = service.findById(id);
+    if (p == null) return Optional.empty(); // Manual atomic failure
+    results.add(p);
+}
+return Optional.of(results);
 ```
 
-### Persistent Vectors & HashMaps
+**functional-java:**
 ```java
-Vector<Integer> v = Vector.of(1, 2, 3);
-v.at(1); // Some(2)
-v.update(1, 10); // [1, 10, 3] (Original v is unchanged)
-
-HashMap<String, Integer> map = HashMap.<String, Integer>nil().put("A", 1).put("B", 2);
-map.get("A"); // Some(1)
+// List<String> -> Maybe<List<Profile>>
+return ids.traverse(service::findById);
 ```
+
+### 2. Validation Pipelines (`Either`)
+Processing a checkout where each step can fail with a specific reason.
+
+```java
+Either<String, Order> result = Either.<String, Cart>right(cart)
+    .flatMap(this::validateStock)      // returns Either<String, Stock>
+    .flatMap(this::calculateTax)       // returns Either<String, TaxedOrder>
+    .flatMap(this::applyDiscount);     // returns Either<String, Order>
+
+result.either(
+    error -> log.error("Checkout failed: " + error),
+    order -> ship(order)
+);
+```
+
+### 3. Complex Network Analytics (`Graph`)
+Finding all "Influencers" reachable from a user who are also "Java" experts.
+
+```java
+long count = network.bfs("Alice")               // Graph Breadth-First Search
+    .map(profiles::get)                        // Map to Maybe<Profile>
+    .flatMap(m -> (Collection<Profile>) m)     // Flatten to existing profiles only
+    .filter(p -> p.interests().any(i -> i.equals("Java")))
+    .count();
+```
+
+### 4. Structural Aggregation (`RoseTree` & `foldl`)
+Auditing a corporate hierarchy to calculate total budget across all regional hubs.
+
+```java
+// globalTopology is a RoseTree<Hub>
+double totalBudget = globalTopology.foldl(0.0, (acc, hub) -> acc + hub.getBudget());
+```
+
+---
+
+## Comparison Summary
+
+| Feature | Standard Java | functional-java |
+| :--- | :--- | :--- |
+| **Error Handling** | `try-catch` or `null` checks | Monadic `Either` / `Maybe` |
+| **Transformation** | `stream().map(...).collect(...)` | Direct `.map(...)` |
+| **Atomic Ops** | Manual loop + early exit logic | `traverse(fn)` |
+| **Persistence** | `Collections.unmodifiableList(...)` | Inherently Immutable |
+| **Data Structures**| Mostly Linear/Associative | Graphs, RoseTrees, Deques, HAMTs |
+
+---
 
 ### Error Handling with Either
 ```java
