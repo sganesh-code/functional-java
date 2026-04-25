@@ -1,5 +1,6 @@
 package io.github.senthilganeshs.fj.ds;
 
+import io.github.senthilganeshs.fj.optic.Prism;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 

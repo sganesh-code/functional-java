@@ -1,5 +1,7 @@
 package io.github.senthilganeshs.fj.ds;
 
+import io.github.senthilganeshs.fj.typeclass.*;
+
 /**
  * A realistic example of using the Graph data structure for Task Dependency Management.
  * This demonstrates building a dependency graph, performing a topological sort 

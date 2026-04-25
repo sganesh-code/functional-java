@@ -1,5 +1,6 @@
 package io.github.senthilganeshs.fj.ds;
 
+import io.github.senthilganeshs.fj.typeclass.Ord;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.function.BiFunction;

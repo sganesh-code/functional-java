@@ -1,4 +1,4 @@
-package io.github.senthilganeshs.fj.ds;
+package io.github.senthilganeshs.fj.typeclass;
 
 /**
  * An algebraic structure consisting of a set together with a single 

@@ -1,4 +1,4 @@
-package io.github.senthilganeshs.fj.ds;
+package io.github.senthilganeshs.fj.typeclass;
 
 /**
  * A typeclass for types that support equality.

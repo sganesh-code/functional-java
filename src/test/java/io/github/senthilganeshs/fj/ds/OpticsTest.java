@@ -1,5 +1,10 @@
 package io.github.senthilganeshs.fj.ds;
 
+import io.github.senthilganeshs.fj.typeclass.*;
+
+import io.github.senthilganeshs.fj.optic.Lens;
+import io.github.senthilganeshs.fj.optic.Prism;
+import io.github.senthilganeshs.fj.optic.Traversal;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

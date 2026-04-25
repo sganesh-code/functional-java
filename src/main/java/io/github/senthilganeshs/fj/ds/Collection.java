@@ -1,5 +1,8 @@
 package io.github.senthilganeshs.fj.ds;
 
+import io.github.senthilganeshs.fj.optic.Traversal;
+import io.github.senthilganeshs.fj.typeclass.Eq;
+import io.github.senthilganeshs.fj.typeclass.Monoid;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;

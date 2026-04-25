@@ -1,5 +1,8 @@
-package io.github.senthilganeshs.fj.ds;
+package io.github.senthilganeshs.fj.optic;
 
+import io.github.senthilganeshs.fj.ds.Collection;
+import io.github.senthilganeshs.fj.ds.List;
+import io.github.senthilganeshs.fj.ds.Maybe;
 import java.util.function.Function;
 
 /**

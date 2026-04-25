@@ -1,5 +1,7 @@
 package io.github.senthilganeshs.fj.ds;
 
+import io.github.senthilganeshs.fj.typeclass.*;
+
 /**
  * A realistic example of using functional data structures to process a product catalog 
  * and validate customer orders.

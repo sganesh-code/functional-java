@@ -1,4 +1,4 @@
-package io.github.senthilganeshs.fj.ds;
+package io.github.senthilganeshs.fj.optic;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

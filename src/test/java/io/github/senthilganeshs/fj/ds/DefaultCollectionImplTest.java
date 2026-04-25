@@ -1,5 +1,7 @@
 package io.github.senthilganeshs.fj.ds;
 
+import io.github.senthilganeshs.fj.typeclass.*;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import java.util.function.BiFunction;
