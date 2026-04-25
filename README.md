@@ -1,65 +1,106 @@
 ![build](https://github.com/sganesh-code/functional-java/actions/workflows/ci.yml/badge.svg?branch=master)
+
 # functional-java
 
-Functional Java is an initiative to bring functional APIs to Java without compromising on object-oriented programming principles. It provides purely functional, immutable data structures with an API inspired by Haskell.
+**Purely functional, immutable data structures for the modern Java developer.**
 
-## Core Concepts & Design
+`functional-java` is an initiative to bring expressive, Haskell-inspired functional APIs to Java without compromising on object-oriented principles. Built for robustness and clarity, it provides a unified set of tools to transform complex data manipulations into concise, declarative pipelines.
 
-The library is built around a single, powerful abstraction: the `Collection<T>` interface.
+---
 
-### The Core Triad
-To add support for a new data structure in this library, one only needs to implement three fundamental methods. The rest of the functional API is derived automatically via default methods in the `Collection` interface.
+## 📖 Documentation
+**[Explore the Full API Reference (GitHub Pages)](https://sganesh-code.github.io/functional-java/)**
 
-1.  **`empty()`**: Returns an empty implementation of the data structure.
-2.  **`build(T input)`**: Adds an element to the structure and returns a **new** instance, preserving immutability.
-3.  **`foldl(R seed, BiFunction<R, T, R> fn)`**: The left-associative reduction operation that serves as the basis for almost all other transformations.
+---
 
-### Derived Functional Power
-By implementing the triad above, a data structure instantly gains:
-*   **Transformations**: `map`, `flatMap`, `mapMaybe`, `filter`, `partition`, `reverse`
-*   **Combinators**: `concat`, `intersperse`, `intercalate`
-*   **Applicative Functors**: `apply`, `liftA2`, `liftA3`, `liftA4`
-*   **Traversable**: `traverse`, `sequence`
-*   **Zipping**: `zip`, `zipWith`, `zipWithIndex`
-*   **Categorization**: `groupBy`
-*   **State Tracking**: `scanl`
-*   **Utilities**: `take`, `takeWhile`, `drop`, `dropWhile`, `slice`, `find`, `any`, `all`, `mkString`, `reduce`
+## 🚀 Key Features
+
+*   **100% Immutable**: All structures are persistent; updates return new versions while sharing structure.
+*   **Unified API**: 40+ functional methods (map, filter, traverse, partition, etc.) available on every data structure via a single interface.
+*   **Performance Optimized**: Core engines rewritten from recursion to iterative loops, achieving up to **400x speedup** for large datasets.
+*   **Zero Dependencies**: Lean and lightweight library with no external requirements.
+
+---
+
+## 📋 Table of Contents
+1. [Core Triad Design](#core-triad-design)
+2. [Supported Data Structures](#supported-data-structures)
+3. [API Showcase](#api-showcase)
+4. [Installation](#installation)
+5. [Performance](#performance)
+6. [License](#license)
+
+---
+
+## Core Triad Design
+
+The library is built on a powerful abstraction: the `Collection<T>` interface. To implement any complex functional behavior, a data structure only needs to implement three core methods:
+
+1.  **`empty()`**: Returns an empty instance.
+2.  **`build(T)`**: Persistent addition of an element.
+3.  **`foldl(seed, fn)`**: The fundamental reduction engine.
+
+By implementing these three, every data structure automatically inherits the full functional suite: `map`, `flatMap`, `traverse`, `zipWith`, `span`, `chunk`, `groupBy`, and many more.
 
 ---
 
 ## Supported Data Structures
 
-The library provides a variety of persistent data structures optimized for functional use:
+### 📦 Sequential
+*   **`List`**: Purely functional linked list (Snoc-list style).
+*   **`Vector`**: Bitmapped Vector Trie for near O(1) random access and updates.
+*   **`Array`**: Functional wrapper for Java arrays.
+*   **`LazyList`**: Deferred evaluation for finite or infinite sequences.
 
-### Sequential
-*   **`List`**: A classic functional linked list.
-*   **`Vector`**: A persistent bitmapped vector trie providing near O(1) random access and updates.
-*   **`Array`**: A functional wrapper around standard arrays.
-*   **`LazyList`**: A list with deferred evaluation.
+### 🔍 Associative & Sets
+*   **`Set`**: Self-balancing AVL Tree implementation.
+*   **`HashMap`**: High-performance Hash Array Mapped Trie (HAMT) with collision handling.
+*   **`Map`**: Binary tree-based associative mapping.
 
-### Associative & Sets
-*   **`Set`**: An immutable set implemented using a self-balancing AVL Tree.
-*   **`HashMap`**: A high-performance Hash Array Mapped Trie (HAMT).
-*   **`Map`**: A binary tree-based associative mapping.
+### 🎭 Functional Primitives
+*   **`Maybe`**: Safe optional values with monadic API.
+*   **`Either`**: Disjoint union type for expressive error handling.
+*   **`Tuple`**: Simple product types for grouping values.
 
-### Functional Primitives
-*   **`Maybe`**: Represents optional values (similar to `Optional` but with a richer functional API).
-*   **`Either`**: Represents a value of one of two possible types (typically used for error handling).
-*   **`Tuple`**: A simple product type for grouping related values.
-
-### Structural & Abstract
-*   **`Stack`**, **`Queue`**, **`Deque`**: Standard linear structures with functional APIs.
-*   **`PriorityQueue`**: A heap-based priority queue.
-*   **`RoseTree`**: A multi-way tree structure.
-*   **`Graph`**: A functional representation of graphs.
+### 🌳 Structural
+*   **`RoseTree`**: Multi-way (N-ary) tree structure.
+*   **`Graph`**: Purely functional Directed Graph with BFS, DFS, and Topological Sort.
+*   **`Stack` / `Queue` / `Deque`**: Functional linear structures.
 
 ---
 
-## Usage
+## API Showcase
 
-### Installation (Version 1.0.1)
+### 1. Atomic Retrieval (`traverse`)
+Turn a list of IDs into a list of profiles, but only if **every** ID exists.
+```java
+// turns List<String> -> Maybe<List<Profile>>
+Maybe<List<Profile>> result = userIds.traverse(db::findMaybe);
+```
 
-#### Maven
+### 2. Validation Pipelines (`Either`)
+Chain operations that can fail without manual null checks or exceptions.
+```java
+Either<String, Order> order = Either.right(cart)
+    .flatMap(this::checkStock)
+    .flatMap(this::applyDiscount)
+    .flatMap(this::calculateTax);
+```
+
+### 3. Data Segmentation (`span` & `groupBy`)
+```java
+// Split a list at the first non-positive number
+Tuple<Collection<Integer>, Collection<Integer>> s = list.span(i -> i > 0);
+
+// Group users by their primary interest
+HashMap<String, Collection<User>> segments = users.groupBy(User::getInterest);
+```
+
+---
+
+## Installation (Version 1.0.1)
+
+### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
@@ -68,105 +109,26 @@ The library provides a variety of persistent data structures optimized for funct
 </dependency>
 ```
 
-#### Gradle
+### Gradle
 ```gradle
 implementation 'io.github.sganesh-code:functional-java:1.0.1'
 ```
 
 ---
 
-## Examples
+## Performance
 
-### Basic Transformations
-```java
-List.of(1,2,3).map(i -> i * 2); 
-// > [2, 4, 6]
+The library is designed for the JVM. All recursive bottlenecks in the core traversal engine have been replaced with optimized iterative loops.
 
-List.of(1,2,3,4,5,6).filter(i -> i % 2 == 0); 
-// > [2, 4, 6]
+**Benchmark Highlights (1,000 Elements):**
+*   **List Folding**: ~4.5μs (Competitive with Java Streams).
+*   **Random Access**: ~0.003μs (Near constant time).
+*   **Map Lookup**: ~0.004μs (Optimized HAMT traversal).
 
-List.of(1,2,3).flatMap(i -> List.of(i, i * 10));
-// > [1, 10, 2, 20, 3, 30]
-```
-
-## Showcase: The Declarative Advantage
-
-While standard Java has introduced `Stream` and `Optional`, they often remain verbose for complex logic. `functional-java` allows you to express "The What" rather than "The How."
-
-### 1. Atomic Batch Retrieval (`traverse`)
-Fetching metadata for a list of IDs and requiring **all** to exist (Atomic Success) or failing entirely.
-
-**Standard Java:**
-```java
-List<Profile> results = new ArrayList<>();
-for (String id : ids) {
-    Profile p = service.findById(id);
-    if (p == null) return Optional.empty(); // Manual atomic failure
-    results.add(p);
-}
-return Optional.of(results);
-```
-
-**functional-java:**
-```java
-// List<String> -> Maybe<List<Profile>>
-return ids.traverse(service::findById);
-```
-
-### 2. Validation Pipelines (`Either`)
-Processing a checkout where each step can fail with a specific reason.
-
-```java
-Either<String, Order> result = Either.<String, Cart>right(cart)
-    .flatMap(this::validateStock)      // returns Either<String, Stock>
-    .flatMap(this::calculateTax)       // returns Either<String, TaxedOrder>
-    .flatMap(this::applyDiscount);     // returns Either<String, Order>
-
-result.either(
-    error -> log.error("Checkout failed: " + error),
-    order -> ship(order)
-);
-```
-
-### 3. Complex Network Analytics (`Graph`)
-Finding all "Influencers" reachable from a user who are also "Java" experts.
-
-```java
-long count = network.bfs("Alice")               // Graph Breadth-First Search
-    .map(profiles::get)                        // Map to Maybe<Profile>
-    .flatMap(m -> (Collection<Profile>) m)     // Flatten to existing profiles only
-    .filter(p -> p.interests().any(i -> i.equals("Java")))
-    .count();
-```
-
-### 4. Structural Aggregation (`RoseTree` & `foldl`)
-Auditing a corporate hierarchy to calculate total budget across all regional hubs.
-
-```java
-// globalTopology is a RoseTree<Hub>
-double totalBudget = globalTopology.foldl(0.0, (acc, hub) -> acc + hub.getBudget());
-```
+*Full details available in [BENCHMARK.md](./BENCHMARK.md).*
 
 ---
 
-## Comparison Summary
+## License
 
-| Feature | Standard Java | functional-java |
-| :--- | :--- | :--- |
-| **Error Handling** | `try-catch` or `null` checks | Monadic `Either` / `Maybe` |
-| **Transformation** | `stream().map(...).collect(...)` | Direct `.map(...)` |
-| **Atomic Ops** | Manual loop + early exit logic | `traverse(fn)` |
-| **Persistence** | `Collections.unmodifiableList(...)` | Inherently Immutable |
-| **Data Structures**| Mostly Linear/Associative | Graphs, RoseTrees, Deques, HAMTs |
-
----
-
-### Error Handling with Either
-```java
-Either.lefts(List.of(Either.right(1), Either.left("Error"), Either.right(3)));
-// > ["Error"]
-```
-
----
-
-
+Distributed under the **GPL-v3.0** License. See `LICENSE` for more information.

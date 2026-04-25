@@ -5,38 +5,53 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * The fundamental abstraction for all functional data structures in this library.
+ * 
+ * <p>To implement a new data structure, only three methods are required:
+ * {@link #empty()}, {@link #build(Object)}, and {@link #foldl(Object, BiFunction)}.
+ * All other functional methods are provided as defaults based on this core triad.</p>
+ * 
+ * @param <T> The type of elements in the collection.
+ */
 public interface Collection<T> {
 
     /**
-     * Returns empty implementation of this data-structure.
+     * Returns an empty instance of the data structure.
      * 
-     * @param <R>
-     * @return
+     * @param <R> The type of elements for the empty collection.
+     * @return An empty Collection implementation.
      */
     <R> Collection<R> empty();
 
     /**
-     * Builds the data-structure with the input value.
+     * Creates a new instance of the data structure with the provided element added.
+     * This operation is persistent and does not modify the original instance.
      * 
-     * @param input
-     * @return
+     * @param input The element to add.
+     * @return A new Collection containing the added element.
      */
     Collection<T> build (final T input);
     
-    
     /**
-     * Travel the data-structure in the left to right order.
+     * Performs a left-associative reduction (fold) over the elements of this collection.
+     * This is the primary traversal mechanism for all derived operations.
      * 
-     * @param <R>
-     * @param seed
-     * @param fn
-     * @return
+     * @param <R> The type of the accumulated result.
+     * @param seed The initial value for the accumulation.
+     * @param fn The combining function (accumulator, element) -> result.
+     * @return The final accumulated value.
      */
-    
     <R> R foldl (final R seed, final BiFunction<R,T,R> fn);
 
-
-    
+    /**
+     * Performs a right-associative reduction over the elements of this collection.
+     * 
+     * @param <R> The type of the accumulated result.
+     * @param seed The initial value for the accumulation.
+     * @param fn The combining function (element, accumulator) -> result.
+     * @return The final accumulated value.
+     */
     default <R> R foldr (final R seed, final BiFunction<T,R,R> fn) {
         final Function<R, R> res = 
             foldl(a -> a,
@@ -44,6 +59,16 @@ public interface Collection<T> {
         return res.apply(seed);
     }
 
+    /**
+     * Maps each element to a collection-producing function, then flips the structure.
+     * Also known as "inside-out" mapping.
+     * 
+     * <p>Example: {@code List.of(1, 2).traverse(i -> Maybe.some(i + 1))} results in {@code Some([2, 3])}</p>
+     * 
+     * @param <R> The type of elements in the inner collection.
+     * @param fn Function that returns a collection.
+     * @return A collection of collections.
+     */
     default <R> Collection<Collection<R>> traverse (final Function<T, Collection<R>> fn) {            
         Collection<Collection<R>> seed = empty();
         Collection<Collection<R>> sseed = seed.build(empty());
@@ -51,16 +76,36 @@ public interface Collection<T> {
         return foldl (sseed, (rrs, t) -> fn.apply(t).liftA2((r,  rs) -> rs.build(r), rrs));
     }
    
+    /**
+     * Returns a new collection containing only elements that satisfy the predicate.
+     * 
+     * @param pred The condition to test against.
+     * @return A filtered collection.
+     */
     default Collection<T> filter (final Predicate<T> pred) {
         return foldl(
             empty(),
             (r, t) -> pred.test(t) ? r.build(t) : r);
     }
 
+    /**
+     * Filters elements by their class type and casts them.
+     * Useful for heterogeneous collections.
+     * 
+     * @param <R> The target type.
+     * @param clazz The class to filter by.
+     * @return A collection containing only elements of type R.
+     */
     default <R> Collection<R> filterType(Class<R> clazz) {
         return filter(clazz::isInstance).map(clazz::cast);
     }
 
+    /**
+     * Finds the first element satisfying the predicate.
+     * 
+     * @param pred The condition to search for.
+     * @return Some(element) if found, Nothing otherwise.
+     */
     @SuppressWarnings("unchecked")
     default Maybe<T> find(final Predicate<T> pred) {
         return foldl(Maybe.nothing(), (acc, t) -> acc.isSome() ? acc : (pred.test(t) ? Maybe.some(t) : acc));
@@ -112,16 +157,34 @@ public interface Collection<T> {
         });
     }
 
+    /**
+     * Combines two collections by appending the provided collection to the end of this one.
+     * 
+     * @param first The collection to append.
+     * @return A new collection containing elements of both.
+     */
     default Collection<T> concat (final Collection<T> first) {
         return first.foldl(this, (ts, t) -> ts.build(t));
     }
 
+    /**
+     * Maps each element to a collection and flattens the result into a single collection.
+     * 
+     * @param <R> The type of elements in the resulting collection.
+     * @param fn The transformation function.
+     * @return A flattened collection of results.
+     */
     default <R> Collection<R> flatMap (final Function<T, Collection<R>> fn) {
         return foldl (
             empty(),
             (rs, t) -> rs.concat(fn.apply(t)));
     }
 
+    /**
+     * Pairs each element with its 0-based index.
+     * 
+     * @return A collection of Tuples (element, index).
+     */
     @SuppressWarnings("unchecked")
     default Collection<Tuple<T, Integer>> zipWithIndex() {
         Object[] res = new Object[2];
@@ -132,6 +195,15 @@ public interface Collection<T> {
             (r, t) -> new Object[] { (Integer) r[0] + 1, ((Collection<Tuple<T, Integer>>)r[1]).build(Tuple.of(t, (Integer) r[0]))})[1];
     }
 
+    /**
+     * Combines two collections element-wise using the provided function.
+     * 
+     * @param <R> The type of elements in the other collection.
+     * @param <S> The type of elements in the resulting collection.
+     * @param fn The combining function.
+     * @param other The other collection.
+     * @return A collection of combined results.
+     */
     @SuppressWarnings("unchecked")
     default <R, S> Collection<S> zipWith(final BiFunction<T, R, S> fn, final List<R> other) {
         // We use the already implemented List.zip() logic
@@ -139,10 +211,23 @@ public interface Collection<T> {
         return (Collection<S>) thisAsList.zip(other).map(t -> fn.apply(t.getA().fromMaybe(null), t.getB().fromMaybe(null)));
     }
 
+    /**
+     * Applicative apply: applies a collection of functions to this collection of values.
+     * 
+     * @param <R> The resulting element type.
+     * @param fns The collection of functions.
+     * @return A collection containing every possible application of the functions to the values.
+     */
     default <R> Collection<R> apply (final Collection<Function<T, R>> fns) {
         return fns.flatMap(this::map);
     }
 
+    /**
+     * Performs an action for each element in the collection.
+     * 
+     * @param action The consumer action.
+     * @return This collection (for chaining).
+     */
     default Collection<T> forEach (final Consumer<T> action) {
         return foldl(this,
             (__, t) -> {
@@ -151,6 +236,13 @@ public interface Collection<T> {
             });
     }    
 
+    /**
+     * Categorizes elements into a HashMap based on a key extraction function.
+     * 
+     * @param <K> The type of the key.
+     * @param keyFn The key extraction function.
+     * @return A HashMap where each key points to a collection of elements belonging to that group.
+     */
     @SuppressWarnings("unchecked")
     default <K> HashMap<K, Collection<T>> groupBy(final Function<T, K> keyFn) {
         return (HashMap<K, Collection<T>>) foldl(HashMap.<K, Collection<T>>nil(), (acc, t) -> {
@@ -161,6 +253,14 @@ public interface Collection<T> {
         });
     }
 
+    /**
+     * Like foldl, but returns a collection of all intermediate accumulation states.
+     * 
+     * @param <R> The type of states.
+     * @param seed The initial state.
+     * @param fn The accumulation function.
+     * @return A collection of states.
+     */
     @SuppressWarnings("unchecked")
     default <R> Collection<R> scanl(final R seed, final BiFunction<R, T, R> fn) {
         Object[] state = new Object[2];
@@ -175,6 +275,14 @@ public interface Collection<T> {
         })[1];
     }
 
+    /**
+     * Splits the collection into two parts based on a predicate.
+     * The first part contains the prefix of elements satisfying the predicate.
+     * The second part contains the remaining elements.
+     * 
+     * @param pred The predicate condition.
+     * @return A Tuple containing (takeWhile, dropWhile).
+     */
     @SuppressWarnings("unchecked")
     default Tuple<Collection<T>, Collection<T>> span (final Predicate<T> pred) {
         Object[] res = new Object[3];
@@ -196,6 +304,12 @@ public interface Collection<T> {
         return Tuple.of((Collection<T>)finalRes[1], (Collection<T>)finalRes[2]);
     }
 
+    /**
+     * Splits the collection into sub-collections of the specified size.
+     * 
+     * @param size The size of each chunk.
+     * @return A collection of chunks.
+     */
     @SuppressWarnings("unchecked")
     default Collection<Collection<T>> chunk (int size) {
         if (size <= 0) return empty();
@@ -222,10 +336,21 @@ public interface Collection<T> {
         return last.count() > 0 ? chunks.build(last) : chunks;
     }
 
+    /**
+     * Returns the total number of elements in the collection.
+     * 
+     * @return The size of the collection.
+     */
     default int length() {
         return foldl(0, (r, t) -> r + 1);
     }
     
+    /**
+     * Drops the first n elements from the collection.
+     * 
+     * @param n Number of elements to drop.
+     * @return A collection containing all but the first n elements.
+     */
     @SuppressWarnings("unchecked")
     default Collection<T> drop (final int n) {
         Object[] res = new Object[2];
@@ -237,11 +362,22 @@ public interface Collection<T> {
             new Object[] {(Integer) r[0], ((Collection<T>)r[1]).build(t)})[1];
     }
 
+    /**
+     * Reverses the order of elements in the collection.
+     * 
+     * @return A reversed collection.
+     */
     default Collection<T> reverse () {
         return foldr (empty(), 
             (t, r) -> r.build(t));
     }
     
+    /**
+     * Takes elements as long as the predicate is satisfied.
+     * 
+     * @param pred The predicate condition.
+     * @return A collection containing the prefix elements satisfying the predicate.
+     */
     @SuppressWarnings("unchecked")
     default Collection<T> takeWhile (final Predicate<T> pred) {
         Object[] res = new Object[2];
@@ -254,6 +390,12 @@ public interface Collection<T> {
                 new Object[] { false, r[1]})[1];
     }
 
+    /**
+     * Drops elements as long as the predicate is satisfied.
+     * 
+     * @param pred The predicate condition.
+     * @return A collection containing the remaining elements after dropping the prefix.
+     */
     @SuppressWarnings("unchecked")
     default Collection<T> dropWhile (final Predicate<T> pred) {
         Object[] res = new Object[2];
@@ -266,6 +408,12 @@ public interface Collection<T> {
                 new Object[] { false, ((Collection<T>)r[1]).build(t)})[1];
     }
     
+    /**
+     * Takes the first n elements from the collection.
+     * 
+     * @param n Number of elements to take.
+     * @return A collection containing only the first n elements.
+     */
     @SuppressWarnings("unchecked")
     default Collection<T> take (final int n) {
         Object[] res = new Object[2];
@@ -278,38 +426,90 @@ public interface Collection<T> {
                 new Object[] { (Integer) r[0], r[1]})[1];
     }
     
+    /**
+     * Places the separator element between every two existing elements.
+     * 
+     * @param sep The separator.
+     * @return A collection with separators interspersed.
+     */
     default Collection<T> intersperse (final T sep) {
         return drop(1).foldl(take(1), (r, t) -> r.build(sep).build(t));
     }
 
+    /**
+     * Intersperses this collection between every two collections in the input collection.
+     * 
+     * @param rss A collection of collections.
+     * @return A single collection with elements of this collection intercalated.
+     */
     default Collection<Collection<T>> intercalate(final Collection<Collection<T>> rss) {
         return rss.drop(1).foldl(rss.take(1), (r, t) -> r.build(this).build(t));
     }
 
+    /**
+     * Returns a view of a portion of this collection.
+     * 
+     * @param start The starting index.
+     * @param n The number of elements.
+     * @return A slice of the collection.
+     */
     default public Collection<T> slice(int start, int n) {
         return drop(start).take(n);
     }
 
+    /**
+     * Alias for {@link #length()}.
+     * 
+     * @return The element count.
+     */
     default public int count() {
         return foldl(0, (count, t) -> count + 1);
     }
 
+    /**
+     * Returns true if any element satisfies the predicate.
+     * 
+     * @param pred The predicate condition.
+     * @return True if at least one match is found.
+     */
     default boolean any(Predicate<T> pred) {
         return foldl(false, (acc, t) -> acc || pred.test(t));
     }
 
+    /**
+     * Returns true if all elements satisfy the predicate.
+     * 
+     * @param pred The predicate condition.
+     * @return True if all elements match.
+     */
     default boolean all(Predicate<T> pred) {
         return foldl(true, (acc, t) -> acc && pred.test(t));
     }
 
+    /**
+     * Returns the first element of the collection safely.
+     * 
+     * @return Some(head) if not empty, Nothing otherwise.
+     */
     default Maybe<T> headMaybe() {
         return find(i -> true);
     }
 
+    /**
+     * Returns the last element of the collection safely.
+     * 
+     * @return Some(last) if not empty, Nothing otherwise.
+     */
     default Maybe<T> lastMaybe() {
         return foldl(Maybe.nothing(), (acc, t) -> Maybe.some(t));
     }
 
+    /**
+     * Reduces the collection to a single value using a binary function.
+     * 
+     * @param fn The reduction function.
+     * @return Some(result) if not empty, Nothing otherwise.
+     */
     @SuppressWarnings("unchecked")
     default Maybe<T> reduce(BiFunction<T, T, T> fn) {
         return (Maybe<T>) foldl((Collection<T>) Maybe.nothing(), (acc, t) -> {
@@ -319,14 +519,33 @@ public interface Collection<T> {
         });
     }
 
+    /**
+     * Renders the collection as a string with customizable boundaries and separator.
+     * 
+     * @param start Starting string.
+     * @param sep Separator string.
+     * @param end Ending string.
+     * @return The rendered string.
+     */
     default String mkString(String start, String sep, String end) {
         return foldl(start, (acc, t) -> acc + (acc.equals(start) ? "" : sep) + t) + end;
     }
 
+    /**
+     * Renders the collection as a string with a separator.
+     * 
+     * @param sep Separator string.
+     * @return The rendered string.
+     */
     default String mkString(String sep) {
         return mkString("", sep, "");
     }
 
+    /**
+     * Returns a new collection containing only unique elements.
+     * 
+     * @return A collection without duplicates.
+     */
     @SuppressWarnings("unchecked")
     default Collection<T> distinct() {
         java.util.Set<T> seen = new java.util.HashSet<>();
