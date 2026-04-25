@@ -53,12 +53,19 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
-      - name: Publish Artifacts
-        run: ./gradlew publish
+      - name: Publish to Local and Zip
+        run: ./gradlew zipBundle
         env:
           CI: "true"
-          ossrhUsername: ${{ secrets.OSSRH_USERNAME }}
-          ossrhPassword: ${{ secrets.OSSRH_PASSWORD }}
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Upload to Sonatype Central Portal
+        run: |
+          curl --request POST \
+            --verbose \
+            --header "Authorization: UserToken ${{ secrets.OSSRH_USERNAME }}:${{ secrets.OSSRH_PASSWORD }}" \
+            --form "bundle=@build/bundle.zip" \
+            --url https://central.sonatype.com/api/v1/publisher/upload
+

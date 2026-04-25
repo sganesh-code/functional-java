@@ -81,16 +81,19 @@ publishing {
     repositories {
         maven {
             if (System.getenv("CI") == "true") {
-                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-                credentials {
-                    username = System.getenv("ossrhUsername")
-                    password = System.getenv("ossrhPassword")
-                }
+                url = layout.buildDirectory.dir("repos")
             } else {
                 url = layout.buildDirectory.dir("repos")
             }
         }
     }
+}
+
+task zipBundle(type: Zip) {
+    dependsOn publish
+    from layout.buildDirectory.dir("repos")
+    archiveFileName = "bundle.zip"
+    destinationDirectory = layout.buildDirectory
 }
 
 signing {
