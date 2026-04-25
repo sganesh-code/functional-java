@@ -1,8 +1,17 @@
 package io.github.senthilganeshs.fj.ds;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
+/**
+ * A purely functional Stack (LIFO).
+ * 
+ * @param <T> The type of elements in the stack.
+ */
 public interface Stack<T> extends Collection<T>{
 
     Maybe<T> head();
@@ -13,26 +22,30 @@ public interface Stack<T> extends Collection<T>{
         return (Stack<R>) c.foldl(Stack.<R>emptyStack(), (s, r) -> (Stack<R>) s.build(r));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    default <R> Stack<R> map(java.util.function.Function<T, R> fn) {
+    default <R> Stack<R> map(Function<T, R> fn) {
         return from(Collection.super.map(fn));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    default Stack<T> filter(java.util.function.Predicate<T> pred) {
+    default Stack<T> filter(Predicate<T> pred) {
         return from(Collection.super.filter(pred));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default Stack<T> take(int n) {
         if (n <= 0) return emptyStack();
-        return (Stack<T>) ((Maybe<Stack<T>>) head().flatMap(h -> tail().map(t -> (Stack<T>) new NonEmpty<>(h, t.take(n - 1))))).orElse(this);
+        return ((Maybe<Stack<T>>) (Maybe<?>) head().flatMap(h -> tail().map(t -> (Stack<T>) new NonEmpty<>(h, t.take(n - 1))))).orElse(this);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default Stack<T> drop(int n) {
         if (n <= 0) return this;
-        return (Stack<T>) ((Maybe<Stack<T>>) tail().flatMap(t -> Maybe.some(t.drop(n - 1)))).orElse(emptyStack());
+        return ((Maybe<Stack<T>>) (Maybe<?>) tail().flatMap(t -> Maybe.some(t.drop(n - 1)))).orElse(emptyStack());
     }
 
     @Override
@@ -44,16 +57,20 @@ public interface Stack<T> extends Collection<T>{
         return new Empty<>();
     }
 
-    static <R> Stack<R> newStack(R[] values) {
-        return Arrays.stream(values).reduce(emptyStack(), (stack, r) -> (Stack<R>) stack.build(r), (a, b) -> b);
+    @SafeVarargs
+    static <R> Stack<R> newStack(R... values) {
+        Stack<R> s = emptyStack();
+        if (values == null) return s;
+        for (R val : values) s = (Stack<R>) s.build(val);
+        return s;
     }
 
     final static class NonEmpty<T> implements Stack<T> {
 
-        private Stack<T> tail;
-        private T head;
+        private final T head;
+        private final Stack<T> tail;
 
-        NonEmpty(T head, Stack<T> tail) {
+        NonEmpty(final T head, final Stack<T> tail) {
             this.head = head;
             this.tail = tail;
         }
@@ -70,7 +87,7 @@ public interface Stack<T> extends Collection<T>{
 
         @Override
         public <R> Collection<R> empty() {
-            return new Empty<>();
+            return emptyStack();
         }
 
         @Override
@@ -94,24 +111,29 @@ public interface Stack<T> extends Collection<T>{
         public String toString() {
             return foldl("[", (r, t) -> r + (r.equals("[") ? "" : ",") + t) + "]";
         }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == null) return false;
+            if (other == this) return true;
+            if (!(other instanceof Stack)) return false;
+            Stack<?> o = (Stack<?>) other;
+            if (o.length() != length()) return false;
+            return toString().equals(o.toString());
+        }
+
+        @Override
+        public int hashCode() {
+            return toString().hashCode();
+        }
     }
 
 
     final static class Empty<T> implements Stack<T> {
 
         @Override
-        public Maybe<T> head() {
-            return Maybe.nothing();
-        }
-
-        @Override
-        public Maybe<Stack<T>> tail() {
-            return Maybe.nothing();
-        }
-
-        @Override
         public <R> Collection<R> empty() {
-            return new Empty<>();
+            return emptyStack();
         }
 
         @Override
@@ -127,6 +149,26 @@ public interface Stack<T> extends Collection<T>{
         @Override
         public String toString() {
             return "[]";
+        }
+
+        @Override
+        public Maybe<T> head() {
+            return Maybe.nothing();
+        }
+
+        @Override
+        public Maybe<Stack<T>> tail() {
+            return Maybe.nothing();
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof Empty;
+        }
+
+        @Override
+        public int hashCode() {
+            return 0;
         }
     }
 }

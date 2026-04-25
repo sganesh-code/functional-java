@@ -47,6 +47,10 @@ jacocoTestReport {
 }
 
 
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:all" << "-Xlint:-processing" << "-Xlint:-serial"
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {

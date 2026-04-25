@@ -6,6 +6,8 @@ import java.util.function.BiFunction;
 
 /**
  * Persistent Vector implementation using a Bitmapped Vector Trie.
+ * 
+ * @param <T> The type of elements.
  */
 public interface Vector<T> extends Collection<T> {
 
@@ -18,21 +20,31 @@ public interface Vector<T> extends Collection<T> {
         return (Vector<R>) c.foldl(Vector.<R>nil(), (v, r) -> (Vector<R>) v.build(r));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default <R> Vector<R> map(java.util.function.Function<T, R> fn) {
         return from(Collection.super.map(fn));
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    default <R> Vector<R> mapMaybe(java.util.function.Function<T, Maybe<R>> fn) {
+        return from(Collection.super.mapMaybe(fn));
+    }
+
+    @SuppressWarnings("unchecked")
     @Override
     default Vector<T> filter(java.util.function.Predicate<T> pred) {
         return from(Collection.super.filter(pred));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default Vector<T> take(int n) {
         return from(Collection.super.take(n));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default Vector<T> drop(int n) {
         return from(Collection.super.drop(n));
@@ -45,6 +57,7 @@ public interface Vector<T> extends Collection<T> {
     @SafeVarargs
     static <R> Vector<R> of(R... values) {
         Vector<R> v = nil();
+        if (values == null) return v;
         for (R val : values) {
             v = (Vector<R>) v.build(val);
         }
@@ -73,6 +86,7 @@ public interface Vector<T> extends Collection<T> {
             return ((size - 1) >> BITS) << BITS;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public Maybe<T> at(int index) {
             if (index < 0 || index >= size) return Maybe.nothing();
@@ -116,7 +130,6 @@ public interface Vector<T> extends Collection<T> {
 
         @Override
         public Collection<T> build(T input) {
-            // If tail is not full
             if (size - tailOffset() < WIDTH) {
                 Object[] newTail;
                 if (tail == null) {
@@ -130,7 +143,6 @@ public interface Vector<T> extends Collection<T> {
                 return new VectorImpl<>(size + 1, shift, root, newTail);
             }
 
-            // Tail is full, push to trie
             Node newRoot;
             int newShift = shift;
             Node tailNode = new Node(tail);
@@ -168,10 +180,10 @@ public interface Vector<T> extends Collection<T> {
             return ret;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
             R res = seed;
-            // Iterate through trie
             if (root != null) {
                 Deque<LevelNode> stack = new ArrayDeque<>();
                 stack.push(new LevelNode(shift, root));
@@ -192,7 +204,6 @@ public interface Vector<T> extends Collection<T> {
                     }
                 }
             }
-            // Iterate through tail
             if (tail != null) {
                 for (Object o : tail) {
                     res = fn.apply(res, (T) o);
@@ -213,6 +224,23 @@ public interface Vector<T> extends Collection<T> {
         @Override
         public String toString() {
             return foldl("[", (r, t) -> r + (r.equals("[") ? "" : ",") + t) + "]";
+        }
+
+        @Override
+        public boolean equals(final Object other) {
+            if (other == null) return false;
+            if (other == this) return true;
+            if (other instanceof Vector) {
+                Vector<?> v = (Vector<?>) other;
+                if (v.length() != size) return false;
+                return this.toString().equals(v.toString());
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return toString().hashCode();
         }
 
         private static class Node {

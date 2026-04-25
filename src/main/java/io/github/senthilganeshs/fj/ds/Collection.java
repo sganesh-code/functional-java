@@ -60,6 +60,19 @@ public interface Collection<T> {
     }
 
     /**
+     * Transforms each element of the collection using the provided function.
+     * 
+     * @param <R> The type of elements in the resulting collection.
+     * @param fn The transformation function.
+     * @return A new collection containing the transformed elements.
+     */
+    default <R> Collection<R> map (final Function<T, R> fn) {
+        return foldl (
+            empty(),
+            (rs, t) -> rs.build(fn.apply(t)));
+    }
+
+    /**
      * Maps each element to a collection-producing function, then flips the structure.
      * Also known as "inside-out" mapping.
      * 
@@ -74,6 +87,21 @@ public interface Collection<T> {
         Collection<Collection<R>> sseed = seed.build(empty());
        
         return foldl (sseed, (rrs, t) -> fn.apply(t).liftA2((r,  rs) -> rs.build(r), rrs));
+    }
+
+    /**
+     * Maps each element to a Maybe-producing function and keeps only the "Some" results.
+     * 
+     * @param <R> Resulting element type.
+     * @param fn Transformation function.
+     * @return A collection of successful results.
+     */
+    @SuppressWarnings("unchecked")
+    default <R> Collection<R> mapMaybe (final Function<T, Maybe<R>> fn) {
+        return foldl(empty(), (rs, t) -> {
+            Maybe<R> res = fn.apply(t);
+            return res.isSome() ? rs.build(res.orElse(null)) : rs;
+        });
     }
    
     /**
@@ -111,6 +139,12 @@ public interface Collection<T> {
         return foldl(Maybe.nothing(), (acc, t) -> acc.isSome() ? acc : (pred.test(t) ? Maybe.some(t) : acc));
     }
 
+    /**
+     * Finds the index of the first element satisfying the predicate.
+     * 
+     * @param pred The condition to test.
+     * @return Some(index) if found, Nothing otherwise.
+     */
     @SuppressWarnings("unchecked")
     default Maybe<Integer> findIndex(final Predicate<T> pred) {
         Object[] state = new Object[2];
@@ -125,6 +159,12 @@ public interface Collection<T> {
         })[1];
     }
 
+    /**
+     * Finds the index of the first occurrence of the provided value.
+     * 
+     * @param value The value to search for.
+     * @return Some(index) if found, Nothing otherwise.
+     */
     default Maybe<Integer> indexOf(T value) {
         return findIndex(t -> t.equals(value));
     }
@@ -134,45 +174,15 @@ public interface Collection<T> {
     }
 
     default <R, S> Collection<S> liftA2 (final BiFunction<T, R, S> fn, final Collection<R> rs) {
-        return liftA2(t -> r -> fn.apply(t, r), rs);
-    }
-    
-    default <P, Q, R> Collection<R> liftA3 (final Function<T, BiFunction<P, Q, R>> fn, final Collection<P> ps, final Collection<Q> qs) {
-        return apply(ps.liftA2((p,  q) -> (t -> fn.apply(t).apply(p, q)), qs));        
-    }
-    
-    default <P, Q, R, S> Collection<S> liftA4 (
-        final Function<T, Function<P, BiFunction<Q, R, S>>> fn, 
-        final Collection<P> ps, 
-        final Collection<Q> qs,
-        final Collection<R> rs) {
-       
-        return apply(
-            ps.liftA3(p -> (q, r) -> (t -> fn.apply(t).apply(p).apply(q, r)), qs, rs));
+        return liftA2(t -> r -> fn.apply(t, r), rs);        
     }
 
-    default <R> Collection<R> map (final Function<T, R> fn) {
-        return foldl (
-            empty(),
-            (rs, t) -> rs.build(fn.apply(t)));
+    default <R, S, U> Collection<U> liftA3 (final Function<T, Function<R, Function<S, U>>> fn, final Collection<R> rs, final Collection<S> ss) {
+        return ss.apply(liftA2(fn, rs));        
     }
 
-    @SuppressWarnings("unchecked")
-    default <R> Collection<R> mapMaybe (final Function<T, Maybe<R>> fn) {
-        return foldl(empty(), (rs, t) -> {
-            Maybe<R> res = fn.apply(t);
-            return res.isSome() ? rs.build(res.orElse(null)) : rs;
-        });
-    }
-
-    @SuppressWarnings("unchecked")
-    default Tuple<Collection<T>, Collection<T>> partition (final Predicate<T> pred) {
-        return (Tuple<Collection<T>, Collection<T>>) foldl(Tuple.of(this.<T>empty(), this.<T>empty()), (acc, t) -> {
-            Tuple<Collection<T>, Collection<T>> tuple = (Tuple<Collection<T>, Collection<T>>) acc;
-            Collection<T> left = tuple.getA().orElse(empty());
-            Collection<T> right = tuple.getB().orElse(empty());
-            return pred.test(t) ? Tuple.of(left.build(t), right) : Tuple.of(left, right.build(t));
-        });
+    default <R, S, U, V> Collection<V> liftA4 (final Function<T, Function<R, Function<S, Function<U, V>>>> fn, final Collection<R> rs, final Collection<S> ss, final Collection<U> us) {
+        return us.apply(liftA3(fn, rs, ss));        
     }
 
     /**
@@ -196,6 +206,24 @@ public interface Collection<T> {
         return foldl (
             empty(),
             (rs, t) -> rs.concat(fn.apply(t)));
+    }
+
+    /**
+     * Splits the collection into two collections based on a predicate.
+     * The first collection contains elements that satisfy the predicate,
+     * the second contains those that do not.
+     * 
+     * @param pred The predicate condition.
+     * @return A Tuple containing (satisfied, dissatisfied).
+     */
+    @SuppressWarnings("unchecked")
+    default Tuple<Collection<T>, Collection<T>> partition (final Predicate<T> pred) {
+        return (Tuple<Collection<T>, Collection<T>>) foldl(Tuple.of(this.<T>empty(), this.<T>empty()), (acc, t) -> {
+            Tuple<Collection<T>, Collection<T>> tuple = acc;
+            Collection<T> left = tuple.getA().orElse(empty());
+            Collection<T> right = tuple.getB().orElse(empty());
+            return pred.test(t) ? Tuple.of(left.build(t), right) : Tuple.of(left, right.build(t));
+        });
     }
 
     /**
@@ -224,7 +252,6 @@ public interface Collection<T> {
      */
     @SuppressWarnings("unchecked")
     default <R, S> Collection<S> zipWith(final BiFunction<T, R, S> fn, final List<R> other) {
-        // We use the already implemented List.zip() logic
         List<T> thisAsList = (this instanceof List) ? (List<T>) this : List.from(this);
         return (Collection<S>) thisAsList.zip(other).map(t -> fn.apply(t.getA().orElse(null), t.getB().orElse(null)));
     }
@@ -266,8 +293,8 @@ public interface Collection<T> {
         return (HashMap<K, Collection<T>>) foldl(HashMap.<K, Collection<T>>nil(), (acc, t) -> {
             HashMap<K, Collection<T>> map = (HashMap<K, Collection<T>>) acc;
             K key = keyFn.apply(t);
-            Collection<T> group = ((Maybe<Collection<T>>) map.get(key)).orElse(this.<T>empty());
-            return (HashMap<K, Collection<T>>) map.put(key, group.build(t));
+            Collection<T> group = map.get(key).orElse(this.<T>empty());
+            return map.put(key, group.build(t));
         });
     }
 
@@ -457,8 +484,8 @@ public interface Collection<T> {
     /**
      * Intersperses this collection between every two collections in the input collection.
      * 
-     * @param rss A collection of collections.
-     * @return A single collection with elements of this collection intercalated.
+     * @param rss a collection of collections.
+     * @return a single collection with elements of this collection intercalated.
      */
     default Collection<Collection<T>> intercalate(final Collection<Collection<T>> rss) {
         return rss.drop(1).foldl(rss.take(1), (r, t) -> r.build(this).build(t));
@@ -603,13 +630,14 @@ public interface Collection<T> {
         return map(fn).foldl(monoid.empty(), monoid::combine);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T, S> Collection<T> unfold(S seed, Function<S, Maybe<Tuple<T, S>>> f) {
         return (Collection<T>) f.apply(seed).foldl(
             (Collection<T>) List.<T>nil(),
             (nil, tuple) -> {
                 T val = tuple.getA().orElse(null);
                 S nextSeed = tuple.getB().orElse(null);
-                return (Collection<T>) List.of(val).concat(unfold(nextSeed, f));
+                return List.from(List.of(val).concat(unfold(nextSeed, f)));
             }
         );
     }

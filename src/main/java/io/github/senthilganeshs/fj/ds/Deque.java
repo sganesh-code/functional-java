@@ -5,6 +5,8 @@ import java.util.function.BiFunction;
 /**
  * A purely functional Double-Ended Queue (Deque).
  * Supports O(1) amortized access/removal from both ends.
+ * 
+ * @param <T> The type of elements in the deque.
  */
 public interface Deque<T> extends Collection<T> {
 
@@ -23,12 +25,6 @@ public interface Deque<T> extends Collection<T> {
         return from(Collection.super.map(fn));
     }
 
-    @Override
-    default Deque<T> filter(java.util.function.Predicate<T> pred) {
-        return from(Collection.super.filter(pred));
-    }
-
-
     static <R> Deque<R> nil() {
         return new BankersDeque<>(Stack.emptyStack(), Stack.emptyStack());
     }
@@ -36,6 +32,7 @@ public interface Deque<T> extends Collection<T> {
     @SafeVarargs
     static <R> Deque<R> of(R... values) {
         Deque<R> d = nil();
+        if (values == null) return d;
         for (R val : values) {
             d = d.pushBack(val);
         }
@@ -63,20 +60,12 @@ public interface Deque<T> extends Collection<T> {
 
         @Override
         public Maybe<Tuple<T, Deque<T>>> popFront() {
-            return (Maybe<Tuple<T, Deque<T>>>) front.head().flatMap(h -> 
-                front.tail().map(t -> 
-                    Tuple.of(h, check(t, back))
-                )
-            );
+            return front.head().map(h -> Tuple.of(h, check(front.tail().orElse(Stack.emptyStack()), back)));
         }
 
         @Override
         public Maybe<Tuple<T, Deque<T>>> popBack() {
-            return (Maybe<Tuple<T, Deque<T>>>) back.head().flatMap(h -> 
-                back.tail().map(t -> 
-                    Tuple.of(h, check(front, t))
-                )
-            );
+            return back.head().map(h -> Tuple.of(h, check(front, back.tail().orElse(Stack.emptyStack()))));
         }
 
         private Deque<T> check(Stack<T> f, Stack<T> b) {
@@ -84,16 +73,13 @@ public interface Deque<T> extends Collection<T> {
             int bLen = b.length();
             if (fLen == 0 && bLen > 0) {
                 int mid = bLen / 2;
-                // b is [last, ..., mid, ..., first]
-                // front should get [first, ..., mid-1]
-                // back should stay [last, ..., mid]
-                Stack<T> newF = (Stack<T>) b.drop(mid).reverse();
-                Stack<T> newB = (Stack<T>) b.take(mid);
+                Stack<T> newF = b.drop(mid).reverse();
+                Stack<T> newB = b.take(mid);
                 return new BankersDeque<>(newF, newB);
             } else if (bLen == 0 && fLen > 0) {
                 int mid = fLen / 2;
-                Stack<T> newB = (Stack<T>) f.drop(mid).reverse();
-                Stack<T> newF = (Stack<T>) f.take(mid);
+                Stack<T> newB = f.drop(mid).reverse();
+                Stack<T> newF = f.take(mid);
                 return new BankersDeque<>(newF, newB);
             }
             return new BankersDeque<>(f, b);
@@ -112,7 +98,7 @@ public interface Deque<T> extends Collection<T> {
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
             R frontRes = front.foldl(seed, fn);
-            return ((Stack<T>) back.reverse()).foldl(frontRes, fn);
+            return back.reverse().foldl(frontRes, fn);
         }
 
         @Override
@@ -120,6 +106,7 @@ public interface Deque<T> extends Collection<T> {
             return foldl("[", (r, t) -> r + (r.equals("[") ? "" : ",") + t) + "]";
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public boolean equals(Object other) {
             if (other == null) return false;

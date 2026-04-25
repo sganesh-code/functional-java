@@ -3,19 +3,22 @@ package io.github.senthilganeshs.fj.ds;
 import java.util.function.BiFunction;
 
 /**
- * A purely functional Directed Graph implementation.
- * Represented as an Adjacency Map: {@code HashMap<V, Set<V>>}.
+ * A purely functional Graph interface using an Adjacency Map representation.
+ * 
+ * @param <V> The type of nodes in the graph.
  */
 public interface Graph<V extends Comparable<V>> extends Collection<V> {
 
     Graph<V> addNode(V node);
-
     Graph<V> addEdge(V from, V to);
-
     Set<V> nodes();
-
     Set<V> successors(V node);
 
+    static <R extends Comparable<R>> Graph<R> nil() {
+        return new AdjacencyMapGraph<>(HashMap.<R, Set<R>>nil());
+    }
+
+    @SuppressWarnings("unchecked")
     default List<V> bfs(V start) {
         List<V> result = List.nil();
         Set<V> visited = Set.emptyNatural();
@@ -27,12 +30,12 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
             if (t == null) break;
 
             V current = t.getA().orElse(null);
-            queue = (Queue<V>) t.getB().orElse(Queue.nil());
+            queue = t.getB().orElse(Queue.nil());
 
             if (visited.contains(current)) continue;
 
-            visited = (Set<V>) visited.build(current);
-            result = (List<V>) result.build(current);
+            visited = visited.build(current);
+            result = result.build(current);
 
             Set<V> neighbors = successors(current);
             final Queue<V> currentQueue = queue;
@@ -41,6 +44,7 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     default List<V> dfs(V start) {
         List<V> result = List.nil();
         Set<V> visited = Set.emptyNatural();
@@ -51,12 +55,12 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
             V current = top.orElse(null);
             if (current == null) break;
 
-            stack = (Stack<V>) stack.tail().orElse(Stack.emptyStack());
+            stack = stack.tail().orElse(Stack.emptyStack());
 
             if (visited.contains(current)) continue;
 
-            visited = (Set<V>) visited.build(current);
-            result = (List<V>) result.build(current);
+            visited = visited.build(current);
+            result = result.build(current);
 
             Set<V> neighbors = successors(current);
             final Stack<V> currentStack = stack;
@@ -68,28 +72,25 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
     /**
      * Performs a topological sort on the graph.
      * Returns Maybe.nothing() if the graph contains a cycle.
+     * 
+     * @return Some(list) of nodes in topological order, or Nothing if cycle found.
      */
+    @SuppressWarnings("unchecked")
     default Maybe<List<V>> topologicalSort() {
-        // Since pure functional DFS for topo sort is complex for the Java compiler,
-        // we'll use Kahn's algorithm or a slightly more robust DFS state management.
-        
-        // 1. Calculate in-degrees
-        final HashMap<V, Integer> initialInDegree = nodes().foldl(HashMap.nil(), (acc, n) -> 
-            successors(n).foldl(((HashMap<V, Integer>)acc).put(n, acc.get(n).orElse(0)), (accInner, succ) -> {
-                int count = accInner.get(succ).orElse(0);
-                return accInner.put(succ, count + 1);
-            })
-        );
+        HashMap<V, Integer> inDegree = nodes().foldl(HashMap.<V, Integer>nil(), (acc, n) -> {
+            HashMap<V, Integer> next = acc.put(n, acc.get(n).orElse(0));
+            return successors(n).foldl(next, (accInner, succ) -> 
+                accInner.put(succ, accInner.get(succ).orElse(0) + 1));
+        });
 
-        // 2. Initial queue with 0 in-degree nodes
-        Queue<V> initialQueue = nodes().foldl(Queue.nil(), (q, n) -> 
-            initialInDegree.get(n).orElse(0) == 0 ? (Queue<V>) q.build(n) : q
-        );
+        Queue<V> queue = nodes().foldl(Queue.<V>nil(), (q, n) -> 
+            inDegree.get(n).orElse(0) == 0 ? (Queue<V>) q.build(n) : q);
 
         List<V> result = List.nil();
         int count = 0;
-        HashMap<V, Integer> currentInDegree = initialInDegree;
-        Queue<V> currentQueue = initialQueue;
+        
+        HashMap<V, Integer> currentInDegree = inDegree;
+        Queue<V> currentQueue = queue;
 
         while (true) {
             Maybe<Tuple<V, Queue<V>>> dequeued = currentQueue.dequeue();
@@ -98,15 +99,13 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
 
             V u = t.getA().orElse(null);
             currentQueue = t.getB().orElse(Queue.nil());
-            result = (List<V>) result.build(u);
+            result = result.build(u);
             count++;
 
             Set<V> neighbors = successors(u);
             final HashMap<V, Integer> loopInDegree = currentInDegree;
             final Queue<V> loopQueue = currentQueue;
             
-            // This is tricky to do purely inside a loop without mutation of the outer local variables.
-            // We'll use a custom record or Tuple to carry the state through foldl.
             Tuple<HashMap<V, Integer>, Queue<V>> state = neighbors.foldl(Tuple.of(loopInDegree, loopQueue), (acc, v) -> {
                 HashMap<V, Integer> d = (HashMap<V, Integer>) acc.getA().orElse(null);
                 Queue<V> q = (Queue<V>) acc.getB().orElse(null);
@@ -120,14 +119,7 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
             currentQueue = state.getB().orElse(null);
         }
 
-        if (count != nodes().length()) {
-            return Maybe.nothing(); // Cycle!
-        }
-        return Maybe.some(result);
-    }
-
-    static <V extends Comparable<V>> Graph<V> nil() {
-        return new AdjacencyMapGraph<V>(HashMap.nil());
+        return count == nodes().length() ? Maybe.some(result) : Maybe.nothing();
     }
 
     final class AdjacencyMapGraph<V extends Comparable<V>> implements Graph<V> {
@@ -139,8 +131,8 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
 
         @Override
         public Graph<V> addNode(V node) {
-            return ((Maybe<Graph<V>>) adjacencyMap.get(node).map(__ -> (Graph<V>) this))
-                .orElse(new AdjacencyMapGraph<>(adjacencyMap.put(node, Set.emptyNatural())));
+            if (adjacencyMap.get(node).isSome()) return this;
+            return new AdjacencyMapGraph<>(adjacencyMap.put(node, Set.emptyNatural()));
         }
 
         @Override
@@ -148,7 +140,7 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
             Graph<V> g = addNode(from).addNode(to);
             HashMap<V, Set<V>> map = ((AdjacencyMapGraph<V>) g).adjacencyMap;
             Set<V> neighbors = map.get(from).orElse(Set.emptyNatural());
-            return new AdjacencyMapGraph<>(map.put(from, (Set<V>) neighbors.build(to)));
+            return new AdjacencyMapGraph<>(map.put(from, neighbors.build(to)));
         }
 
         @Override
@@ -173,23 +165,27 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
 
         @Override
         public <R> R foldl(R seed, BiFunction<R, V, R> fn) {
-            return adjacencyMap.foldl(seed, (acc, entry) -> fn.apply(acc, entry.key()));
+            return nodes().foldl(seed, fn);
         }
 
         @Override
         public String toString() {
-            return adjacencyMap.foldl("Graph{", (acc, entry) -> 
-                acc + (acc.equals("Graph{") ? "" : ", ") + entry.key() + "->" + entry.value()
-            ) + "}";
+            return "Graph" + adjacencyMap.toString();
         }
 
+        @Override
+        public int length() {
+            return nodes().length();
+        }
+
+        @SuppressWarnings("unchecked")
         @Override
         public boolean equals(Object other) {
             if (other == null) return false;
             if (other == this) return true;
             if (!(other instanceof Graph)) return false;
             Graph<?> o = (Graph<?>) other;
-            return nodes().equals(o.nodes());
+            return adjacencyMap.equals(((AdjacencyMapGraph<?>) o).adjacencyMap);
         }
 
         @Override

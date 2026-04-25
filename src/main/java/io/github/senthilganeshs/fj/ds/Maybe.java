@@ -65,14 +65,16 @@ public interface Maybe<T> extends Collection<T> {
         throw exceptionSupplier.get();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default <R> Maybe<R> map(java.util.function.Function<T, R> fn) {
-        return (Maybe<R>) Collection.super.map(fn);
+        return isSome() ? Maybe.some(fn.apply(orElse(null))) : Maybe.nothing();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default Maybe<T> filter(java.util.function.Predicate<T> pred) {
-        return (Maybe<T>) Collection.super.filter(pred);
+        return (isSome() && pred.test(orElse(null))) ? this : Maybe.nothing();
     }
 
     default <R> Maybe<R> safeCast(Class<R> clazz) {

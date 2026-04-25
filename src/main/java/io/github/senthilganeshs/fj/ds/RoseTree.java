@@ -6,11 +6,19 @@ import java.util.function.Function;
 /**
  * A purely functional Rose Tree (N-ary Tree).
  * Each node has a value and a list of children.
+ * 
+ * @param <T> The type of element.
  */
 public interface RoseTree<T> extends Collection<T> {
 
     T value();
     List<RoseTree<T>> children();
+
+    @SuppressWarnings("unchecked")
+    @Override
+    default <R> RoseTree<R> map(Function<T, R> fn) {
+        return (RoseTree<R>) RoseTree.of(fn.apply(value()), children().map(child -> child.map(fn)));
+    }
 
     static <R> RoseTree<R> of(R value) {
         return new RoseTreeImpl<>(value, List.nil());
@@ -41,31 +49,18 @@ public interface RoseTree<T> extends Collection<T> {
 
         @Override
         public <R> Collection<R> empty() {
-            // A Rose Tree must have at least one node (the root), 
-            // so 'empty' is tricky. We'll return nil() List or similar 
-            // if we need to participate in Collection operations that build.
             return List.nil();
         }
 
         @Override
         public Collection<T> build(T input) {
-            // Adding a child to the root
             return new RoseTreeImpl<>(value, children.build(RoseTree.of(input)));
         }
 
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-            // Pre-order traversal
             R res = fn.apply(seed, value);
-            return children.foldl(res, (r, child) -> child.foldl(r, fn));
-        }
-
-        @Override
-        public <R> Collection<R> map(Function<T, R> fn) {
-            return new RoseTreeImpl<>(
-                fn.apply(value), 
-                (List<RoseTree<R>>) children.map(child -> (RoseTree<R>) child.map(fn))
-            );
+            return children.foldl(res, (acc, child) -> child.foldl(acc, fn));
         }
 
         @Override

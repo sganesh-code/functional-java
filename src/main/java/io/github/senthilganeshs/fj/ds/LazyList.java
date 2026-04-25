@@ -3,41 +3,44 @@ package io.github.senthilganeshs.fj.ds;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
+/**
+ * A purely functional Lazy List with deferred evaluation.
+ * 
+ * @param <T> The type of elements.
+ */
 public interface LazyList<T> extends List<T> {
 
     Maybe<T> head();
     LazyList<T> tail();
 
     @Override
-    default List<T> build(T input) {
-        return (List<T>) concat(LazyList.of(input));
-    }
-
-    @Override
     default Tuple<Maybe<T>, List<T>> unzip() {
         return Tuple.of(head(), tail());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default <R> List<Tuple<T, R>> zip(List<R> other) {
         T h = head().orElse(null);
         if (h == null) return LazyList.nil();
         
         Tuple<Maybe<R>, List<R>> otherUnzipped = other.unzip();
-        R oh = ((Maybe<R>) otherUnzipped.getA().orElse(Maybe.nothing())).orElse(null);
+        R oh = ((Maybe<R>) (Maybe<?>) otherUnzipped.getA().orElse(Maybe.nothing())).orElse(null);
         if (oh == null) return LazyList.nil();
         
         return cons(Tuple.of(h, oh), () -> (LazyList<Tuple<T, R>>) tail().zip(otherUnzipped.getB().orElse(List.nil())));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default <R> LazyList<R> map(java.util.function.Function<T, R> fn) {
-        return ((Maybe<LazyList<R>>) head().map(h -> cons(fn.apply(h), () -> tail().map(fn)))).orElse((LazyList<R>) nil());
+        return ((Maybe<LazyList<R>>) (Maybe<?>) head().map(h -> cons(fn.apply(h), () -> tail().map(fn)))).orElse(nil());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default LazyList<T> filter(java.util.function.Predicate<T> pred) {
-        return ((Maybe<LazyList<T>>) head().map(h -> {
+        return ((Maybe<LazyList<T>>) (Maybe<?>) head().map(h -> {
             if (pred.test(h)) {
                 return cons(h, () -> tail().filter(pred));
             } else {
@@ -46,21 +49,24 @@ public interface LazyList<T> extends List<T> {
         })).orElse(this);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default LazyList<T> take(int n) {
         if (n <= 0) return nil();
-        return ((Maybe<LazyList<T>>) head().map(h -> cons(h, () -> tail().take(n - 1)))).orElse(this);
+        return ((Maybe<LazyList<T>>) (Maybe<?>) head().map(h -> cons(h, () -> tail().take(n - 1)))).orElse(this);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default LazyList<T> drop(int n) {
         if (n <= 0) return this;
-        return ((Maybe<LazyList<T>>) head().map(__ -> tail().drop(n - 1))).orElse(this);
+        return ((Maybe<LazyList<T>>) (Maybe<?>) head().map(__ -> tail().drop(n - 1))).orElse(this);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default Collection<T> concat(Collection<T> other) {
-        return ((Maybe<LazyList<T>>) head().map(h -> cons(h, () -> (LazyList<T>) tail().concat(other)))).orElse((LazyList<T>) other);
+        return ((Maybe<LazyList<T>>) (Maybe<?>) head().map(h -> cons(h, () -> (LazyList<T>) tail().concat(other)))).orElse((LazyList<T>) other);
     }
 
     static <R> LazyList<R> nil() {
@@ -71,29 +77,29 @@ public interface LazyList<T> extends List<T> {
         return new NonEmpty<>(head, tail);
     }
 
-    @SafeVarargs
-    static <R> LazyList<R> of(R... values) {
-        LazyList<R> l = nil();
-        for (int i = values.length - 1; i >= 0; i--) {
-            R val = values[i];
-            LazyList<R> finalL = l;
-            l = cons(val, () -> finalL);
-        }
-        return l;
+    static <R> LazyList<R> iterate(R seed, java.util.function.UnaryOperator<R> f) {
+        return cons(seed, () -> iterate(f.apply(seed), f));
     }
 
-    static <R> LazyList<R> iterate(R seed, java.util.function.UnaryOperator<R> fn) {
-        return cons(seed, () -> iterate(fn.apply(seed), fn));
+    @SafeVarargs
+    static <R> LazyList<R> of(R... values) {
+        if (values == null || values.length == 0) return nil();
+        LazyList<R> res = nil();
+        for (int i = values.length - 1; i >= 0; i--) {
+            final R val = values[i];
+            final LazyList<R> tail = res;
+            res = cons(val, () -> tail);
+        }
+        return res;
     }
 
     final class NonEmpty<T> implements LazyList<T> {
         private final T head;
-        private final Supplier<LazyList<T>> tailSupplier;
-        private LazyList<T> evaluatedTail;
+        private final Supplier<LazyList<T>> tail;
 
         NonEmpty(T head, Supplier<LazyList<T>> tail) {
             this.head = head;
-            this.tailSupplier = tail;
+            this.tail = tail;
         }
 
         @Override
@@ -103,10 +109,7 @@ public interface LazyList<T> extends List<T> {
 
         @Override
         public LazyList<T> tail() {
-            if (evaluatedTail == null) {
-                evaluatedTail = tailSupplier.get();
-            }
-            return evaluatedTail;
+            return tail.get();
         }
 
         @Override
@@ -131,18 +134,17 @@ public interface LazyList<T> extends List<T> {
         }
 
         @Override
+        public List<T> build(T input) {
+            return cons(head, () -> (LazyList<T>) tail().build(input));
+        }
+
+        @Override
         public String toString() {
-            // toString is dangerous for infinite lists, so we limit it to 10
             StringBuilder sb = new StringBuilder("[");
-            
-            // We can use take(11) to see if there's more than 10 elements
-            // and foldl to build the string
             String content = take(10).foldl("", (r, t) -> r + (r.equals("") ? "" : ",") + t);
             sb.append(content);
             
-            // To check if there is an 11th element without isSome, we can try to take(11) 
-            // and see if it's longer than take(10), or just check if the 11th head exists
-            if (((Maybe<Boolean>) drop(10).head().map(h -> true)).orElse(false)) {
+            if (((Maybe<Boolean>) (Maybe<?>) drop(10).head().map(h -> true)).orElse(false)) {
                 sb.append(",...");
             }
             
@@ -152,6 +154,7 @@ public interface LazyList<T> extends List<T> {
     }
 
     final class Empty<T> implements LazyList<T> {
+
         @Override
         public Maybe<T> head() {
             return Maybe.nothing();
@@ -175,6 +178,11 @@ public interface LazyList<T> extends List<T> {
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
             return seed;
+        }
+
+        @Override
+        public int length() {
+            return 0;
         }
 
         @Override

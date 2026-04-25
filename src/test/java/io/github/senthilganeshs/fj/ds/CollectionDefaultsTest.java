@@ -73,7 +73,7 @@ public class CollectionDefaultsTest {
         Maybe<Integer> m2 = Maybe.some(2);
         Maybe<Integer> m3 = Maybe.some(3);
         
-        Collection<Integer> lifted = m1.liftA3(a -> (b, c) -> a + b + c, m2, m3);
+        Collection<Integer> lifted = m1.liftA3((Integer a) -> (Integer b) -> (Integer c) -> a + b + c, m2, m3);
         Assert.assertEquals(((Maybe<Integer>)lifted).orElse(0), Integer.valueOf(6));
     }
 
@@ -84,7 +84,7 @@ public class CollectionDefaultsTest {
         Maybe<Integer> m3 = Maybe.some(3);
         Maybe<Integer> m4 = Maybe.some(4);
         
-        Collection<Integer> lifted = m1.liftA4(a -> b -> (c, d) -> a + b + c + d, m2, m3, m4);
+        Collection<Integer> lifted = m1.liftA4((Integer a) -> (Integer b) -> (Integer c) -> (Integer d) -> a + b + c + d, m2, m3, m4);
         Assert.assertEquals(((Maybe<Integer>)lifted).orElse(0), Integer.valueOf(10));
     }
 

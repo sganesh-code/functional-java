@@ -19,7 +19,7 @@ public interface Tuple<A, B> {
     Maybe<B> getB();
 
     default <C, D> Tuple<C, D> bimap (final Function<A, C> fa, final Function<B, D> fb) {
-        return Tuple.of(((Maybe<C>)getA().map(fa)).orElse(null), ((Maybe<D>)getB().map(fb)).orElse(null));
+        return Tuple.of(getA().map(fa).orElse(null), getB().map(fb).orElse(null));
     }
 
     default Tuple<B, A> swap () {

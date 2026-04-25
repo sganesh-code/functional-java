@@ -2,6 +2,11 @@ package io.github.senthilganeshs.fj.ds;
 
 import java.util.function.BiFunction;
 
+/**
+ * A purely functional Queue (FIFO).
+ * 
+ * @param <T> The type of elements.
+ */
 public interface Queue<T> extends Collection<T> {
 
     Maybe<Tuple<T, Queue<T>>> dequeue();
@@ -11,14 +16,10 @@ public interface Queue<T> extends Collection<T> {
         return (Queue<R>) c.foldl(Queue.<R>nil(), (q, r) -> (Queue<R>) q.build(r));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default <R> Queue<R> map(java.util.function.Function<T, R> fn) {
         return from(Collection.super.map(fn));
-    }
-
-    @Override
-    default Queue<T> filter(java.util.function.Predicate<T> pred) {
-        return from(Collection.super.filter(pred));
     }
 
     static <R> Queue<R> nil() {
@@ -28,19 +29,31 @@ public interface Queue<T> extends Collection<T> {
     @SafeVarargs
     static <R> Queue<R> of(R... values) {
         Queue<R> q = nil();
-        for (R v : values) {
-            q = (Queue<R>) q.build(v);
-        }
+        if (values == null) return q;
+        for (R val : values) q = (Queue<R>) q.build(val);
         return q;
     }
 
     final class BankersQueue<T> implements Queue<T> {
         private final Stack<T> front;
-        private final Stack<T> rear;
+        private final Stack<T> back;
 
-        BankersQueue(Stack<T> front, Stack<T> rear) {
+        BankersQueue(Stack<T> front, Stack<T> back) {
             this.front = front;
-            this.rear = rear;
+            this.back = back;
+        }
+
+        @Override
+        public Maybe<Tuple<T, Queue<T>>> dequeue() {
+            return front.head().map(h -> Tuple.of(h, check(front.tail().orElse(Stack.emptyStack()), back)));
+        }
+
+        private Queue<T> check(Stack<T> f, Stack<T> b) {
+            if (f.length() == 0) {
+                // To move back to front, we must reverse LIFO back to get FIFO front
+                return new BankersQueue<>(b.reverse(), Stack.emptyStack());
+            }
+            return new BankersQueue<>(f, b);
         }
 
         @Override
@@ -50,46 +63,34 @@ public interface Queue<T> extends Collection<T> {
 
         @Override
         public Collection<T> build(T input) {
-            return check(front, (Stack<T>) rear.build(input));
+            return check(front, (Stack<T>) back.build(input));
         }
 
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-            R frontRes = front.foldl(seed, fn);
-            return rear.reverse().foldl(frontRes, fn);
-        }
-
-        @Override
-        public Maybe<Tuple<T, Queue<T>>> dequeue() {
-            return (Maybe<Tuple<T, Queue<T>>>) front.head().flatMap(h -> 
-                front.tail().map(t -> 
-                    Tuple.of(h, check(t, rear))
-                )
-            );
-        }
-        
-        // Internal balance check
-        private Queue<T> check(Stack<T> f, Stack<T> r) {
-            return ((Maybe<Queue<T>>) f.head()
-                .map(h -> (Queue<T>) new BankersQueue<>(f, r)))
-                .orElse(new BankersQueue<>((Stack<T>) r.reverse(), Stack.emptyStack()));
+            R res = front.foldl(seed, fn);
+            return back.reverse().foldl(res, fn);
         }
 
         @Override
         public String toString() {
             return foldl("[", (r, t) -> r + (r.equals("[") ? "" : ",") + t) + "]";
         }
-        
+
+        @SuppressWarnings("unchecked")
         @Override
         public boolean equals(Object other) {
             if (other == null) return false;
             if (other == this) return true;
             if (!(other instanceof Queue)) return false;
-            Queue<T> qOther = (Queue<T>) other;
-            if (this.length() != qOther.length()) return false;
-            
-            // This is a bit slow but correct for now
-            return this.toString().equals(qOther.toString());
+            Queue<?> o = (Queue<?>) other;
+            if (o.length() != length()) return false;
+            return this.toString().equals(o.toString());
+        }
+
+        @Override
+        public int hashCode() {
+            return toString().hashCode();
         }
     }
 }

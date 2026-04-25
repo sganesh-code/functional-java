@@ -1,5 +1,11 @@
 package io.github.senthilganeshs.fj.ds;
 
+/**
+ * A purely functional Map interface.
+ * 
+ * @param <K> Key type.
+ * @param <V> Value type.
+ */
 public interface Map<K extends Comparable<K>, V> {
 
     record Entry<K extends Comparable<K>, V>(K key, V value) implements Comparable<Entry<K, V>> {
@@ -7,25 +13,34 @@ public interface Map<K extends Comparable<K>, V> {
         public int compareTo(Entry<K, V> o) {
             return key.compareTo(o.key);
         }
+        
+        @Override
+        public String toString() {
+            return key + "->" + value;
+        }
     }
+
     Maybe<V> lookup(K key);
+
     Map<K, V> put(K key, V value);
 
     Collection<K> keys();
+
     Collection<V> values();
-    Collection<Map.Entry<K, V>> entries();
 
-    final class BinaryTreeMap <K extends Comparable<K>, V> implements Map<K, V> {
+    Collection<Entry<K, V>> entries();
 
-        private final Set<Map.Entry<K, V>> entries;
+    final class BinaryTreeMap<K extends Comparable<K>, V> implements Map<K, V> {
+        private final Set<Entry<K, V>> entries;
 
-        BinaryTreeMap(Set<Map.Entry<K, V>> entries) {
+        BinaryTreeMap(Set<Entry<K, V>> entries) {
             this.entries = entries;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public Maybe<V> lookup(K key) {
-            return (Maybe<V>) entries.find(e -> e.key.compareTo(key) == 0).map(e ->  e.value);
+            return (Maybe<V>) (Maybe<?>) entries.find(e -> e.key.compareTo(key) == 0).map(e -> e.value);
         }
 
         @Override

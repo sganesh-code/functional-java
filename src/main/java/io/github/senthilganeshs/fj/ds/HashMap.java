@@ -1,14 +1,18 @@
 package io.github.senthilganeshs.fj.ds;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.function.BiFunction;
 
 /**
- * A purely functional HashMap implemented using a Hash Array Mapped Trie (HAMT).
- * Provides near O(1) performance for lookups and updates.
+ * A persistent Hash Array Mapped Trie (HAMT) implementation.
+ * 
+ * @param <K> The type of keys.
+ * @param <V> The type of values.
  */
 public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
+
+    int BITS = 5;
+    int WIDTH = 1 << BITS;
+    int MASK = WIDTH - 1;
 
     record Entry<K, V>(K key, V value) {}
 
@@ -18,11 +22,16 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
 
     HashMap<K, V> remove(K key);
 
+    int size();
+
+    @SuppressWarnings("unchecked")
     static <K, V> HashMap<K, V> nil() {
-        return new HAMT<>(null, 0);
+        return (HashMap<K, V>) HAMT.EMPTY;
     }
 
     final class HAMT<K, V> implements HashMap<K, V> {
+        static final HashMap<?, ?> EMPTY = new HAMT<>(null, 0);
+
         private final Node root;
         private final int size;
 
@@ -32,20 +41,25 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
         }
 
         @Override
+        public int size() {
+            return size;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
         public Maybe<V> get(K key) {
             if (root == null) return Maybe.nothing();
             return root.get(0, key.hashCode(), key);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public HashMap<K, V> put(K key, V value) {
             Node newRoot = (root == null) 
                 ? new LeafNode(key.hashCode(), key, value)
                 : root.put(0, key.hashCode(), key, value);
             
-            // This size calculation is a bit naive if the key already exists
-            // We can check if the key already exists using map().orElse()
-            int newSize = size + ((Maybe<Integer>) get(key).map(v -> 0)).orElse(1);
+            int newSize = size + (get(key).map(v -> 0)).orElse(1);
             return new HAMT<>(newRoot, newSize);
         }
 
@@ -67,29 +81,32 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
             return put(input.key, input.value);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <R> R foldl(R seed, BiFunction<R, Entry<K, V>, R> fn) {
             if (root == null) return seed;
-            R acc = seed;
-            Deque<Node> stack = new ArrayDeque<>();
-            stack.push(root);
-            while (!stack.isEmpty()) {
-                Node curr = stack.pop();
-                if (curr instanceof IndexedNode) {
-                    IndexedNode in = (IndexedNode) curr;
-                    for (int i = in.children.length - 1; i >= 0; i--) {
-                        stack.push(in.children[i]);
-                    }
-                } else {
-                    acc = curr.foldl(acc, fn);
-                }
-            }
-            return acc;
+            return root.foldl(seed, fn);
         }
 
         @Override
         public String toString() {
             return foldl("{", (r, e) -> r + (r.equals("{") ? "" : ",") + e.key + "->" + e.value) + "}";
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public boolean equals(Object other) {
+            if (other == null) return false;
+            if (other == this) return true;
+            if (!(other instanceof HashMap)) return false;
+            HashMap<K, V> o = (HashMap<K, V>) other;
+            if (o.size() != size) return false;
+            return foldl(true, (acc, entry) -> acc && o.get(entry.key()).map(v -> v.equals(entry.value())).orElse(false));
+        }
+
+        @Override
+        public int hashCode() {
+            return toString().hashCode();
         }
     }
 
@@ -111,6 +128,7 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
             this.value = value;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <K, V> Maybe<V> get(int shift, int hash, K key) {
             if (this.hash == hash && this.key.equals(key)) {
@@ -119,6 +137,7 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
             return Maybe.nothing();
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <K, V> Node put(int shift, int hash, K key, V value) {
             if (this.hash == hash) {
@@ -128,7 +147,6 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
                     return new CollisionNode(hash, List.of(new Entry<>((K)this.key, (V)this.value), new Entry<>(key, value)));
                 }
             }
-            // Deeper level
             return IndexedNode.fromLeaf(shift, this).put(shift, hash, key, value);
         }
 
@@ -138,6 +156,7 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
             return this;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <K, V, R> R foldl(R seed, BiFunction<R, Entry<K, V>, R> fn) {
             return fn.apply(seed, new Entry<>((K) key, (V) value));
@@ -153,17 +172,19 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
             this.entries = entries;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <K, V> Maybe<V> get(int shift, int hash, K key) {
             if (this.hash != hash) return Maybe.nothing();
-            return (Maybe<V>) entries.filter(e -> e.key().equals(key)).map(Entry::value).find(v -> true);
+            return (Maybe<V>) (Maybe<?>) entries.filter(e -> e.key().equals(key)).map(Entry::value).find(v -> true);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <K, V> Node put(int shift, int hash, K key, V value) {
             if (this.hash == hash) {
-                List<Entry<?, ?>> filtered = (List<Entry<?, ?>>) entries.filter(e -> !e.key().equals(key));
-                return new CollisionNode(hash, (List<Entry<?, ?>>) filtered.build(new Entry<>(key, value)));
+                List<Entry<?, ?>> filtered = entries.filter(e -> !e.key().equals(key));
+                return new CollisionNode(hash, filtered.build(new Entry<>(key, value)));
             }
             return IndexedNode.fromNode(shift, this).put(shift, hash, key, value);
         }
@@ -171,7 +192,7 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
         @Override
         public <K, V> Node remove(int shift, int hash, K key) {
             if (this.hash != hash) return this;
-            List<Entry<?, ?>> filtered = (List<Entry<?, ?>>) entries.filter(e -> !e.key().equals(key));
+            List<Entry<?, ?>> filtered = entries.filter(e -> !e.key().equals(key));
             if (filtered.length() == 0) return null;
             if (filtered.length() == 1) {
                 Entry<?, ?> e = filtered.foldl(null, (acc, entry) -> entry);
@@ -180,86 +201,87 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
             return new CollisionNode(hash, filtered);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <K, V, R> R foldl(R seed, BiFunction<R, Entry<K, V>, R> fn) {
-            return (R) entries.foldl(seed, (acc, e) -> fn.apply((R) acc, (Entry<K, V>) e));
+            return entries.foldl(seed, (acc, e) -> fn.apply(acc, (Entry<K, V>) e));
         }
     }
 
     final class IndexedNode implements Node {
         private final int bitmap;
-        private final Node[] children;
+        private final Node[] nodes;
 
-        IndexedNode(int bitmap, Node[] children) {
+        IndexedNode(int bitmap, Node[] nodes) {
             this.bitmap = bitmap;
-            this.children = children;
+            this.nodes = nodes;
         }
 
         static IndexedNode fromLeaf(int shift, LeafNode leaf) {
-            int bit = 1 << ((leaf.hash >>> shift) & 0x1f);
+            int hash = leaf.hash;
+            int bit = 1 << ((hash >> shift) & MASK);
             return new IndexedNode(bit, new Node[]{leaf});
         }
 
         static IndexedNode fromNode(int shift, Node node) {
-            int hash;
-            if (node instanceof LeafNode) hash = ((LeafNode)node).hash;
-            else if (node instanceof CollisionNode) hash = ((CollisionNode)node).hash;
-            else return null; // Should not happen
-            
-            int bit = 1 << ((hash >>> shift) & 0x1f);
+            int hash = (node instanceof CollisionNode) ? ((CollisionNode)node).hash : ((LeafNode)node).hash;
+            int bit = 1 << ((hash >> shift) & MASK);
             return new IndexedNode(bit, new Node[]{node});
         }
 
         @Override
         public <K, V> Maybe<V> get(int shift, int hash, K key) {
-            int bit = 1 << ((hash >>> shift) & 0x1f);
+            int bit = 1 << ((hash >> shift) & MASK);
             if ((bitmap & bit) == 0) return Maybe.nothing();
             int index = Integer.bitCount(bitmap & (bit - 1));
-            return children[index].get(shift + 5, hash, key);
+            return nodes[index].get(shift + BITS, hash, key);
         }
 
         @Override
         public <K, V> Node put(int shift, int hash, K key, V value) {
-            int bit = 1 << ((hash >>> shift) & 0x1f);
+            int bit = 1 << ((hash >> shift) & MASK);
             int index = Integer.bitCount(bitmap & (bit - 1));
             if ((bitmap & bit) != 0) {
-                Node newChild = children[index].put(shift + 5, hash, key, value);
-                Node[] newChildren = children.clone();
-                newChildren[index] = newChild;
-                return new IndexedNode(bitmap, newChildren);
+                Node child = nodes[index];
+                Node newChild = child.put(shift + BITS, hash, key, value);
+                if (newChild == child) return this;
+                Node[] newNodes = nodes.clone();
+                newNodes[index] = newChild;
+                return new IndexedNode(bitmap, newNodes);
             } else {
-                Node[] newChildren = new Node[children.length + 1];
-                System.arraycopy(children, 0, newChildren, 0, index);
-                newChildren[index] = new LeafNode(hash, key, value);
-                System.arraycopy(children, index, newChildren, index + 1, children.length - index);
-                return new IndexedNode(bitmap | bit, newChildren);
+                Node[] newNodes = new Node[nodes.length + 1];
+                System.arraycopy(nodes, 0, newNodes, 0, index);
+                newNodes[index] = new LeafNode(hash, key, value);
+                System.arraycopy(nodes, index, newNodes, index + 1, nodes.length - index);
+                return new IndexedNode(bitmap | bit, newNodes);
             }
         }
 
         @Override
         public <K, V> Node remove(int shift, int hash, K key) {
-            int bit = 1 << ((hash >>> shift) & 0x1f);
+            int bit = 1 << ((hash >> shift) & MASK);
             if ((bitmap & bit) == 0) return this;
             int index = Integer.bitCount(bitmap & (bit - 1));
-            Node newChild = children[index].remove(shift + 5, hash, key);
-            if (newChild == children[index]) return this;
+            Node child = nodes[index];
+            Node newChild = child.remove(shift + BITS, hash, key);
+            if (newChild == child) return this;
             if (newChild == null) {
-                if (children.length == 1) return null;
-                Node[] newChildren = new Node[children.length - 1];
-                System.arraycopy(children, 0, newChildren, 0, index);
-                System.arraycopy(children, index + 1, newChildren, index, children.length - index - 1);
-                return new IndexedNode(bitmap ^ bit, newChildren);
+                if (nodes.length == 1) return null;
+                Node[] newNodes = new Node[nodes.length - 1];
+                System.arraycopy(nodes, 0, newNodes, 0, index);
+                System.arraycopy(nodes, index + 1, newNodes, index, nodes.length - index - 1);
+                return new IndexedNode(bitmap & ~bit, newNodes);
             }
-            Node[] newChildren = children.clone();
-            newChildren[index] = newChild;
-            return new IndexedNode(bitmap, newChildren);
+            Node[] newNodes = nodes.clone();
+            newNodes[index] = newChild;
+            return new IndexedNode(bitmap, newNodes);
         }
 
         @Override
         public <K, V, R> R foldl(R seed, BiFunction<R, Entry<K, V>, R> fn) {
             R res = seed;
-            for (Node child : children) {
-                res = child.foldl(res, fn);
+            for (Node node : nodes) {
+                res = node.foldl(res, fn);
             }
             return res;
         }

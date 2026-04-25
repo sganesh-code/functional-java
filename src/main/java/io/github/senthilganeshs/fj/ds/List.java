@@ -7,6 +7,11 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * A purely functional Linked List (Snoc-list style).
+ * 
+ * @param <T> The type of elements in the list.
+ */
 public interface List<T> extends Collection<T> {
     
     @Override List<T> build(final T input);
@@ -15,46 +20,55 @@ public interface List<T> extends Collection<T> {
 
     <R> List<Tuple<T, R>> zip(List<R> other);
 
+    @SuppressWarnings("unchecked")
     @Override
     default <R> List<R> map(Function<T, R> fn) {
         return from(Collection.super.map(fn));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default <R> Collection<R> flatMap(Function<T, Collection<R>> fn) {
         return Collection.super.flatMap(fn);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default List<T> filter(Predicate<T> pred) {
         return from(Collection.super.filter(pred));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default List<T> take(int n) {
         return from(Collection.super.take(n));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default List<T> drop(int n) {
         return from(Collection.super.drop(n));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default List<T> reverse() {
         return from(Collection.super.reverse());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default <R> List<R> mapMaybe(Function<T, Maybe<R>> fn) {
         return from(Collection.super.mapMaybe(fn));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default List<T> takeWhile(Predicate<T> pred) {
         return from(Collection.super.takeWhile(pred));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default List<T> dropWhile(Predicate<T> pred) {
         return from(Collection.super.dropWhile(pred));
@@ -64,8 +78,9 @@ public interface List<T> extends Collection<T> {
         return list.stream().reduce(nil(), (rs, r) ->rs.build(r), (r1, r2) -> r2);
     }
 
+    @SuppressWarnings("unchecked")
     public static <R> List<R> from (final Collection<R> collection) {
-        return collection.foldl(nil(), (list, r) -> (List<R>) list.build(r));
+        return (List<R>) collection.foldl(nil(), (list, r) -> list.build(r));
     }
 
     static <R> Collection<R> emptyQueue() {
@@ -87,7 +102,7 @@ public interface List<T> extends Collection<T> {
         return list;
     }
     
-    static final List<Void> EMPTY = new EmptyList<Void>();
+    static final List<Void> EMPTY = new EmptyList<>();
     
     @SuppressWarnings("unchecked")
     public static<R> List<R> nil() {
@@ -117,18 +132,18 @@ public interface List<T> extends Collection<T> {
 
         @Override
         public Tuple<Maybe<T>, List<T>> unzip() {
-            return Tuple.of();
+            return Tuple.of(Maybe.nothing(), nil());
         }
 
 
         @Override
         public <R> List<Tuple<T, R>> zip(List<R> other) {
-            return List.of();
+            return List.nil();
         }
 
         @Override
         public String toString() {
-            return "";
+            return "[]";
         }
         
         @Override
@@ -142,11 +157,8 @@ public interface List<T> extends Collection<T> {
                 return false;
             if (other == this)
                 return true;
-            if (other instanceof EmptyList)
-                return true;
-            return false;
+            return other instanceof EmptyList;
         }
-        
     }
     
     final static class LinkedList<T> implements List<T> {
@@ -162,9 +174,10 @@ public interface List<T> extends Collection<T> {
         public <R> Collection<R> empty() {
             return nil();
         }
+
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-            java.util.Deque<T> stack = new java.util.ArrayDeque<>();
+            Deque<T> stack = new ArrayDeque<>();
             List<T> curr = this;
             while (curr instanceof LinkedList) {
                 LinkedList<T> ll = (LinkedList<T>) curr;
@@ -177,6 +190,7 @@ public interface List<T> extends Collection<T> {
             }
             return acc;
         }
+
         @Override
         public List<T> build(T input) {
             return cons(this, input);
@@ -190,7 +204,7 @@ public interface List<T> extends Collection<T> {
             }
             return Tuple.of(
                     first,
-                    (List<T>) head.drop(1).build(tail));
+                    head.drop(1).build(tail));
         }
 
         @Override
@@ -204,25 +218,28 @@ public interface List<T> extends Collection<T> {
              if (h.isNothing() || oh.isNothing()) return List.nil();
              
              List<Tuple<T, R>> rest = thisUnzipped.getB().orElse(List.nil()).zip(otherUnzipped.getB().orElse(List.nil()));
-             return (List<Tuple<T, R>>) List.of(Tuple.of(h.orElse(null), oh.orElse(null))).concat(rest);
+             return List.from(List.of(Tuple.of(h.orElse(null), oh.orElse(null))).concat(rest));
         }
 
         @Override
         public String toString() {
-            return head.foldl("[", (r, t) -> r + t + ",") + tail + "]";
+            return foldl("[", (r, t) -> r + (r.equals("[") ? "" : ",") + t) + "]";
         }
-        
+
+        @Override
+        public int hashCode() {
+            return toString().hashCode();
+        }
+
         @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public boolean equals(final Object other) {
             if (other == null) return false;
             if (other == this) return true;
-            
-            if (other instanceof LinkedList) {
-                LinkedList<T> llOther = (LinkedList<T>) other;
-                if (llOther.tail.equals(((LinkedList) other).tail)) {
-                    return llOther.head.equals(head);
-                }
+            if (other instanceof List) {
+                List<?> llOther = (List<?>) other;
+                if (llOther.length() != length()) return false;
+                return this.toString().equals(llOther.toString());
             }
             return false;
         }
