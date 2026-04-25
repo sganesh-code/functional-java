@@ -131,12 +131,7 @@ public interface Collection<T> {
     @SuppressWarnings("unchecked")
     default <R, S> Collection<S> zipWith(final BiFunction<T, R, S> fn, final List<R> other) {
         // We use the already implemented List.zip() logic
-        List<T> thisAsList;
-        if (this instanceof List) {
-            thisAsList = (List<T>) this;
-        } else {
-            thisAsList = foldl(List.<T>nil(), (l, t) -> (List<T>) l.build(t));
-        }
+        List<T> thisAsList = (this instanceof List) ? (List<T>) this : List.from(this);
         return (Collection<S>) thisAsList.zip(other).map(t -> fn.apply(t.getA().fromMaybe(null), t.getB().fromMaybe(null)));
     }
 

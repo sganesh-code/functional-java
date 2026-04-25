@@ -18,6 +18,10 @@ public interface List<T> extends Collection<T> {
         return list.stream().reduce(nil(), (rs, r) ->rs.build(r), (r1, r2) -> r2);
     }
 
+    public static <R> List<R> from (final Collection<R> collection) {
+        return collection.foldl(nil(), (list, r) -> (List<R>) list.build(r));
+    }
+
     static <R> Collection<R> emptyQueue() {
         return new EmptyList<>();
     }
