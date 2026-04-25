@@ -28,6 +28,34 @@ public interface Traversal<S, A> {
     }
 
     /**
+     * Composes this traversal with a prism.
+     */
+    default <B> Traversal<S, B> compose(Prism<A, B> other) {
+        return new Traversal<S, B>() {
+            @Override public Collection<B> getAll(S s) {
+                return Traversal.this.getAll(s).mapMaybe(other::getMaybe);
+            }
+            @Override public S modify(S s, Function<B, B> fn) {
+                return Traversal.this.modify(s, a -> other.modify(a, fn));
+            }
+        };
+    }
+
+    /**
+     * Composes this traversal with another traversal.
+     */
+    default <B> Traversal<S, B> compose(Traversal<A, B> other) {
+        return new Traversal<S, B>() {
+            @Override public Collection<B> getAll(S s) {
+                return Traversal.this.getAll(s).flatMap(other::getAll);
+            }
+            @Override public S modify(S s, Function<B, B> fn) {
+                return Traversal.this.modify(s, a -> other.modify(a, fn));
+            }
+        };
+    }
+
+    /**
      * Standard Traversal for any FJ Collection.
      */
     static <T> Traversal<Collection<T>, T> fromCollection() {

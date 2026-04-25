@@ -31,6 +31,20 @@ public interface Prism<S, A> {
         };
     }
 
+    /**
+     * Composes this prism with a traversal.
+     */
+    default <B> Traversal<S, B> compose(Traversal<A, B> other) {
+        return new Traversal<S, B>() {
+            @Override public Collection<B> getAll(S s) {
+                return Prism.this.getMaybe(s).map(other::getAll).orElse(List.nil());
+            }
+            @Override public S modify(S s, java.util.function.Function<B, B> fn) {
+                return Prism.this.modify(s, a -> other.modify(a, fn));
+            }
+        };
+    }
+
     static <S, A> Prism<S, A> of(Function<S, Maybe<A>> preview, Function<A, S> review) {
         return new Prism<S, A>() {
             @Override public Maybe<A> getMaybe(S s) { return preview.apply(s); }
