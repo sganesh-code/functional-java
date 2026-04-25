@@ -29,6 +29,7 @@ loadScripts(document, 'script');</script>
 <li><a href="io/github/senthilganeshs/fj/ds/package-summary.html">Package</a></li>
 <li>Class</li>
 <li><a href="overview-tree.html">Tree</a></li>
+<li><a href="deprecated-list.html">Deprecated</a></li>
 <li class="nav-bar-cell1-rev">Index</li>
 <li><a href="help-doc.html#index">Help</a></li>
 </ul>
@@ -493,9 +494,17 @@ loadScripts(document, 'script');</script>
 <dt><a href="io/github/senthilganeshs/fj/ds/Either.html#fromLeft(A)" class="member-name-link">fromLeft(A)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Maybe.html#fromMaybe(T)" class="member-name-link">fromMaybe(T)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="io/github/senthilganeshs/fj/ds/Maybe.html#orElse(T)"><code>Maybe.orElse(Object)</code></a> instead.</div>
+</div>
+</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Either.html#fromRight(B)" class="member-name-link">fromRight(B)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Use <a href="io/github/senthilganeshs/fj/ds/Either.html#orElse(B)"><code>Either.orElse(Object)</code></a> instead.</div>
+</div>
+</dd>
 </dl>
 <h2 class="title" id="I:G">G</h2>
 <dl class="index">
@@ -842,6 +851,30 @@ loadScripts(document, 'script');</script>
 <dt><a href="io/github/senthilganeshs/fj/ds/Set.html#order()" class="member-name-link">order()</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.html" title="interface in io.github.senthilganeshs.fj.ds">Set</a></dt>
 <dd>
 <div class="block">Returns the ordering strategy used by this set.</div>
+</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Either.html#orElse(B)" class="member-name-link">orElse(B)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a></dt>
+<dd>
+<div class="block">Returns the Right value if present, otherwise returns the provided default.</div>
+</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Maybe.html#orElse(T)" class="member-name-link">orElse(T)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a></dt>
+<dd>
+<div class="block">Returns the contained value if present, otherwise returns the provided default.</div>
+</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Either.html#orElseGet(java.util.function.Supplier)" class="member-name-link">orElseGet(Supplier&lt;? extends B&gt;)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a></dt>
+<dd>
+<div class="block">Returns the Right value if present, otherwise returns the result of the supplier.</div>
+</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Maybe.html#orElseGet(java.util.function.Supplier)" class="member-name-link">orElseGet(Supplier&lt;? extends T&gt;)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a></dt>
+<dd>
+<div class="block">Returns the contained value if present, otherwise returns the result of the supplier.</div>
+</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Either.html#orElseThrow(java.util.function.Supplier)" class="member-name-link">orElseThrow(Supplier&lt;? extends X&gt;)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a></dt>
+<dd>
+<div class="block">Returns the Right value if present, otherwise throws the exception from the supplier.</div>
+</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Maybe.html#orElseThrow(java.util.function.Supplier)" class="member-name-link">orElseThrow(Supplier&lt;? extends X&gt;)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a></dt>
+<dd>
+<div class="block">Returns the contained value if present, otherwise throws the exception from the supplier.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:P">P</h2>
