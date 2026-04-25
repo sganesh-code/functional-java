@@ -542,16 +542,25 @@ public interface Collection<T> {
     }
 
     /**
-     * Returns a new collection containing only unique elements.
+     * Returns a new collection containing only unique elements using standard equals.
      * 
      * @return A collection without duplicates.
      */
     @SuppressWarnings("unchecked")
     default Collection<T> distinct() {
-        java.util.Set<T> seen = new java.util.HashSet<>();
+        return distinct(Eq.fromEquals());
+    }
+
+    /**
+     * Returns a new collection containing only unique elements using the provided Eq strategy.
+     * 
+     * @param eq The equality strategy.
+     * @return A collection without duplicates.
+     */
+    @SuppressWarnings("unchecked")
+    default Collection<T> distinct(Eq<T> eq) {
         return foldl(empty(), (results, t) -> {
-            if (seen.contains(t)) return results;
-            seen.add(t);
+            if (results.any(existing -> eq.eq(existing, t))) return results;
             return results.build(t);
         });
     }

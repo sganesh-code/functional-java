@@ -1,62 +1,79 @@
 package io.github.senthilganeshs.fj.ds;
 
 import java.util.ArrayDeque;
-import java.util.Comparator;
 import java.util.Deque;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable<T> {
+/**
+ * A purely functional Set implementation using a self-balancing AVL Tree.
+ * 
+ * @param <T> The type of elements in the set.
+ */
+public interface Set<T> extends Collection<T> {
 
     @Override Set<T> build(final T value);
 
-    default Set<T> build (final T value, final Comparator<T> comparator) {
-        return build (value); //discard the comparator.        
-    }
-
     boolean contains(final T value);
+
+    /**
+     * Returns the ordering strategy used by this set.
+     * @return The Ord instance.
+     */
+    Ord<T> order();
 
     static <R extends Comparable<R>> Collection<R> sort(Collection<R> collection) {
         return of(collection).foldl(collection.empty(), (rs, t) -> rs.build(t));
     }
-       
-    Set<Integer> EMPTY = new Empty<>();
     
-    @SuppressWarnings("unchecked")
-    @Deprecated
     static <R extends Comparable<R>> Set<R> nil() {
-        return (Set<R>) EMPTY;
+        return empty(Ord.<R>natural());
     }
 
-    static <R extends Comparable<R>> Set<R> empty() {
-        return nil();
+    static <R> Set<R> empty(Ord<R> ord) {
+        return new Empty<>(ord);
+    }
+
+    static <R extends Comparable<R>> Set<R> emptyNatural() {
+        return empty(Ord.<R>natural());
     }
     
     static <R extends Comparable<R>> Set<R> of(final Collection<R> values) {
-        return values.foldl(nil(), (r, t) -> r.build(t));
+        return of(Ord.<R>natural(), values);
+    }
+
+    static <R> Set<R> of(Ord<R> ord, final Collection<R> values) {
+        return values.foldl(empty(ord), (r, t) -> r.build(t));
     }
     
     static <R extends Comparable<R>> Set<R> of(final java.util.Collection<R> values) {
-        Set<R> tree = nil();
+        return of(Ord.<R>natural(), values);
+    }
+
+    static <R> Set<R> of(Ord<R> ord, final java.util.Collection<R> values) {
+        Set<R> tree = empty(ord);
         for (final R value : values) {
             tree = tree.build(value);
         }
         return tree;
     }   
     
-    @SuppressWarnings("unchecked")
+    @SafeVarargs
     static <R extends Comparable<R>> Set<R> of(R... values) {
-        Set<R> tree = nil();
-        if (values == null || values.length == 0)
-            return tree;
-        
+        return of(Ord.<R>natural(), values);
+    }
+
+    @SafeVarargs
+    static <R> Set<R> of(Ord<R> ord, R... values) {
+        Set<R> tree = empty(ord);
+        if (values == null) return tree;
         for (final R value  : values) {
             tree = tree.build(value);            
         }
         return tree;
     }
 
-    interface AVLTree <T extends Comparable<T>> extends Set<T> {
+    interface AVLTree<T> extends Set<T> {
         
         @Override AVLTree<T> build(final T value);
 
@@ -71,16 +88,23 @@ public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable
         int height();
     }
    
-    final class NonEmpty<T extends Comparable<T>> implements AVLTree<T> {
+    final class NonEmpty<T> implements AVLTree<T> {
 
+        private final Ord<T> ord;
         private final AVLTree<T> right;
         private final AVLTree<T> left;
         private final T value;
 
-        NonEmpty (final T value, final AVLTree<T> left, final AVLTree<T> right) {
+        NonEmpty (final Ord<T> ord, final T value, final AVLTree<T> left, final AVLTree<T> right) {
+            this.ord = ord;
             this.value = value;
             this.left = left;
             this.right = right;
+        }
+
+        @Override
+        public Ord<T> order() {
+            return ord;
         }
         
         @Override
@@ -108,13 +132,14 @@ public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable
                 
         @Override
         public AVLTree<T> build(T other) {
-            if (this.value.compareTo(other) == 0)
-                return new NonEmpty<>(other, left, right);
+            int cmp = ord.compare(this.value, other);
+            if (cmp == 0)
+                return new NonEmpty<>(ord, other, left, right);
 
             AVLTree<T> lf;
             AVLTree<T> rt;
             
-            if (this.value.compareTo(other) > 0) {
+            if (cmp > 0) {
                 lf = this.left.build(other);
                 rt = this.right;
             } else {
@@ -125,22 +150,18 @@ public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable
             int lfh = lf.height();
             int rth = rt.height();
 
-            AVLTree<T> newNode =  new NonEmpty<>(value, lf, rt);;
+            AVLTree<T> newNode = new NonEmpty<>(ord, value, lf, rt);
 
             if (lfh > rth && lfh - rth == 2) {
-                if (lf.compareTo(other) > 0) {
-                    //single-left-rotation - Ex: [3 [2 [1]]]
+                if (ord.compare(lf.foldl(null, (a, v) -> v), other) > 0) {
                     return newNode.rotateLeft();
                 } else {
-                    //right-lfet-double rotation - Ex: [3 [1[][2]]]
                     return newNode.replaceLeft(AVLTree::rotateRight).rotateLeft();
                 }
             } else if (lfh < rth && rth - lfh == 2) {
-                if (rt.compareTo(other) < 0) {
-                    //single-right-rotation - Ex: [1 [][2 [][3]]]
+                if (ord.compare(rt.foldl(null, (a, v) -> v), other) < 0) {
                     return newNode.rotateRight();
                 } else {
-                    //left-right-double rotation - Ex: [1 [][3 [2]]]
                     return newNode.replaceRight(AVLTree::rotateLeft).rotateRight();
                 }
             } else {
@@ -150,17 +171,12 @@ public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable
 
         @Override
         public AVLTree<T> replaceLeft(Function<AVLTree<T>, AVLTree<T>> left) {
-            return new NonEmpty<>(value, left.apply(this.left), right);
+            return new NonEmpty<>(ord, value, left.apply(this.left), right);
         }
 
         @Override
         public AVLTree<T> replaceRight(Function<AVLTree<T>, AVLTree<T>> right) {
-            return new NonEmpty<>(value, left, right.apply(this.right));
-        }
-
-        @Override
-        public int compareTo(T other) {
-            return this.value.compareTo(other);
+            return new NonEmpty<>(ord, value, left, right.apply(this.right));
         }
 
         @Override
@@ -178,25 +194,23 @@ public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable
         @Override
         public AVLTree<T> rotateLeft() {
             return left.replaceRight(lfrt -> 
-                new NonEmpty<>(value, lfrt, right));
+                new NonEmpty<>(ord, value, lfrt, right));
         }
 
         @Override
         public AVLTree<T> rotateRight() {
             return right.replaceLeft(rtlf -> 
-                new NonEmpty<>(value, left, rtlf));
+                new NonEmpty<>(ord, value, left, rtlf));
         }
 
         @Override
         public boolean contains(T value) {
-            if (this.value.compareTo(value) == 0)
-                return true;
-            if (this.value.compareTo(value) > 0)
-                return left.contains(value);
+            int cmp = ord.compare(this.value, value);
+            if (cmp == 0) return true;
+            if (cmp > 0) return left.contains(value);
             return right.contains(value);
         }
         
-        @SuppressWarnings("unchecked")
         @Override
         public boolean equals(final Object other) {
             if (other == null) return false;
@@ -215,7 +229,17 @@ public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable
         }
     }
     
-    class Empty<T extends Comparable<T>> implements AVLTree<T> {
+    final class Empty<T> implements AVLTree<T> {
+        private final Ord<T> ord;
+
+        Empty(Ord<T> ord) {
+            this.ord = ord;
+        }
+
+        @Override
+        public Ord<T> order() {
+            return ord;
+        }
 
         @Override
         public <R> Collection<R> empty() {
@@ -227,10 +251,9 @@ public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable
             return seed;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public AVLTree<T> build(T value) {
-            return new NonEmpty<T>(value, (AVLTree<T>) EMPTY, (AVLTree<T>) EMPTY);
+            return new NonEmpty<>(ord, value, this, this);
         }
         
         @Override
@@ -241,11 +264,6 @@ public interface Set <T extends Comparable<T>> extends Collection<T>, Comparable
         @Override
         public AVLTree<T> replaceRight(Function<AVLTree<T>, AVLTree<T>> right) {
             return right.apply(this);
-        }
-
-        @Override
-        public int compareTo(T o) {
-            return -1;
         }
 
         @Override

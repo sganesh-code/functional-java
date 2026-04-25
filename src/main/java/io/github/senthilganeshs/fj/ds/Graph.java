@@ -18,7 +18,7 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
 
     default List<V> bfs(V start) {
         List<V> result = List.nil();
-        Set<V> visited = Set.empty();
+        Set<V> visited = Set.emptyNatural();
         Queue<V> queue = Queue.of(start);
 
         while (true) {
@@ -43,7 +43,7 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
 
     default List<V> dfs(V start) {
         List<V> result = List.nil();
-        Set<V> visited = Set.empty();
+        Set<V> visited = Set.emptyNatural();
         Stack<V> stack = (Stack<V>) Stack.<V>emptyStack().build(start);
 
         while (true) {
@@ -140,25 +140,25 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
         @Override
         public Graph<V> addNode(V node) {
             return ((Maybe<Graph<V>>) adjacencyMap.get(node).map(__ -> (Graph<V>) this))
-                .fromMaybe(new AdjacencyMapGraph<>(adjacencyMap.put(node, Set.empty())));
+                .fromMaybe(new AdjacencyMapGraph<>(adjacencyMap.put(node, Set.emptyNatural())));
         }
 
         @Override
         public Graph<V> addEdge(V from, V to) {
             Graph<V> g = addNode(from).addNode(to);
             HashMap<V, Set<V>> map = ((AdjacencyMapGraph<V>) g).adjacencyMap;
-            Set<V> neighbors = map.get(from).fromMaybe(Set.empty());
+            Set<V> neighbors = map.get(from).fromMaybe(Set.emptyNatural());
             return new AdjacencyMapGraph<>(map.put(from, (Set<V>) neighbors.build(to)));
         }
 
         @Override
         public Set<V> nodes() {
-            return adjacencyMap.foldl(Set.<V>empty(), (acc, entry) -> acc.build(entry.key()));
+            return adjacencyMap.foldl(Set.<V>emptyNatural(), (acc, entry) -> acc.build(entry.key()));
         }
 
         @Override
         public Set<V> successors(V node) {
-            return adjacencyMap.get(node).fromMaybe(Set.empty());
+            return adjacencyMap.get(node).fromMaybe(Set.emptyNatural());
         }
 
         @Override

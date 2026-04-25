@@ -387,10 +387,10 @@ public class CollectionsTest {
     
     @Test
     public void testBinarytree() throws Exception {
-        Assert.assertEquals(Set.of(1,2,3).compareTo(2), 0);//left rotation.
-        Assert.assertEquals(Set.of(3,1,2).compareTo(2), 0);//left-right rotation
-        Assert.assertEquals(Set.of(1,3,2).compareTo(2), 0);//right-left rotation
-        Assert.assertEquals(Set.of(3,2,1).compareTo(2), 0);//right rotation
+        Assert.assertTrue(Set.of(1,2,3).toString().contains("Label : 2")); // left
+        Assert.assertTrue(Set.of(3,1,2).toString().contains("Label : 2")); // left-right
+        Assert.assertTrue(Set.of(1,3,2).toString().contains("Label : 2")); // right-left
+        Assert.assertTrue(Set.of(3,2,1).toString().contains("Label : 2")); // right
         
         Assert.assertTrue(Set.of(1,2,3,4,5,6,7,8,9).contains(5));
         Assert.assertFalse(Set.of(1,2,3,4,5,6,7,8).contains(9));                

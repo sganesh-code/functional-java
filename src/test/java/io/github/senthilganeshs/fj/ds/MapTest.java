@@ -7,7 +7,7 @@ public class MapTest {
 
     @Test
     public void testMapBasic() {
-        Map<String, Integer> map = new Map.BinaryTreeMap<>(Set.empty());
+        Map<String, Integer> map = new Map.BinaryTreeMap<>(Set.emptyNatural());
         map = map.put("a", 1).put("b", 2);
         
         Assert.assertEquals(map.lookup("a").fromMaybe(-1), Integer.valueOf(1));
@@ -17,7 +17,7 @@ public class MapTest {
 
     @Test
     public void testMapUpdate() {
-        Map<String, Integer> map = new Map.BinaryTreeMap<>(Set.empty());
+        Map<String, Integer> map = new Map.BinaryTreeMap<>(Set.emptyNatural());
         map = map.put("a", 1).put("a", 10);
         
         Assert.assertEquals(map.lookup("a").fromMaybe(-1), Integer.valueOf(10));
@@ -26,7 +26,7 @@ public class MapTest {
 
     @Test
     public void testMapKeysValuesEntries() {
-        Map<String, Integer> map = new Map.BinaryTreeMap<>(Set.empty());
+        Map<String, Integer> map = new Map.BinaryTreeMap<>(Set.emptyNatural());
         map = map.put("a", 1).put("b", 2);
         
         Assert.assertEquals(map.keys().length(), 2);

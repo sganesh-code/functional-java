@@ -17,6 +17,7 @@
 
 *   **100% Immutable**: All structures are persistent; updates return new versions while sharing structure.
 *   **Unified API**: 40+ functional methods (map, filter, traverse, partition, etc.) available on every data structure via a single interface.
+*   **Algebraic Typeclasses**: Extensible `Eq`, `Ord`, `Semigroup`, and `Monoid` implementations for type-safe comparisons and reductions.
 *   **Performance Optimized**: Core engines rewritten from recursion to iterative loops, achieving up to **400x speedup** for large datasets.
 *   **Zero Dependencies**: Lean and lightweight library with no external requirements.
 
@@ -149,6 +150,20 @@ Build complex structures from a simple seed.
     ```java
     // Generate a range [10, 9, ..., 1]
     Collection<Integer> countdown = Collection.unfold(10, i -> i > 0 ? Maybe.some(Tuple.of(i, i - 1)) : Maybe.nothing());
+    ```
+
+### 6. Algebraic Strategies (`Eq` & `Ord`)
+Decouple ordering and equality logic from your data types.
+
+*   **Custom Ordering**: Create a Set for types that don't implement `Comparable`.
+    ```java
+    // Case-insensitive string set
+    Set<String> s = Set.empty(Ord.fromComparator(String.CASE_INSENSITIVE_ORDER));
+    ```
+*   **Domain-Specific Equality**: Define how elements are considered unique.
+    ```java
+    // Keep only unique users by their ID (uses distinct with custom Eq)
+    Collection<User> uniqueUsers = users.distinct(Eq.fromEquals()); 
     ```
 
 ---

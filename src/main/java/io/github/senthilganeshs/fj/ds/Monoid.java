@@ -6,9 +6,9 @@ import java.util.function.BiFunction;
  * An algebraic structure consisting of a set together with a single 
  * binary operation and an identity element.
  */
-public interface Monoid<T> {
+public interface Monoid<T> extends Semigroup<T> {
     T empty();
-    T combine(T a, T b);
+    @Override T combine(T a, T b);
 
     static <R> Monoid<R> of(R empty, BiFunction<R, R, R> combine) {
         return new Monoid<R>() {

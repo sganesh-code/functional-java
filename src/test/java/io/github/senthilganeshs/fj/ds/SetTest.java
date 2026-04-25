@@ -40,7 +40,7 @@ public class SetTest {
 
     @Test
     public void testSetEmpty() {
-        Set<Integer> empty = Set.empty();
+        Set<Integer> empty = Set.emptyNatural();
         Assert.assertEquals(empty.length(), 0);
         Assert.assertFalse(empty.contains(1));
     }
