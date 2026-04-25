@@ -50,13 +50,25 @@ By implementing these three, every data structure automatically inherits the ful
 
 One of the most powerful traits of `functional-java` is that it makes interoperability a first-class citizen. When you create a custom data structure by implementing the **Core Triad**, it doesn't just gain functional methods—it instantly gains the ability to interoperate with every other data structure in the library without writing a single line of integration code.
 
-### 1. Implement your Triad
+### 1. Implement your Triad (e.g., a Sliding Window)
+A `SlidingWindow` is a collection that only keeps the last `N` elements. By implementing the Triad, it becomes a first-class functional citizen.
+
 ```java
-public class MyBinaryTree<T> implements Collection<T> {
-    // 1. Core Triad: empty(), build(), foldl()
-    @Override public <R> Collection<R> empty() { return new MyBinaryTree<>(); }
-    @Override public Collection<T> build(T val) { /* persistent insert logic */ }
-    @Override public <R> R foldl(R seed, BiFunction<R, T, R> fn) { /* traversal logic */ }
+public class SlidingWindow<T> implements Collection<T> {
+    private final List<T> items; // Using FJ List internally
+    private final int maxSize;
+
+    @Override public <R> Collection<R> empty() { return new SlidingWindow<>(maxSize, List.nil()); }
+
+    // Domain Logic: If at capacity, drop the oldest element before adding new
+    @Override public Collection<T> build(T val) {
+        List<T> next = (items.length() >= maxSize) ? items.drop(1).build(val) : items.build(val);
+        return new SlidingWindow<>(maxSize, next);
+    }
+
+    @Override public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
+        return items.foldl(seed, fn);
+    }
 }
 ```
 
@@ -64,17 +76,17 @@ public class MyBinaryTree<T> implements Collection<T> {
 Because everything is built on the same abstraction, you can convert, combine, and query across types seamlessly:
 
 ```java
-MyBinaryTree<User> myTree = ...;
+SlidingWindow<Double> window = new SlidingWindow<>(3); // Window of size 3
+window = window.build(10.0).build(20.0).build(30.0).build(40.0); // Content: [20.0, 30.0, 40.0]
 
-// Convert custom tree to a persistent Vector
-Vector<User> userVector = Vector.from(myTree);
+// Interop: Convert window to a persistent Vector for O(1) random access
+Vector<Double> vector = Vector.from(window);
 
-// Perform atomic batch operations across disparate types
-// (Custom Tree -> Maybe -> functional List)
-Maybe<List<Profile>> profiles = myTree.traverse(user -> db.findProfile(user.id));
+// Interop: Perform atomic batch operations (Window -> Maybe -> functional List)
+Maybe<List<Price>> prices = window.traverse(id -> priceDB.find(id));
 
-// Combine with standard lists
-Collection<User> joined = myTree.concat(List.of(new User("Alice")));
+// Interop: Categorize window data into a HashMap
+HashMap<Boolean, Collection<Double>> segments = window.groupBy(val -> val > 25.0);
 ```
 
 This "Zero-Cost Interop" ensures that your custom domain-specific structures are never isolated; they are full citizens of the functional ecosystem.
