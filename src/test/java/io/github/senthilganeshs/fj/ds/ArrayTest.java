@@ -4,6 +4,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class ArrayTest {
+    // Triggering CI build to verify GitHub Actions configuration.
 
     @Test
     public void testArrayBasic() {

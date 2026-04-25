@@ -1,4 +1,4 @@
-![build](https://travis-ci.org/sganesh-code/functional-java.svg?branch=master)
+![build](https://github.com/sganesh-code/functional-java/actions/workflows/ci.yml/badge.svg?branch=master)
 # functional-java
 
 Functional Java is an initiative to bring functional APIs to Java without compromising on object-oriented programming principles. It provides purely functional, immutable data structures with an API inspired by Haskell.
