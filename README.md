@@ -240,22 +240,41 @@ Effortlessly update deeply nested immutable structures without boilerplate.
     List<Hub> allReset = eachHub.compose(cityL).set("UNKNOWN", hubList);
     ```
 
+### 8. Parallel Validation (`Validation`)
+Unlike `Either`, which stops at the first error, `Validation` accumulates **every** error using a `Semigroup`.
+
+```java
+// Combine multiple validations; if both fail, errors are concatenated
+Validation<String, User> result = v1.liftA2(User::new, v2, Monoid.STRING_CONCAT);
+```
+
+### 9. Lazy Generators (`Generator`)
+Generate infinite or sequential sequences with zero memory overhead until evaluated.
+
+```java
+// Infinite sequence of 1, 2, 3, 4...
+LazyList<Integer> naturalNumbers = Generator.iterate(1, i -> i + 1);
+
+// Infinite repetition: [A, A, A, ...]
+LazyList<String> stream = Generator.repeat("A");
+```
+
 ---
 
-## Installation (Version 1.0.2)
+## Installation (Version 1.0.3)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.0.2'
+implementation 'io.github.sganesh-code:functional-java:1.0.3'
 ```
 
 ---

@@ -81,6 +81,12 @@ public interface LazyList<T> extends List<T> {
         return cons(seed, () -> iterate(f.apply(seed), f));
     }
 
+    @SuppressWarnings("unchecked")
+    static <R> LazyList<R> from(Collection<R> c) {
+        if (c instanceof LazyList) return (LazyList<R>) c;
+        return c.foldr(nil(), (r, acc) -> cons(r, () -> acc));
+    }
+
     @SafeVarargs
     static <R> LazyList<R> of(R... values) {
         if (values == null || values.length == 0) return nil();
