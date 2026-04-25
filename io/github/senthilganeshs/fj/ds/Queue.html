@@ -86,6 +86,10 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of elements.</dd>
+</dl>
+<dl class="notes">
 <dt>All Superinterfaces:</dt>
 <dd><code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;T&gt;</code></dd>
 </dl>
@@ -96,6 +100,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Queue&lt;T&gt;</span><span class="extends-implements">
 extends <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;T&gt;</span></div>
+<div class="block">A purely functional Queue (FIFO).</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -128,29 +133,26 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a><wbr>&lt;<a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a>&lt;<a href="Queue.html" title="type parameter in Queue">T</a>,<wbr><a href="Queue.html" title="interface in io.github.senthilganeshs.fj.ds">Queue</a>&lt;<a href="Queue.html" title="type parameter in Queue">T</a>&gt;&gt;&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#dequeue()" class="member-name-link">dequeue</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Queue.html" title="interface in io.github.senthilganeshs.fj.ds">Queue</a><wbr>&lt;<a href="Queue.html" title="type parameter in Queue">T</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#filter(java.util.function.Predicate)" class="member-name-link">filter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="Queue.html" title="type parameter in Queue">T</a>&gt;&nbsp;pred)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Returns a new collection containing only elements that satisfy the predicate.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R&gt;&nbsp;<a href="Queue.html" title="interface in io.github.senthilganeshs.fj.ds">Queue</a><wbr>&lt;R&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#from(io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">from</a><wbr>(<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;&nbsp;c)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="Queue.html" title="interface in io.github.senthilganeshs.fj.ds">Queue</a><wbr>&lt;R&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Queue.html" title="type parameter in Queue">T</a>,<wbr>R&gt;&nbsp;fn)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R&gt;&nbsp;<a href="Queue.html" title="interface in io.github.senthilganeshs.fj.ds">Queue</a><wbr>&lt;R&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#nil()" class="member-name-link">nil</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R&gt;&nbsp;<a href="Queue.html" title="interface in io.github.senthilganeshs.fj.ds">Queue</a><wbr>&lt;R&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(R...)" class="member-name-link">of</a><wbr>(R...&nbsp;values)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#from(io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">from</a><wbr>(<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;&nbsp;c)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="Queue.html" title="interface in io.github.senthilganeshs.fj.ds">Queue</a><wbr>&lt;R&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Queue.html" title="type parameter in Queue">T</a>,<wbr>R&gt;&nbsp;fn)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Transforms each element of the collection using the provided function.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R&gt;&nbsp;<a href="Queue.html" title="interface in io.github.senthilganeshs.fj.ds">Queue</a><wbr>&lt;R&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#nil()" class="member-name-link">nil</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R&gt;&nbsp;<a href="Queue.html" title="interface in io.github.senthilganeshs.fj.ds">Queue</a><wbr>&lt;R&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(R...)" class="member-name-link">of</a><wbr>(R...&nbsp;values)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-io.github.senthilganeshs.fj.ds.Collection">Methods inherited from interface&nbsp;io.github.senthilganeshs.fj.ds.<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a></h3>
-<code><a href="Collection.html#all(java.util.function.Predicate)">all</a>, <a href="Collection.html#any(java.util.function.Predicate)">any</a>, <a href="Collection.html#apply(io.github.senthilganeshs.fj.ds.Collection)">apply</a>, <a href="Collection.html#build(T)">build</a>, <a href="Collection.html#chunk(int)">chunk</a>, <a href="Collection.html#concat(io.github.senthilganeshs.fj.ds.Collection)">concat</a>, <a href="Collection.html#count()">count</a>, <a href="Collection.html#distinct()">distinct</a>, <a href="Collection.html#distinct(io.github.senthilganeshs.fj.ds.Eq)">distinct</a>, <a href="Collection.html#drop(int)">drop</a>, <a href="Collection.html#dropWhile(java.util.function.Predicate)">dropWhile</a>, <a href="Collection.html#empty()">empty</a>, <a href="Collection.html#filterType(java.lang.Class)">filterType</a>, <a href="Collection.html#find(java.util.function.Predicate)">find</a>, <a href="Collection.html#findIndex(java.util.function.Predicate)">findIndex</a>, <a href="Collection.html#flatMap(java.util.function.Function)">flatMap</a>, <a href="Collection.html#fold(io.github.senthilganeshs.fj.ds.Monoid)">fold</a>, <a href="Collection.html#foldl(R,java.util.function.BiFunction)">foldl</a>, <a href="Collection.html#foldMap(java.util.function.Function,io.github.senthilganeshs.fj.ds.Monoid)">foldMap</a>, <a href="Collection.html#foldr(R,java.util.function.BiFunction)">foldr</a>, <a href="Collection.html#forEach(java.util.function.Consumer)">forEach</a>, <a href="Collection.html#groupBy(java.util.function.Function)">groupBy</a>, <a href="Collection.html#headMaybe()">headMaybe</a>, <a href="Collection.html#indexOf(T)">indexOf</a>, <a href="Collection.html#intercalate(io.github.senthilganeshs.fj.ds.Collection)">intercalate</a>, <a href="Collection.html#intersperse(T)">intersperse</a>, <a href="Collection.html#lastMaybe()">lastMaybe</a>, <a href="Collection.html#length()">length</a>, <a href="Collection.html#liftA2(java.util.function.BiFunction,io.github.senthilganeshs.fj.ds.Collection)">liftA2</a>, <a href="Collection.html#liftA2(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection)">liftA2</a>, <a href="Collection.html#liftA3(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection)">liftA3</a>, <a href="Collection.html#liftA4(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection)">liftA4</a>, <a href="Collection.html#mapMaybe(java.util.function.Function)">mapMaybe</a>, <a href="Collection.html#mkString(java.lang.String)">mkString</a>, <a href="Collection.html#mkString(java.lang.String,java.lang.String,java.lang.String)">mkString</a>, <a href="Collection.html#partition(java.util.function.Predicate)">partition</a>, <a href="Collection.html#reduce(java.util.function.BiFunction)">reduce</a>, <a href="Collection.html#reverse()">reverse</a>, <a href="Collection.html#scanl(R,java.util.function.BiFunction)">scanl</a>, <a href="Collection.html#slice(int,int)">slice</a>, <a href="Collection.html#span(java.util.function.Predicate)">span</a>, <a href="Collection.html#take(int)">take</a>, <a href="Collection.html#takeWhile(java.util.function.Predicate)">takeWhile</a>, <a href="Collection.html#traverse(java.util.function.Function)">traverse</a>, <a href="Collection.html#zipWith(java.util.function.BiFunction,io.github.senthilganeshs.fj.ds.List)">zipWith</a>, <a href="Collection.html#zipWithIndex()">zipWithIndex</a></code></div>
+<code><a href="Collection.html#all(java.util.function.Predicate)">all</a>, <a href="Collection.html#any(java.util.function.Predicate)">any</a>, <a href="Collection.html#apply(io.github.senthilganeshs.fj.ds.Collection)">apply</a>, <a href="Collection.html#build(T)">build</a>, <a href="Collection.html#chunk(int)">chunk</a>, <a href="Collection.html#concat(io.github.senthilganeshs.fj.ds.Collection)">concat</a>, <a href="Collection.html#count()">count</a>, <a href="Collection.html#distinct()">distinct</a>, <a href="Collection.html#distinct(io.github.senthilganeshs.fj.ds.Eq)">distinct</a>, <a href="Collection.html#drop(int)">drop</a>, <a href="Collection.html#dropWhile(java.util.function.Predicate)">dropWhile</a>, <a href="Collection.html#empty()">empty</a>, <a href="Collection.html#filter(java.util.function.Predicate)">filter</a>, <a href="Collection.html#filterType(java.lang.Class)">filterType</a>, <a href="Collection.html#find(java.util.function.Predicate)">find</a>, <a href="Collection.html#findIndex(java.util.function.Predicate)">findIndex</a>, <a href="Collection.html#flatMap(java.util.function.Function)">flatMap</a>, <a href="Collection.html#fold(io.github.senthilganeshs.fj.ds.Monoid)">fold</a>, <a href="Collection.html#foldl(R,java.util.function.BiFunction)">foldl</a>, <a href="Collection.html#foldMap(java.util.function.Function,io.github.senthilganeshs.fj.ds.Monoid)">foldMap</a>, <a href="Collection.html#foldr(R,java.util.function.BiFunction)">foldr</a>, <a href="Collection.html#forEach(java.util.function.Consumer)">forEach</a>, <a href="Collection.html#groupBy(java.util.function.Function)">groupBy</a>, <a href="Collection.html#headMaybe()">headMaybe</a>, <a href="Collection.html#indexOf(T)">indexOf</a>, <a href="Collection.html#intercalate(io.github.senthilganeshs.fj.ds.Collection)">intercalate</a>, <a href="Collection.html#intersperse(T)">intersperse</a>, <a href="Collection.html#lastMaybe()">lastMaybe</a>, <a href="Collection.html#length()">length</a>, <a href="Collection.html#liftA2(java.util.function.BiFunction,io.github.senthilganeshs.fj.ds.Collection)">liftA2</a>, <a href="Collection.html#liftA2(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection)">liftA2</a>, <a href="Collection.html#liftA3(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection)">liftA3</a>, <a href="Collection.html#liftA4(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection)">liftA4</a>, <a href="Collection.html#mapMaybe(java.util.function.Function)">mapMaybe</a>, <a href="Collection.html#mkString(java.lang.String)">mkString</a>, <a href="Collection.html#mkString(java.lang.String,java.lang.String,java.lang.String)">mkString</a>, <a href="Collection.html#partition(java.util.function.Predicate)">partition</a>, <a href="Collection.html#reduce(java.util.function.BiFunction)">reduce</a>, <a href="Collection.html#reverse()">reverse</a>, <a href="Collection.html#scanl(R,java.util.function.BiFunction)">scanl</a>, <a href="Collection.html#slice(int,int)">slice</a>, <a href="Collection.html#span(java.util.function.Predicate)">span</a>, <a href="Collection.html#take(int)">take</a>, <a href="Collection.html#takeWhile(java.util.function.Predicate)">takeWhile</a>, <a href="Collection.html#traverse(java.util.function.Function)">traverse</a>, <a href="Collection.html#zipWith(java.util.function.BiFunction,io.github.senthilganeshs.fj.ds.List)">zipWith</a>, <a href="Collection.html#zipWithIndex()">zipWithIndex</a></code></div>
 </section>
 </li>
 </ul>
@@ -178,25 +180,17 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 <section class="detail" id="map(java.util.function.Function)">
 <h3>map</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Queue.html" title="interface in io.github.senthilganeshs.fj.ds">Queue</a>&lt;R&gt;</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Queue.html" title="type parameter in Queue">T</a>,<wbr>R&gt;&nbsp;fn)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="Collection.html#map(java.util.function.Function)">Collection</a></code></span></div>
+<div class="block">Transforms each element of the collection using the provided function.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="Collection.html#map(java.util.function.Function)">map</a></code>&nbsp;in interface&nbsp;<code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Queue.html" title="type parameter in Queue">T</a>&gt;</code></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="filter(java.util.function.Predicate)">
-<h3>filter</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Queue.html" title="interface in io.github.senthilganeshs.fj.ds">Queue</a>&lt;<a href="Queue.html" title="type parameter in Queue">T</a>&gt;</span>&nbsp;<span class="element-name">filter</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="Queue.html" title="type parameter in Queue">T</a>&gt;&nbsp;pred)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="Collection.html#filter(java.util.function.Predicate)">Collection</a></code></span></div>
-<div class="block">Returns a new collection containing only elements that satisfy the predicate.</div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="Collection.html#filter(java.util.function.Predicate)">filter</a></code>&nbsp;in interface&nbsp;<code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Queue.html" title="type parameter in Queue">T</a>&gt;</code></dd>
+<dt>Type Parameters:</dt>
+<dd><code>R</code> - The type of elements in the resulting collection.</dd>
 <dt>Parameters:</dt>
-<dd><code>pred</code> - The condition to test against.</dd>
+<dd><code>fn</code> - The transformation function.</dd>
 <dt>Returns:</dt>
-<dd>A filtered collection.</dd>
+<dd>A new collection containing the transformed elements.</dd>
 </dl>
 </section>
 </li>

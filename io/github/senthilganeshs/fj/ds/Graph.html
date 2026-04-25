@@ -86,6 +86,10 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>V</code> - The type of nodes in the graph.</dd>
+</dl>
+<dl class="notes">
 <dt>All Superinterfaces:</dt>
 <dd><code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;V&gt;</code></dd>
 </dl>
@@ -96,8 +100,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Graph&lt;V extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;V&gt;&gt;</span><span class="extends-implements">
 extends <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;V&gt;</span></div>
-<div class="block">A purely functional Directed Graph implementation.
- Represented as an Adjacency Map: <code>HashMap&lt;V, Set&lt;V&gt;&gt;</code>.</div>
+<div class="block">A purely functional Graph interface using an Adjacency Map representation.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -140,7 +143,7 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="List.html" title="interface in io.github.senthilganeshs.fj.ds">List</a><wbr>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#dfs(V)" class="member-name-link">dfs</a><wbr>(<a href="Graph.html" title="type parameter in Graph">V</a>&nbsp;start)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;V extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;V&gt;&gt;<br><a href="Graph.html" title="interface in io.github.senthilganeshs.fj.ds">Graph</a><wbr>&lt;V&gt;</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;R&gt;&gt;<br><a href="Graph.html" title="interface in io.github.senthilganeshs.fj.ds">Graph</a><wbr>&lt;R&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#nil()" class="member-name-link">nil</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Set.html" title="interface in io.github.senthilganeshs.fj.ds">Set</a><wbr>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;</code></div>
@@ -197,6 +200,12 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 </section>
 </li>
 <li>
+<section class="detail" id="nil()">
+<h3>nil</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;R extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;R&gt;&gt;</span>&nbsp;<span class="return-type"><a href="Graph.html" title="interface in io.github.senthilganeshs.fj.ds">Graph</a>&lt;R&gt;</span>&nbsp;<span class="element-name">nil</span>()</div>
+</section>
+</li>
+<li>
 <section class="detail" id="bfs(V)">
 <h3 id="bfs(java.lang.Comparable)">bfs</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="List.html" title="interface in io.github.senthilganeshs.fj.ds">List</a>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;</span>&nbsp;<span class="element-name">bfs</span><wbr><span class="parameters">(<a href="Graph.html" title="type parameter in Graph">V</a>&nbsp;start)</span></div>
@@ -214,12 +223,10 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;<a href="List.html" title="interface in io.github.senthilganeshs.fj.ds">List</a>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;&gt;</span>&nbsp;<span class="element-name">topologicalSort</span>()</div>
 <div class="block">Performs a topological sort on the graph.
  Returns Maybe.nothing() if the graph contains a cycle.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="nil()">
-<h3>nil</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;V extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;V&gt;&gt;</span>&nbsp;<span class="return-type"><a href="Graph.html" title="interface in io.github.senthilganeshs.fj.ds">Graph</a>&lt;V&gt;</span>&nbsp;<span class="element-name">nil</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>Some(list) of nodes in topological order, or Nothing if cycle found.</dd>
+</dl>
 </section>
 </li>
 </ul>

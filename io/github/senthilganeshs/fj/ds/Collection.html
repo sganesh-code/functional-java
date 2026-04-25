@@ -195,7 +195,9 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#findIndex(java.util.function.Predicate)" class="member-name-link">findIndex</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>&gt;&nbsp;pred)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Finds the index of the first element satisfying the predicate.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;R&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#flatMap(java.util.function.Function)" class="member-name-link">flatMap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;&gt;&nbsp;fn)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
@@ -241,7 +243,9 @@ R extends <a href="Collection.html" title="interface in io.github.senthilganeshs
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#indexOf(T)" class="member-name-link">indexOf</a><wbr>(<a href="Collection.html" title="type parameter in Collection">T</a>&nbsp;value)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Finds the index of the first occurrence of the provided value.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>&gt;&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#intercalate(io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">intercalate</a><wbr>(<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>&gt;&gt;&nbsp;rss)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
@@ -272,28 +276,32 @@ S&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganesh
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#liftA2(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">liftA2</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;R,<wbr>S&gt;&gt;&nbsp;fn,
  <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;&nbsp;rs)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;P,<wbr>
-Q,<wbr>
-R&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;R&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#liftA3(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">liftA3</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;P,<wbr>Q,<wbr>R&gt;&gt;&nbsp;fn,
- <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;P&gt;&nbsp;ps,
- <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;Q&gt;&nbsp;qs)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R,<wbr>
+S,<wbr>
+U&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;U&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#liftA3(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">liftA3</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;R,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;S,<wbr>U&gt;&gt;&gt;&nbsp;fn,
+ <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;&nbsp;rs,
+ <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;S&gt;&nbsp;ss)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;P,<wbr>
-Q,<wbr>
-R,<wbr>
-S&gt;<br><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;S&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#liftA4(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">liftA4</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;P,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;Q,<wbr>R,<wbr>S&gt;&gt;&gt;&nbsp;fn,
- <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;P&gt;&nbsp;ps,
- <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;Q&gt;&nbsp;qs,
- <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;&nbsp;rs)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R,<wbr>
+S,<wbr>
+U,<wbr>
+V&gt;<br><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;V&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#liftA4(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">liftA4</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;R,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;S,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;U,<wbr>V&gt;&gt;&gt;&gt;&nbsp;fn,
+ <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;&nbsp;rs,
+ <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;S&gt;&nbsp;ss,
+ <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;U&gt;&nbsp;us)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;R&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr>R&gt;&nbsp;fn)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Transforms each element of the collection using the provided function.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;R&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#mapMaybe(java.util.function.Function)" class="member-name-link">mapMaybe</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;R&gt;&gt;&nbsp;fn)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Maps each element to a Maybe-producing function and keeps only the "Some" results.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#mkString(java.lang.String)" class="member-name-link">mkString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;sep)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
@@ -308,7 +316,9 @@ S&gt;<br><a href="Collection.html" title="interface in io.github.senthilganeshs.
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a><wbr>&lt;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>&gt;,<wbr><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>&gt;&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#partition(java.util.function.Predicate)" class="member-name-link">partition</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>&gt;&nbsp;pred)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Splits the collection into two collections based on a predicate.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a><wbr>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#reduce(java.util.function.BiFunction)" class="member-name-link">reduce</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="Collection.html" title="type parameter in Collection">T</a>&gt;&nbsp;fn)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
@@ -451,6 +461,21 @@ S&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganesh
 </section>
 </li>
 <li>
+<section class="detail" id="map(java.util.function.Function)">
+<h3>map</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr>R&gt;&nbsp;fn)</span></div>
+<div class="block">Transforms each element of the collection using the provided function.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>R</code> - The type of elements in the resulting collection.</dd>
+<dt>Parameters:</dt>
+<dd><code>fn</code> - The transformation function.</dd>
+<dt>Returns:</dt>
+<dd>A new collection containing the transformed elements.</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="traverse(java.util.function.Function)">
 <h3>traverse</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;&gt;</span>&nbsp;<span class="element-name">traverse</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;&gt;&nbsp;fn)</span></div>
@@ -465,6 +490,21 @@ S&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganesh
 <dd><code>fn</code> - Function that returns a collection.</dd>
 <dt>Returns:</dt>
 <dd>A collection of collections.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="mapMaybe(java.util.function.Function)">
+<h3>mapMaybe</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;</span>&nbsp;<span class="element-name">mapMaybe</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;R&gt;&gt;&nbsp;fn)</span></div>
+<div class="block">Maps each element to a Maybe-producing function and keeps only the "Some" results.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>R</code> - Resulting element type.</dd>
+<dt>Parameters:</dt>
+<dd><code>fn</code> - Transformation function.</dd>
+<dt>Returns:</dt>
+<dd>A collection of successful results.</dd>
 </dl>
 </section>
 </li>
@@ -514,12 +554,26 @@ S&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganesh
 <section class="detail" id="findIndex(java.util.function.Predicate)">
 <h3>findIndex</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</span>&nbsp;<span class="element-name">findIndex</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>&gt;&nbsp;pred)</span></div>
+<div class="block">Finds the index of the first element satisfying the predicate.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>pred</code> - The condition to test.</dd>
+<dt>Returns:</dt>
+<dd>Some(index) if found, Nothing otherwise.</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="indexOf(T)">
 <h3 id="indexOf(java.lang.Object)">indexOf</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</span>&nbsp;<span class="element-name">indexOf</span><wbr><span class="parameters">(<a href="Collection.html" title="type parameter in Collection">T</a>&nbsp;value)</span></div>
+<div class="block">Finds the index of the first occurrence of the provided value.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>value</code> - The value to search for.</dd>
+<dt>Returns:</dt>
+<dd>Some(index) if found, Nothing otherwise.</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -541,41 +595,23 @@ S&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="int
 <li>
 <section class="detail" id="liftA3(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection)">
 <h3>liftA3</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;P,<wbr>
-Q,<wbr>
-R&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;</span>&nbsp;<span class="element-name">liftA3</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;P,<wbr>Q,<wbr>R&gt;&gt;&nbsp;fn,
- <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;P&gt;&nbsp;ps,
- <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;Q&gt;&nbsp;qs)</span></div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R,<wbr>
+S,<wbr>
+U&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;U&gt;</span>&nbsp;<span class="element-name">liftA3</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;R,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;S,<wbr>U&gt;&gt;&gt;&nbsp;fn,
+ <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;&nbsp;rs,
+ <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;S&gt;&nbsp;ss)</span></div>
 </section>
 </li>
 <li>
 <section class="detail" id="liftA4(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection)">
 <h3>liftA4</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;P,<wbr>
-Q,<wbr>
-R,<wbr>
-S&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;S&gt;</span>&nbsp;<span class="element-name">liftA4</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;P,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;Q,<wbr>R,<wbr>S&gt;&gt;&gt;&nbsp;fn,
- <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;P&gt;&nbsp;ps,
- <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;Q&gt;&nbsp;qs,
- <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;&nbsp;rs)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="map(java.util.function.Function)">
-<h3>map</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr>R&gt;&nbsp;fn)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="mapMaybe(java.util.function.Function)">
-<h3>mapMaybe</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;</span>&nbsp;<span class="element-name">mapMaybe</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;R&gt;&gt;&nbsp;fn)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="partition(java.util.function.Predicate)">
-<h3>partition</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a>&lt;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>&gt;,<wbr><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>&gt;&gt;</span>&nbsp;<span class="element-name">partition</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>&gt;&nbsp;pred)</span></div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R,<wbr>
+S,<wbr>
+U,<wbr>
+V&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;V&gt;</span>&nbsp;<span class="element-name">liftA4</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;R,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;S,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;U,<wbr>V&gt;&gt;&gt;&gt;&nbsp;fn,
+ <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;&nbsp;rs,
+ <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;S&gt;&nbsp;ss,
+ <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;U&gt;&nbsp;us)</span></div>
 </section>
 </li>
 <li>
@@ -603,6 +639,21 @@ S&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="int
 <dd><code>fn</code> - The transformation function.</dd>
 <dt>Returns:</dt>
 <dd>A flattened collection of results.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="partition(java.util.function.Predicate)">
+<h3>partition</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a>&lt;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>&gt;,<wbr><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>&gt;&gt;</span>&nbsp;<span class="element-name">partition</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="Collection.html" title="type parameter in Collection">T</a>&gt;&nbsp;pred)</span></div>
+<div class="block">Splits the collection into two collections based on a predicate.
+ The first collection contains elements that satisfy the predicate,
+ the second contains those that do not.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>pred</code> - The predicate condition.</dd>
+<dt>Returns:</dt>
+<dd>A Tuple containing (satisfied, dissatisfied).</dd>
 </dl>
 </section>
 </li>
@@ -818,9 +869,9 @@ S&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="int
 <div class="block">Intersperses this collection between every two collections in the input collection.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>rss</code> - A collection of collections.</dd>
+<dd><code>rss</code> - a collection of collections.</dd>
 <dt>Returns:</dt>
-<dd>A single collection with elements of this collection intercalated.</dd>
+<dd>a single collection with elements of this collection intercalated.</dd>
 </dl>
 </section>
 </li>

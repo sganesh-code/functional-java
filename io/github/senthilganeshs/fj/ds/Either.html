@@ -86,6 +86,11 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>A</code> - The type of the Left value (usually representing an error).</dd>
+<dd><code>B</code> - The type of the Right value (usually representing a success).</dd>
+</dl>
+<dl class="notes">
 <dt>All Superinterfaces:</dt>
 <dd><code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;B&gt;</code></dd>
 </dl>
@@ -96,6 +101,10 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Either&lt;A,<wbr>B&gt;</span><span class="extends-implements">
 extends <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;B&gt;</span></div>
+<div class="block">Represents a value of one of two possible types (a disjoint union).
+ 
+ <p>An instance of Either is either an instance of <a href="Either.Left.html" title="class in io.github.senthilganeshs.fj.ds"><code>Either.Left</code></a> or <a href="Either.Right.html" title="class in io.github.senthilganeshs.fj.ds"><code>Either.Right</code></a>.
+ By convention, <code>Left</code> is used for failure and <code>Right</code> is used for success.</p></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -132,7 +141,9 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 D&gt;&nbsp;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a><wbr>&lt;C,<wbr>D&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#bimap(java.util.function.Function,java.util.function.Function)" class="member-name-link">bimap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">A</a>,<wbr>C&gt;&nbsp;fa,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">B</a>,<wbr>D&gt;&nbsp;fb)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Transforms both sides of the Either.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a><wbr>&lt;<a href="Either.html" title="type parameter in Either">A</a>,<wbr><a href="Either.html" title="type parameter in Either">B</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#build(B)" class="member-name-link">build</a><wbr>(<a href="Either.html" title="type parameter in Either">B</a>&nbsp;value)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -141,71 +152,96 @@ D&gt;&nbsp;<a href="Either.html" title="interface in io.github.senthilganeshs.fj
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;R&gt;&nbsp;R</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#either(java.util.function.Function,java.util.function.Function)" class="member-name-link">either</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">A</a>,<wbr>R&gt;&nbsp;fa,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">B</a>,<wbr>R&gt;&nbsp;fb)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;R&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#flatMap(java.util.function.Function)" class="member-name-link">flatMap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">B</a>,<wbr><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;&gt;&nbsp;fn)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Applies either the left function or the right function to the contained value.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a><wbr>&lt;<a href="Either.html" title="type parameter in Either">A</a>,<wbr><a href="Either.html" title="type parameter in Either">B</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#filter(java.util.function.Predicate)" class="member-name-link">filter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="Either.html" title="type parameter in Either">B</a>&gt;&nbsp;pred)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Returns a new collection containing only elements that satisfy the predicate.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;R&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#flatMap(java.util.function.Function)" class="member-name-link">flatMap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">B</a>,<wbr><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;&gt;&nbsp;fn)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Maps each element to a collection and flattens the result into a single collection.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Either.html" title="type parameter in Either">A</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#fromLeft(A)" class="member-name-link">fromLeft</a><wbr>(<a href="Either.html" title="type parameter in Either">A</a>&nbsp;def)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="Either.html" title="type parameter in Either">B</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#fromRight(B)" class="member-name-link">fromRight</a><wbr>(<a href="Either.html" title="type parameter in Either">B</a>&nbsp;def)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Either.html" title="type parameter in Either">A</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#fromLeft(A)" class="member-name-link">fromLeft</a><wbr>(<a href="Either.html" title="type parameter in Either">A</a>&nbsp;def)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Safely extracts the Left value or returns a default.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code>default <a href="Either.html" title="type parameter in Either">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6"><code><a href="#fromRight(B)" class="member-name-link">fromRight</a><wbr>(<a href="Either.html" title="type parameter in Either">B</a>&nbsp;def)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span>
 <div class="deprecation-comment">Use <a href="#orElse(B)"><code>orElse(Object)</code></a> instead.</div>
 </div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#isLeft()" class="member-name-link">isLeft</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#isRight()" class="member-name-link">isRight</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;P,<wbr>
-Q&gt;&nbsp;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a><wbr>&lt;P,<wbr>Q&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#left(P)" class="member-name-link">left</a><wbr>(P&nbsp;value)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A,<wbr>
-B&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;A&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#lefts(io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">lefts</a><wbr>(<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;A,<wbr>B&gt;&gt;&nbsp;es)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a><wbr>&lt;<a href="Either.html" title="type parameter in Either">A</a>,<wbr>R&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">B</a>,<wbr>R&gt;&nbsp;fn)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Either.html" title="type parameter in Either">B</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#orElse(B)" class="member-name-link">orElse</a><wbr>(<a href="Either.html" title="type parameter in Either">B</a>&nbsp;def)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#isLeft()" class="member-name-link">isLeft</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Returns the Right value if present, otherwise returns the provided default.</div>
+<div class="block">Returns true if this is a Left.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#isRight()" class="member-name-link">isRight</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Returns true if this is a Right.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;P,<wbr>
+Q&gt;&nbsp;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a><wbr>&lt;P,<wbr>Q&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#left(P)" class="member-name-link">left</a><wbr>(P&nbsp;value)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Creates a Left instance.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A,<wbr>
+B&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;A&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#lefts(io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">lefts</a><wbr>(<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;A,<wbr>B&gt;&gt;&nbsp;es)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Extracts all Left values from a collection of Eithers.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a><wbr>&lt;<a href="Either.html" title="type parameter in Either">A</a>,<wbr>R&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">B</a>,<wbr>R&gt;&nbsp;fn)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Transforms each element of the collection using the provided function.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Either.html" title="type parameter in Either">B</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#orElseGet(java.util.function.Supplier)" class="member-name-link">orElseGet</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends <a href="Either.html" title="type parameter in Either">B</a>&gt;&nbsp;supplier)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#orElse(B)" class="member-name-link">orElse</a><wbr>(<a href="Either.html" title="type parameter in Either">B</a>&nbsp;def)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Returns the Right value if present, otherwise returns the provided default.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Either.html" title="type parameter in Either">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#orElseGet(java.util.function.Supplier)" class="member-name-link">orElseGet</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends <a href="Either.html" title="type parameter in Either">B</a>&gt;&nbsp;supplier)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the Right value if present, otherwise returns the result of the supplier.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;X extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&gt;<br><a href="Either.html" title="type parameter in Either">B</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#orElseThrow(java.util.function.Supplier)" class="member-name-link">orElseThrow</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends X&gt;&nbsp;exceptionSupplier)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;X extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&gt;<br><a href="Either.html" title="type parameter in Either">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#orElseThrow(java.util.function.Supplier)" class="member-name-link">orElseThrow</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends X&gt;&nbsp;exceptionSupplier)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the Right value if present, otherwise throws the exception from the supplier.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;P,<wbr>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;P,<wbr>
 Q&gt;&nbsp;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a><wbr>&lt;P,<wbr>Q&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#right(Q)" class="member-name-link">right</a><wbr>(Q&nbsp;value)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A,<wbr>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#right(Q)" class="member-name-link">right</a><wbr>(Q&nbsp;value)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Creates a Right instance.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A,<wbr>
 B&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;B&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#rights(io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">rights</a><wbr>(<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;A,<wbr>B&gt;&gt;&nbsp;es)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a><wbr>&lt;<a href="Either.html" title="type parameter in Either">B</a>,<wbr><a href="Either.html" title="type parameter in Either">A</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#swap()" class="member-name-link">swap</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#rights(io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">rights</a><wbr>(<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;A,<wbr>B&gt;&gt;&nbsp;es)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Extracts all Right values from a collection of Eithers.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a><wbr>&lt;<a href="Either.html" title="type parameter in Either">B</a>,<wbr><a href="Either.html" title="type parameter in Either">A</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#swap()" class="member-name-link">swap</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Flips the Left and Right sides.</div>
+</div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-io.github.senthilganeshs.fj.ds.Collection">Methods inherited from interface&nbsp;io.github.senthilganeshs.fj.ds.<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a></h3>
-<code><a href="Collection.html#all(java.util.function.Predicate)">all</a>, <a href="Collection.html#any(java.util.function.Predicate)">any</a>, <a href="Collection.html#apply(io.github.senthilganeshs.fj.ds.Collection)">apply</a>, <a href="Collection.html#chunk(int)">chunk</a>, <a href="Collection.html#concat(io.github.senthilganeshs.fj.ds.Collection)">concat</a>, <a href="Collection.html#count()">count</a>, <a href="Collection.html#distinct()">distinct</a>, <a href="Collection.html#distinct(io.github.senthilganeshs.fj.ds.Eq)">distinct</a>, <a href="Collection.html#drop(int)">drop</a>, <a href="Collection.html#dropWhile(java.util.function.Predicate)">dropWhile</a>, <a href="Collection.html#empty()">empty</a>, <a href="Collection.html#filter(java.util.function.Predicate)">filter</a>, <a href="Collection.html#filterType(java.lang.Class)">filterType</a>, <a href="Collection.html#find(java.util.function.Predicate)">find</a>, <a href="Collection.html#findIndex(java.util.function.Predicate)">findIndex</a>, <a href="Collection.html#fold(io.github.senthilganeshs.fj.ds.Monoid)">fold</a>, <a href="Collection.html#foldl(R,java.util.function.BiFunction)">foldl</a>, <a href="Collection.html#foldMap(java.util.function.Function,io.github.senthilganeshs.fj.ds.Monoid)">foldMap</a>, <a href="Collection.html#foldr(R,java.util.function.BiFunction)">foldr</a>, <a href="Collection.html#forEach(java.util.function.Consumer)">forEach</a>, <a href="Collection.html#groupBy(java.util.function.Function)">groupBy</a>, <a href="Collection.html#headMaybe()">headMaybe</a>, <a href="Collection.html#indexOf(T)">indexOf</a>, <a href="Collection.html#intercalate(io.github.senthilganeshs.fj.ds.Collection)">intercalate</a>, <a href="Collection.html#intersperse(T)">intersperse</a>, <a href="Collection.html#lastMaybe()">lastMaybe</a>, <a href="Collection.html#length()">length</a>, <a href="Collection.html#liftA2(java.util.function.BiFunction,io.github.senthilganeshs.fj.ds.Collection)">liftA2</a>, <a href="Collection.html#liftA2(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection)">liftA2</a>, <a href="Collection.html#liftA3(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection)">liftA3</a>, <a href="Collection.html#liftA4(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection)">liftA4</a>, <a href="Collection.html#mapMaybe(java.util.function.Function)">mapMaybe</a>, <a href="Collection.html#mkString(java.lang.String)">mkString</a>, <a href="Collection.html#mkString(java.lang.String,java.lang.String,java.lang.String)">mkString</a>, <a href="Collection.html#partition(java.util.function.Predicate)">partition</a>, <a href="Collection.html#reduce(java.util.function.BiFunction)">reduce</a>, <a href="Collection.html#reverse()">reverse</a>, <a href="Collection.html#scanl(R,java.util.function.BiFunction)">scanl</a>, <a href="Collection.html#slice(int,int)">slice</a>, <a href="Collection.html#span(java.util.function.Predicate)">span</a>, <a href="Collection.html#take(int)">take</a>, <a href="Collection.html#takeWhile(java.util.function.Predicate)">takeWhile</a>, <a href="Collection.html#traverse(java.util.function.Function)">traverse</a>, <a href="Collection.html#zipWith(java.util.function.BiFunction,io.github.senthilganeshs.fj.ds.List)">zipWith</a>, <a href="Collection.html#zipWithIndex()">zipWithIndex</a></code></div>
+<code><a href="Collection.html#all(java.util.function.Predicate)">all</a>, <a href="Collection.html#any(java.util.function.Predicate)">any</a>, <a href="Collection.html#apply(io.github.senthilganeshs.fj.ds.Collection)">apply</a>, <a href="Collection.html#chunk(int)">chunk</a>, <a href="Collection.html#concat(io.github.senthilganeshs.fj.ds.Collection)">concat</a>, <a href="Collection.html#count()">count</a>, <a href="Collection.html#distinct()">distinct</a>, <a href="Collection.html#distinct(io.github.senthilganeshs.fj.ds.Eq)">distinct</a>, <a href="Collection.html#drop(int)">drop</a>, <a href="Collection.html#dropWhile(java.util.function.Predicate)">dropWhile</a>, <a href="Collection.html#empty()">empty</a>, <a href="Collection.html#filterType(java.lang.Class)">filterType</a>, <a href="Collection.html#find(java.util.function.Predicate)">find</a>, <a href="Collection.html#findIndex(java.util.function.Predicate)">findIndex</a>, <a href="Collection.html#fold(io.github.senthilganeshs.fj.ds.Monoid)">fold</a>, <a href="Collection.html#foldl(R,java.util.function.BiFunction)">foldl</a>, <a href="Collection.html#foldMap(java.util.function.Function,io.github.senthilganeshs.fj.ds.Monoid)">foldMap</a>, <a href="Collection.html#foldr(R,java.util.function.BiFunction)">foldr</a>, <a href="Collection.html#forEach(java.util.function.Consumer)">forEach</a>, <a href="Collection.html#groupBy(java.util.function.Function)">groupBy</a>, <a href="Collection.html#headMaybe()">headMaybe</a>, <a href="Collection.html#indexOf(T)">indexOf</a>, <a href="Collection.html#intercalate(io.github.senthilganeshs.fj.ds.Collection)">intercalate</a>, <a href="Collection.html#intersperse(T)">intersperse</a>, <a href="Collection.html#lastMaybe()">lastMaybe</a>, <a href="Collection.html#length()">length</a>, <a href="Collection.html#liftA2(java.util.function.BiFunction,io.github.senthilganeshs.fj.ds.Collection)">liftA2</a>, <a href="Collection.html#liftA2(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection)">liftA2</a>, <a href="Collection.html#liftA3(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection)">liftA3</a>, <a href="Collection.html#liftA4(java.util.function.Function,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.ds.Collection)">liftA4</a>, <a href="Collection.html#mapMaybe(java.util.function.Function)">mapMaybe</a>, <a href="Collection.html#mkString(java.lang.String)">mkString</a>, <a href="Collection.html#mkString(java.lang.String,java.lang.String,java.lang.String)">mkString</a>, <a href="Collection.html#partition(java.util.function.Predicate)">partition</a>, <a href="Collection.html#reduce(java.util.function.BiFunction)">reduce</a>, <a href="Collection.html#reverse()">reverse</a>, <a href="Collection.html#scanl(R,java.util.function.BiFunction)">scanl</a>, <a href="Collection.html#slice(int,int)">slice</a>, <a href="Collection.html#span(java.util.function.Predicate)">span</a>, <a href="Collection.html#take(int)">take</a>, <a href="Collection.html#takeWhile(java.util.function.Predicate)">takeWhile</a>, <a href="Collection.html#traverse(java.util.function.Function)">traverse</a>, <a href="Collection.html#zipWith(java.util.function.BiFunction,io.github.senthilganeshs.fj.ds.List)">zipWith</a>, <a href="Collection.html#zipWithIndex()">zipWithIndex</a></code></div>
 </section>
 </li>
 </ul>
@@ -239,6 +275,16 @@ B&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganesh
 <h3>either</h3>
 <div class="member-signature"><span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type">R</span>&nbsp;<span class="element-name">either</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">A</a>,<wbr>R&gt;&nbsp;fa,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">B</a>,<wbr>R&gt;&nbsp;fb)</span></div>
+<div class="block">Applies either the left function or the right function to the contained value.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>R</code> - The resulting type.</dd>
+<dt>Parameters:</dt>
+<dd><code>fa</code> - Function to apply if this is Left.</dd>
+<dd><code>fb</code> - Function to apply if this is Right.</dd>
+<dt>Returns:</dt>
+<dd>The result of applying the appropriate function.</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -246,6 +292,16 @@ B&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganesh
 <h3 id="left(java.lang.Object)">left</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;P,<wbr>
 Q&gt;</span>&nbsp;<span class="return-type"><a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;P,<wbr>Q&gt;</span>&nbsp;<span class="element-name">left</span><wbr><span class="parameters">(P&nbsp;value)</span></div>
+<div class="block">Creates a Left instance.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>P</code> - Left type.</dd>
+<dd><code>Q</code> - Right type.</dd>
+<dt>Parameters:</dt>
+<dd><code>value</code> - The value.</dd>
+<dt>Returns:</dt>
+<dd>A Left Either.</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -253,6 +309,16 @@ Q&gt;</span>&nbsp;<span class="return-type"><a href="Either.html" title="interfa
 <h3 id="right(java.lang.Object)">right</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;P,<wbr>
 Q&gt;</span>&nbsp;<span class="return-type"><a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;P,<wbr>Q&gt;</span>&nbsp;<span class="element-name">right</span><wbr><span class="parameters">(Q&nbsp;value)</span></div>
+<div class="block">Creates a Right instance.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>P</code> - Left type.</dd>
+<dd><code>Q</code> - Right type.</dd>
+<dt>Parameters:</dt>
+<dd><code>value</code> - The value.</dd>
+<dt>Returns:</dt>
+<dd>A Right Either.</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -260,6 +326,16 @@ Q&gt;</span>&nbsp;<span class="return-type"><a href="Either.html" title="interfa
 <h3>lefts</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;A,<wbr>
 B&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;A&gt;</span>&nbsp;<span class="element-name">lefts</span><wbr><span class="parameters">(<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;A,<wbr>B&gt;&gt;&nbsp;es)</span></div>
+<div class="block">Extracts all Left values from a collection of Eithers.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>A</code> - Left type.</dd>
+<dd><code>B</code> - Right type.</dd>
+<dt>Parameters:</dt>
+<dd><code>es</code> - Collection of Eithers.</dd>
+<dt>Returns:</dt>
+<dd>Collection of Left values.</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -267,6 +343,16 @@ B&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="int
 <h3>rights</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;A,<wbr>
 B&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;B&gt;</span>&nbsp;<span class="element-name">rights</span><wbr><span class="parameters">(<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;A,<wbr>B&gt;&gt;&nbsp;es)</span></div>
+<div class="block">Extracts all Right values from a collection of Eithers.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>A</code> - Left type.</dd>
+<dd><code>B</code> - Right type.</dd>
+<dt>Parameters:</dt>
+<dd><code>es</code> - Collection of Eithers.</dd>
+<dt>Returns:</dt>
+<dd>Collection of Right values.</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -327,27 +413,68 @@ B&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="int
 <section class="detail" id="fromLeft(A)">
 <h3 id="fromLeft(java.lang.Object)">fromLeft</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Either.html" title="type parameter in Either">A</a></span>&nbsp;<span class="element-name">fromLeft</span><wbr><span class="parameters">(<a href="Either.html" title="type parameter in Either">A</a>&nbsp;def)</span></div>
+<div class="block">Safely extracts the Left value or returns a default.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>def</code> - Default value.</dd>
+<dt>Returns:</dt>
+<dd>The Left value or def.</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="isLeft()">
 <h3>isLeft</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isLeft</span>()</div>
+<div class="block">Returns true if this is a Left.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>True if Left.</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="isRight()">
 <h3>isRight</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isRight</span>()</div>
+<div class="block">Returns true if this is a Right.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>True if Right.</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="map(java.util.function.Function)">
 <h3>map</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;<a href="Either.html" title="type parameter in Either">A</a>,<wbr>R&gt;</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">B</a>,<wbr>R&gt;&nbsp;fn)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="Collection.html#map(java.util.function.Function)">Collection</a></code></span></div>
+<div class="block">Transforms each element of the collection using the provided function.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="Collection.html#map(java.util.function.Function)">map</a></code>&nbsp;in interface&nbsp;<code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Either.html" title="type parameter in Either">A</a>&gt;</code></dd>
+<dt>Type Parameters:</dt>
+<dd><code>R</code> - The type of elements in the resulting collection.</dd>
+<dt>Parameters:</dt>
+<dd><code>fn</code> - The transformation function.</dd>
+<dt>Returns:</dt>
+<dd>A new collection containing the transformed elements.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="filter(java.util.function.Predicate)">
+<h3>filter</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;<a href="Either.html" title="type parameter in Either">A</a>,<wbr><a href="Either.html" title="type parameter in Either">B</a>&gt;</span>&nbsp;<span class="element-name">filter</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="Either.html" title="type parameter in Either">B</a>&gt;&nbsp;pred)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="Collection.html#filter(java.util.function.Predicate)">Collection</a></code></span></div>
+<div class="block">Returns a new collection containing only elements that satisfy the predicate.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="Collection.html#filter(java.util.function.Predicate)">filter</a></code>&nbsp;in interface&nbsp;<code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Either.html" title="type parameter in Either">A</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>pred</code> - The condition to test against.</dd>
+<dt>Returns:</dt>
+<dd>A filtered collection.</dd>
 </dl>
 </section>
 </li>
@@ -375,12 +502,28 @@ B&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="int
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;C,<wbr>
 D&gt;</span>&nbsp;<span class="return-type"><a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;C,<wbr>D&gt;</span>&nbsp;<span class="element-name">bimap</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">A</a>,<wbr>C&gt;&nbsp;fa,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">B</a>,<wbr>D&gt;&nbsp;fb)</span></div>
+<div class="block">Transforms both sides of the Either.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>C</code> - New Left type.</dd>
+<dd><code>D</code> - New Right type.</dd>
+<dt>Parameters:</dt>
+<dd><code>fa</code> - Left transformation function.</dd>
+<dd><code>fb</code> - Right transformation function.</dd>
+<dt>Returns:</dt>
+<dd>A new Either with both values transformed.</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="swap()">
 <h3>swap</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;<a href="Either.html" title="type parameter in Either">B</a>,<wbr><a href="Either.html" title="type parameter in Either">A</a>&gt;</span>&nbsp;<span class="element-name">swap</span>()</div>
+<div class="block">Flips the Left and Right sides.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>An Either where Right is now Left and vice-versa.</dd>
+</dl>
 </section>
 </li>
 </ul>

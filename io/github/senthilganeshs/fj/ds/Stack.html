@@ -86,6 +86,10 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of elements in the stack.</dd>
+</dl>
+<dl class="notes">
 <dt>All Superinterfaces:</dt>
 <dd><code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;T&gt;</code></dd>
 </dl>
@@ -96,6 +100,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Stack&lt;T&gt;</span><span class="extends-implements">
 extends <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;T&gt;</span></div>
+<div class="block">A purely functional Stack (LIFO).</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -149,9 +154,11 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="Stack.html" title="interface in io.github.senthilganeshs.fj.ds">Stack</a><wbr>&lt;R&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Stack.html" title="type parameter in Stack">T</a>,<wbr>R&gt;&nbsp;fn)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Transforms each element of the collection using the provided function.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R&gt;&nbsp;<a href="Stack.html" title="interface in io.github.senthilganeshs.fj.ds">Stack</a><wbr>&lt;R&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newStack(R%5B%5D)" class="member-name-link">newStack</a><wbr>(R[]&nbsp;values)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newStack(R...)" class="member-name-link">newStack</a><wbr>(R...&nbsp;values)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Stack.html" title="interface in io.github.senthilganeshs.fj.ds">Stack</a><wbr>&lt;<a href="Stack.html" title="type parameter in Stack">T</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#reverse()" class="member-name-link">reverse</a>()</code></div>
@@ -205,9 +212,17 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 <section class="detail" id="map(java.util.function.Function)">
 <h3>map</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Stack.html" title="interface in io.github.senthilganeshs.fj.ds">Stack</a>&lt;R&gt;</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Stack.html" title="type parameter in Stack">T</a>,<wbr>R&gt;&nbsp;fn)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="Collection.html#map(java.util.function.Function)">Collection</a></code></span></div>
+<div class="block">Transforms each element of the collection using the provided function.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="Collection.html#map(java.util.function.Function)">map</a></code>&nbsp;in interface&nbsp;<code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Stack.html" title="type parameter in Stack">T</a>&gt;</code></dd>
+<dt>Type Parameters:</dt>
+<dd><code>R</code> - The type of elements in the resulting collection.</dd>
+<dt>Parameters:</dt>
+<dd><code>fn</code> - The transformation function.</dd>
+<dt>Returns:</dt>
+<dd>A new collection containing the transformed elements.</dd>
 </dl>
 </section>
 </li>
@@ -280,9 +295,10 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 </section>
 </li>
 <li>
-<section class="detail" id="newStack(R[])">
+<section class="detail" id="newStack(R...)">
 <h3 id="newStack(java.lang.Object[])">newStack</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Stack.html" title="interface in io.github.senthilganeshs.fj.ds">Stack</a>&lt;R&gt;</span>&nbsp;<span class="element-name">newStack</span><wbr><span class="parameters">(R[]&nbsp;values)</span></div>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
+</span><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Stack.html" title="interface in io.github.senthilganeshs.fj.ds">Stack</a>&lt;R&gt;</span>&nbsp;<span class="element-name">newStack</span><wbr><span class="parameters">(R...&nbsp;values)</span></div>
 </section>
 </li>
 </ul>

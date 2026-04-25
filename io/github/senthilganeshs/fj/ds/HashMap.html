@@ -38,7 +38,7 @@ loadScripts(document, 'script');</script>
 <p>Summary:</p>
 <ul>
 <li><a href="#nested-class-summary">Nested</a></li>
-<li>Field</li>
+<li><a href="#field-summary">Field</a></li>
 <li>Constr</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
@@ -46,7 +46,7 @@ loadScripts(document, 'script');</script>
 <li>
 <p>Detail:</p>
 <ul>
-<li>Field</li>
+<li><a href="#field-detail">Field</a></li>
 <li>Constr</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
@@ -58,13 +58,13 @@ loadScripts(document, 'script');</script>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 <ul class="sub-nav-list">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field-detail">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
@@ -86,6 +86,11 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>K</code> - The type of keys.</dd>
+<dd><code>V</code> - The type of values.</dd>
+</dl>
+<dl class="notes">
 <dt>All Superinterfaces:</dt>
 <dd><code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="HashMap.Entry.html" title="class in io.github.senthilganeshs.fj.ds">HashMap.Entry</a>&lt;K,<wbr>V&gt;&gt;</code></dd>
 </dl>
@@ -96,8 +101,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">HashMap&lt;K,<wbr>V&gt;</span><span class="extends-implements">
 extends <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="HashMap.Entry.html" title="class in io.github.senthilganeshs.fj.ds">HashMap.Entry</a>&lt;K,<wbr>V&gt;&gt;</span></div>
-<div class="block">A purely functional HashMap implemented using a Hash Array Mapped Trie (HAMT).
- Provides near O(1) performance for lookups and updates.</div>
+<div class="block">A persistent Hash Array Mapped Trie (HAMT) implementation.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -131,6 +135,27 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 </div>
 </section>
 </li>
+<!-- =========== FIELD SUMMARY =========== -->
+<li>
+<section class="field-summary" id="field-summary">
+<h2>Field Summary</h2>
+<div class="caption"><span>Fields</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Field</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static final int</code></div>
+<div class="col-second even-row-color"><code><a href="#BITS" class="member-name-link">BITS</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final int</code></div>
+<div class="col-second odd-row-color"><code><a href="#MASK" class="member-name-link">MASK</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final int</code></div>
+<div class="col-second even-row-color"><code><a href="#WIDTH" class="member-name-link">WIDTH</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+</div>
+</section>
+</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -156,6 +181,9 @@ V&gt;&nbsp;<a href="HashMap.html" title="interface in io.github.senthilganeshs.f
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="HashMap.html" title="interface in io.github.senthilganeshs.fj.ds">HashMap</a><wbr>&lt;<a href="HashMap.html" title="type parameter in HashMap">K</a>,<wbr><a href="HashMap.html" title="type parameter in HashMap">V</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#remove(K)" class="member-name-link">remove</a><wbr>(<a href="HashMap.html" title="type parameter in HashMap">K</a>&nbsp;key)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#size()" class="member-name-link">size</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -168,6 +196,56 @@ V&gt;&nbsp;<a href="HashMap.html" title="interface in io.github.senthilganeshs.f
 </section>
 <section class="details">
 <ul class="details-list">
+<!-- ============ FIELD DETAIL =========== -->
+<li>
+<section class="field-details" id="field-detail">
+<h2>Field Details</h2>
+<ul class="member-list">
+<li>
+<section class="detail" id="BITS">
+<h3>BITS</h3>
+<div class="member-signature"><span class="modifiers">static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">BITS</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#io.github.senthilganeshs.fj.ds.HashMap.BITS">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="WIDTH">
+<h3>WIDTH</h3>
+<div class="member-signature"><span class="modifiers">static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">WIDTH</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#io.github.senthilganeshs.fj.ds.HashMap.WIDTH">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="MASK">
+<h3>MASK</h3>
+<div class="member-signature"><span class="modifiers">static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">MASK</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#io.github.senthilganeshs.fj.ds.HashMap.MASK">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+</ul>
+</section>
+</li>
 <!-- ============ METHOD DETAIL ========== -->
 <li>
 <section class="method-details" id="method-detail">
@@ -190,6 +268,12 @@ V&gt;&nbsp;<a href="HashMap.html" title="interface in io.github.senthilganeshs.f
 <section class="detail" id="remove(K)">
 <h3 id="remove(java.lang.Object)">remove</h3>
 <div class="member-signature"><span class="return-type"><a href="HashMap.html" title="interface in io.github.senthilganeshs.fj.ds">HashMap</a>&lt;<a href="HashMap.html" title="type parameter in HashMap">K</a>,<wbr><a href="HashMap.html" title="type parameter in HashMap">V</a>&gt;</span>&nbsp;<span class="element-name">remove</span><wbr><span class="parameters">(<a href="HashMap.html" title="type parameter in HashMap">K</a>&nbsp;key)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="size()">
+<h3>size</h3>
+<div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">size</span>()</div>
 </section>
 </li>
 <li>

@@ -86,6 +86,10 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of elements in the list.</dd>
+</dl>
+<dl class="notes">
 <dt>All Superinterfaces:</dt>
 <dd><code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;T&gt;</code></dd>
 </dl>
@@ -100,6 +104,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">List&lt;T&gt;</span><span class="extends-implements">
 extends <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;T&gt;</span></div>
+<div class="block">A purely functional Linked List (Snoc-list style).</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -184,10 +189,14 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="List.html" title="interface in io.github.senthilganeshs.fj.ds">List</a><wbr>&lt;R&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="List.html" title="type parameter in List">T</a>,<wbr>R&gt;&nbsp;fn)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Transforms each element of the collection using the provided function.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="List.html" title="interface in io.github.senthilganeshs.fj.ds">List</a><wbr>&lt;R&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#mapMaybe(java.util.function.Function)" class="member-name-link">mapMaybe</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="List.html" title="type parameter in List">T</a>,<wbr><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;R&gt;&gt;&nbsp;fn)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Maps each element to a Maybe-producing function and keeps only the "Some" results.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;R&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newQueue(R%5B%5D)" class="member-name-link">newQueue</a><wbr>(R[]&nbsp;values)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
@@ -285,9 +294,17 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 <section class="detail" id="map(java.util.function.Function)">
 <h3>map</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="List.html" title="interface in io.github.senthilganeshs.fj.ds">List</a>&lt;R&gt;</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="List.html" title="type parameter in List">T</a>,<wbr>R&gt;&nbsp;fn)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="Collection.html#map(java.util.function.Function)">Collection</a></code></span></div>
+<div class="block">Transforms each element of the collection using the provided function.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="Collection.html#map(java.util.function.Function)">map</a></code>&nbsp;in interface&nbsp;<code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="List.html" title="type parameter in List">T</a>&gt;</code></dd>
+<dt>Type Parameters:</dt>
+<dd><code>R</code> - The type of elements in the resulting collection.</dd>
+<dt>Parameters:</dt>
+<dd><code>fn</code> - The transformation function.</dd>
+<dt>Returns:</dt>
+<dd>A new collection containing the transformed elements.</dd>
 </dl>
 </section>
 </li>
@@ -375,9 +392,17 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 <section class="detail" id="mapMaybe(java.util.function.Function)">
 <h3>mapMaybe</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="List.html" title="interface in io.github.senthilganeshs.fj.ds">List</a>&lt;R&gt;</span>&nbsp;<span class="element-name">mapMaybe</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="List.html" title="type parameter in List">T</a>,<wbr><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;R&gt;&gt;&nbsp;fn)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="Collection.html#mapMaybe(java.util.function.Function)">Collection</a></code></span></div>
+<div class="block">Maps each element to a Maybe-producing function and keeps only the "Some" results.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="Collection.html#mapMaybe(java.util.function.Function)">mapMaybe</a></code>&nbsp;in interface&nbsp;<code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="List.html" title="type parameter in List">T</a>&gt;</code></dd>
+<dt>Type Parameters:</dt>
+<dd><code>R</code> - Resulting element type.</dd>
+<dt>Parameters:</dt>
+<dd><code>fn</code> - Transformation function.</dd>
+<dt>Returns:</dt>
+<dd>A collection of successful results.</dd>
 </dl>
 </section>
 </li>
