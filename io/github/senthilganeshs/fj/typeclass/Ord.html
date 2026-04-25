@@ -5,7 +5,7 @@
 <title>Ord (functional-java 1.0.2 API)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="description" content="declaration: package: io.github.senthilganeshs.fj.ds, interface: Ord">
+<meta name="description" content="declaration: package: io.github.senthilganeshs.fj.typeclass, interface: Ord">
 <meta name="generator" content="javadoc/ClassWriterImpl">
 <link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
 <link rel="stylesheet" type="text/css" href="../../../../../script-dir/jquery-ui.min.css" title="Style">
@@ -26,6 +26,7 @@ loadScripts(document, 'script');</script>
 <div class="top-nav" id="navbar-top"><button id="navbar-toggle-button" aria-controls="navbar-top" aria-expanded="false" aria-label="Toggle navigation links"><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span><span class="nav-bar-toggle-icon">&nbsp;</span></button>
 <div class="skip-nav"><a href="#skip-navbar-top" title="Skip navigation links">Skip navigation links</a></div>
 <ul id="navbar-top-firstrow" class="nav-list" title="Navigation">
+<li><a href="../../../../../index.html">Overview</a></li>
 <li><a href="package-summary.html">Package</a></li>
 <li class="nav-bar-cell1-rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
@@ -81,17 +82,17 @@ loadScripts(document, 'script');</script>
 <main role="main">
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">io.github.senthilganeshs.fj.ds</a></div>
+<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">io.github.senthilganeshs.fj.typeclass</a></div>
 <h1 title="Interface Ord" class="title">Interface Ord&lt;T&gt;</h1>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Superinterfaces:</dt>
-<dd><code><a href="Eq.html" title="interface in io.github.senthilganeshs.fj.ds">Eq</a>&lt;T&gt;</code></dd>
+<dd><code><a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typeclass">Eq</a>&lt;T&gt;</code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Ord&lt;T&gt;</span><span class="extends-implements">
-extends <a href="Eq.html" title="interface in io.github.senthilganeshs.fj.ds">Eq</a>&lt;T&gt;</span></div>
+extends <a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typeclass">Eq</a>&lt;T&gt;</span></div>
 <div class="block">A typeclass for types that support ordering.</div>
 </section>
 <section class="summary">
@@ -115,7 +116,7 @@ extends <a href="Eq.html" title="interface in io.github.senthilganeshs.fj.ds">Eq
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#eq(T,T)" class="member-name-link">eq</a><wbr>(<a href="Ord.html" title="type parameter in Ord">T</a>&nbsp;a,
  <a href="Ord.html" title="type parameter in Ord">T</a>&nbsp;b)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R&gt;&nbsp;<a href="Ord.html" title="interface in io.github.senthilganeshs.fj.ds">Ord</a><wbr>&lt;R&gt;</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R&gt;&nbsp;<a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a><wbr>&lt;R&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#fromComparator(java.util.Comparator)" class="member-name-link">fromComparator</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Comparator.html" title="class or interface in java.util" class="external-link">Comparator</a>&lt;R&gt;&nbsp;comparator)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
@@ -134,7 +135,7 @@ extends <a href="Eq.html" title="interface in io.github.senthilganeshs.fj.ds">Eq
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#lte(T,T)" class="member-name-link">lte</a><wbr>(<a href="Ord.html" title="type parameter in Ord">T</a>&nbsp;a,
  <a href="Ord.html" title="type parameter in Ord">T</a>&nbsp;b)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;R&gt;&gt;<br><a href="Ord.html" title="interface in io.github.senthilganeshs.fj.ds">Ord</a><wbr>&lt;R&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;R&gt;&gt;<br><a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a><wbr>&lt;R&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#natural()" class="member-name-link">natural</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
 </div>
@@ -165,7 +166,7 @@ extends <a href="Eq.html" title="interface in io.github.senthilganeshs.fj.ds">Eq
  <a href="Ord.html" title="type parameter in Ord">T</a>&nbsp;b)</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="Eq.html#eq(T,T)">eq</a></code>&nbsp;in interface&nbsp;<code><a href="Eq.html" title="interface in io.github.senthilganeshs.fj.ds">Eq</a>&lt;<a href="Ord.html" title="type parameter in Ord">T</a>&gt;</code></dd>
+<dd><code><a href="Eq.html#eq(T,T)">eq</a></code>&nbsp;in interface&nbsp;<code><a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typeclass">Eq</a>&lt;<a href="Ord.html" title="type parameter in Ord">T</a>&gt;</code></dd>
 </dl>
 </section>
 </li>
@@ -200,13 +201,13 @@ extends <a href="Eq.html" title="interface in io.github.senthilganeshs.fj.ds">Eq
 <li>
 <section class="detail" id="natural()">
 <h3>natural</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;R extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;R&gt;&gt;</span>&nbsp;<span class="return-type"><a href="Ord.html" title="interface in io.github.senthilganeshs.fj.ds">Ord</a>&lt;R&gt;</span>&nbsp;<span class="element-name">natural</span>()</div>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;R extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;R&gt;&gt;</span>&nbsp;<span class="return-type"><a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;R&gt;</span>&nbsp;<span class="element-name">natural</span>()</div>
 </section>
 </li>
 <li>
 <section class="detail" id="fromComparator(java.util.Comparator)">
 <h3>fromComparator</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Ord.html" title="interface in io.github.senthilganeshs.fj.ds">Ord</a>&lt;R&gt;</span>&nbsp;<span class="element-name">fromComparator</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Comparator.html" title="class or interface in java.util" class="external-link">Comparator</a>&lt;R&gt;&nbsp;comparator)</span></div>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;R&gt;</span>&nbsp;<span class="element-name">fromComparator</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Comparator.html" title="class or interface in java.util" class="external-link">Comparator</a>&lt;R&gt;&nbsp;comparator)</span></div>
 </section>
 </li>
 </ul>
