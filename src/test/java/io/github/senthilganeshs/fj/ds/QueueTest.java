@@ -54,4 +54,16 @@ public class QueueTest {
         Assert.assertNotEquals(q1, null);
         Assert.assertNotEquals(q1, "not a queue");
     }
+
+    @Test
+    public void testQueueFunctionalAPIs() {
+        Queue<Integer> q = Queue.of(1, 2, 3, 4);
+        
+        // map (covariant)
+        Assert.assertEquals(q.map(i -> i * 2).length(), 4);
+        Assert.assertTrue(q.map(i -> i * 2).any(i -> i == 8));
+        
+        // filter (covariant)
+        Assert.assertEquals(q.filter(i -> i % 2 == 0).length(), 2);
+    }
 }

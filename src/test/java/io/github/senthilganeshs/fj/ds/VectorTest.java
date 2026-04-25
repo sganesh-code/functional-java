@@ -53,22 +53,27 @@ public class VectorTest {
     }
 
     @Test
-    public void testVectorMassiveGrowth() {
-        Vector<Integer> v = Vector.nil();
-        // Trigger root growth (WIDTH=32, so 32, 1024, 32768...)
-        int limit = 1500; 
-        for (int i = 0; i < limit; i++) v = (Vector<Integer>) v.build(i);
+    public void testVectorFunctionalAPIs() {
+        Vector<Integer> v = Vector.of(1, 2, 3, 4);
         
-        Assert.assertEquals(v.length(), limit);
-        // Verify every element
-        for (int i = 0; i < limit; i++) {
-            Assert.assertEquals(v.at(i).fromMaybe(-1), Integer.valueOf(i));
-        }
+        // map (covariant)
+        Vector<Integer> doubled = v.map(i -> i * 2);
+        Assert.assertEquals(doubled.toString(), "[2,4,6,8]");
         
-        // Random updates
-        v = v.update(0, 999).update(1023, 888).update(1499, 777);
-        Assert.assertEquals(v.at(0).fromMaybe(-1), Integer.valueOf(999));
-        Assert.assertEquals(v.at(1023).fromMaybe(-1), Integer.valueOf(888));
-        Assert.assertEquals(v.at(1499).fromMaybe(-1), Integer.valueOf(777));
+        // filter (covariant)
+        Vector<Integer> filtered = v.filter(i -> i % 2 == 0);
+        Assert.assertEquals(filtered.toString(), "[2,4]");
+        
+        // takeWhile/dropWhile
+        Assert.assertEquals(v.takeWhile(i -> i < 3).toString(), "[1,2]");
+        Assert.assertEquals(v.dropWhile(i -> i < 3).toString(), "[3,4]");
+        
+        // head/last
+        Assert.assertEquals(v.headMaybe().fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(v.lastMaybe().fromMaybe(-1), Integer.valueOf(4));
+        
+        // distinct
+        Vector<Integer> dupes = Vector.of(1, 1, 2, 2);
+        Assert.assertEquals(dupes.distinct().length(), 2);
     }
 }

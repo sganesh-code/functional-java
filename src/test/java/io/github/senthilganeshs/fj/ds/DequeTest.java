@@ -94,4 +94,15 @@ public class DequeTest {
         Deque<Integer> d2 = Deque.<Integer>nil().pushFront(1).pushFront(2).pushFront(3);
         Assert.assertEquals(d2.popBack().fromMaybe(null).getA().fromMaybe(-1), Integer.valueOf(1));
     }
+
+    @Test
+    public void testDequeFunctionalAPIs() {
+        Deque<Integer> d = Deque.of(1, 2, 3, 4);
+        
+        // map (covariant)
+        Assert.assertEquals(d.map(i -> i * 2).length(), 4);
+        
+        // filter (covariant)
+        Assert.assertEquals(d.filter(i -> i % 2 == 0).length(), 2);
+    }
 }

@@ -31,11 +31,20 @@ public class ListTest {
     public void testListUnzipReal() {
         List<Integer> l = List.of(1, 2, 3);
         Tuple<Maybe<Integer>, List<Integer>> unzipped = l.unzip();
-        // For LinkedList(head, tail), head is the list before tail.
-        // List.of(1,2,3) is build(1).build(2).build(3)
-        // [ [ [nil, 1], 2], 3]
-        // unzip on [ [1,2], 3] returns Tuple.of(head.take(1).find(i->true), head.drop(1).build(tail))
-        // This unzip seems specifically designed for some internal use or it's a bit unconventional.
+        
+        // head is 1, tail is [2, 3]
+        Assert.assertEquals(unzipped.getA().fromMaybe(Maybe.nothing()).fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(unzipped.getB().fromMaybe(List.nil()).toString(), "[2,3]");
+    }
+
+    @Test
+    public void testListFrom() {
+        Collection<Integer> c = Maybe.some(10);
+        List<Integer> l = List.from(c);
+        Assert.assertEquals(l.toString(), "[10]");
+        
+        Collection<Integer> c2 = List.of(1, 2, 3);
+        Assert.assertEquals(List.from(c2).length(), 3);
     }
 
     @Test

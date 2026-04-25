@@ -48,4 +48,18 @@ public class StackTest {
         Stack<Integer> s = Stack.newStack(new Integer[]{1, 2, 3});
         Assert.assertEquals(s.length(), 3);
     }
+
+    @Test
+    public void testStackFunctionalAPIs() {
+        Stack<Integer> s = Stack.newStack(new Integer[]{1, 2, 3, 4});
+        
+        // map (covariant). [1,2,3,4] mapped and built sequentially: push 2, then 4, then 6, then 8. Top is 8.
+        // toString() uses foldl, which starts from top. So [8,6,4,2]
+        Stack<Integer> doubled = s.map(i -> i * 2);
+        Assert.assertEquals(doubled.toString(), "[8,6,4,2]");
+        
+        // filter (covariant). [1,2,3,4] filtered: push 2, then 4. Top is 4.
+        Stack<Integer> filtered = s.filter(i -> i % 2 == 0);
+        Assert.assertEquals(filtered.toString(), "[4,2]");
+    }
 }
