@@ -57,6 +57,10 @@ public interface Collection<T> {
             (r, t) -> pred.test(t) ? r.build(t) : r);
     }
 
+    default <R> Collection<R> filterType(Class<R> clazz) {
+        return filter(clazz::isInstance).map(clazz::cast);
+    }
+
     @SuppressWarnings("unchecked")
     default Maybe<T> find(final Predicate<T> pred) {
         return foldl(Maybe.nothing(), (acc, t) -> acc.isSome() ? acc : (pred.test(t) ? Maybe.some(t) : acc));
@@ -343,6 +347,14 @@ public interface Collection<T> {
 
     public static <R extends Number> double sum(Collection<R> rs) {
         return rs.foldl(0.0, (acc, r) -> acc + r.doubleValue());
+    }
+
+    default T fold(Monoid<T> monoid) {
+        return foldl(monoid.empty(), monoid::combine);
+    }
+
+    default <R> R foldMap(Function<T, R> fn, Monoid<R> monoid) {
+        return map(fn).foldl(monoid.empty(), monoid::combine);
     }
 
     public static <T, S> Collection<T> unfold(S seed, Function<S, Maybe<Tuple<T, S>>> f) {

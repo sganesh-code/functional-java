@@ -8,6 +8,21 @@ public interface Stack<T> extends Collection<T>{
     Maybe<T> head();
     Maybe<Stack<T>> tail();
 
+    @SuppressWarnings("unchecked")
+    static <R> Stack<R> from(Collection<R> c) {
+        return (Stack<R>) c.foldl(Stack.<R>emptyStack(), (s, r) -> (Stack<R>) s.build(r));
+    }
+
+    @Override
+    default <R> Stack<R> map(java.util.function.Function<T, R> fn) {
+        return from(Collection.super.map(fn));
+    }
+
+    @Override
+    default Stack<T> filter(java.util.function.Predicate<T> pred) {
+        return from(Collection.super.filter(pred));
+    }
+
     @Override
     default Stack<T> take(int n) {
         if (n <= 0) return emptyStack();

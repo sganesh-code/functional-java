@@ -45,6 +45,11 @@ public interface Either<A, B> extends Collection<B> {
     }
     
     @Override
+    default <R> Either<A, R> map(Function<B, R> fn) {
+        return (Either<A, R>) Collection.super.map(fn);
+    }
+
+    @Override
     default <R> Collection<R> flatMap(Function<B, Collection<R>> fn) {
         return either(Either::left, fn::apply);
     }

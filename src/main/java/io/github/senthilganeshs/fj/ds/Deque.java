@@ -10,9 +10,24 @@ public interface Deque<T> extends Collection<T> {
 
     Deque<T> pushFront(T value);
     Deque<T> pushBack(T value);
-
     Maybe<Tuple<T, Deque<T>>> popFront();
     Maybe<Tuple<T, Deque<T>>> popBack();
+
+    @SuppressWarnings("unchecked")
+    static <R> Deque<R> from(Collection<R> c) {
+        return (Deque<R>) c.foldl(Deque.<R>nil(), (d, r) -> (Deque<R>) d.build(r));
+    }
+
+    @Override
+    default <R> Deque<R> map(java.util.function.Function<T, R> fn) {
+        return from(Collection.super.map(fn));
+    }
+
+    @Override
+    default Deque<T> filter(java.util.function.Predicate<T> pred) {
+        return from(Collection.super.filter(pred));
+    }
+
 
     static <R> Deque<R> nil() {
         return new BankersDeque<>(Stack.emptyStack(), Stack.emptyStack());

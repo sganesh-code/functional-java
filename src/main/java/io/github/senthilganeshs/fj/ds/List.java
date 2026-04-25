@@ -4,6 +4,8 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public interface List<T> extends Collection<T> {
     
@@ -11,8 +13,52 @@ public interface List<T> extends Collection<T> {
 
     Tuple<Maybe<T>, List<T>> unzip();
 
-
     <R> List<Tuple<T, R>> zip(List<R> other);
+
+    @Override
+    default <R> List<R> map(Function<T, R> fn) {
+        return from(Collection.super.map(fn));
+    }
+
+    @Override
+    default <R> Collection<R> flatMap(Function<T, Collection<R>> fn) {
+        return Collection.super.flatMap(fn);
+    }
+
+    @Override
+    default List<T> filter(Predicate<T> pred) {
+        return from(Collection.super.filter(pred));
+    }
+
+    @Override
+    default List<T> take(int n) {
+        return from(Collection.super.take(n));
+    }
+
+    @Override
+    default List<T> drop(int n) {
+        return from(Collection.super.drop(n));
+    }
+
+    @Override
+    default List<T> reverse() {
+        return from(Collection.super.reverse());
+    }
+
+    @Override
+    default <R> List<R> mapMaybe(Function<T, Maybe<R>> fn) {
+        return from(Collection.super.mapMaybe(fn));
+    }
+
+    @Override
+    default List<T> takeWhile(Predicate<T> pred) {
+        return from(Collection.super.takeWhile(pred));
+    }
+
+    @Override
+    default List<T> dropWhile(Predicate<T> pred) {
+        return from(Collection.super.dropWhile(pred));
+    }
     
     static <R> List<R> of (final java.util.List<R> list) {
         return list.stream().reduce(nil(), (rs, r) ->rs.build(r), (r1, r2) -> r2);

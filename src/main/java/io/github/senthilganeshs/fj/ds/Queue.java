@@ -6,6 +6,21 @@ public interface Queue<T> extends Collection<T> {
 
     Maybe<Tuple<T, Queue<T>>> dequeue();
 
+    @SuppressWarnings("unchecked")
+    static <R> Queue<R> from(Collection<R> c) {
+        return (Queue<R>) c.foldl(Queue.<R>nil(), (q, r) -> (Queue<R>) q.build(r));
+    }
+
+    @Override
+    default <R> Queue<R> map(java.util.function.Function<T, R> fn) {
+        return from(Collection.super.map(fn));
+    }
+
+    @Override
+    default Queue<T> filter(java.util.function.Predicate<T> pred) {
+        return from(Collection.super.filter(pred));
+    }
+
     static <R> Queue<R> nil() {
         return new BankersQueue<>(Stack.emptyStack(), Stack.emptyStack());
     }

@@ -13,6 +13,31 @@ public interface Vector<T> extends Collection<T> {
 
     Vector<T> update(int index, T value);
 
+    @SuppressWarnings("unchecked")
+    static <R> Vector<R> from(Collection<R> c) {
+        return (Vector<R>) c.foldl(Vector.<R>nil(), (v, r) -> (Vector<R>) v.build(r));
+    }
+
+    @Override
+    default <R> Vector<R> map(java.util.function.Function<T, R> fn) {
+        return from(Collection.super.map(fn));
+    }
+
+    @Override
+    default Vector<T> filter(java.util.function.Predicate<T> pred) {
+        return from(Collection.super.filter(pred));
+    }
+
+    @Override
+    default Vector<T> take(int n) {
+        return from(Collection.super.take(n));
+    }
+
+    @Override
+    default Vector<T> drop(int n) {
+        return from(Collection.super.drop(n));
+    }
+
     static <R> Vector<R> nil() {
         return new VectorImpl<>(0, 5, null, null);
     }

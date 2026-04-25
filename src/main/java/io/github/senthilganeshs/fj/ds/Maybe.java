@@ -27,6 +27,20 @@ public interface Maybe<T> extends Collection<T> {
     default T fromMaybe(T def) {
         return foldl(def, (__, t) -> t);
     }
+
+    @Override
+    default <R> Maybe<R> map(java.util.function.Function<T, R> fn) {
+        return (Maybe<R>) Collection.super.map(fn);
+    }
+
+    @Override
+    default Maybe<T> filter(java.util.function.Predicate<T> pred) {
+        return (Maybe<T>) Collection.super.filter(pred);
+    }
+
+    default <R> Maybe<R> safeCast(Class<R> clazz) {
+        return filter(clazz::isInstance).map(clazz::cast);
+    }
     
     final static class Nothing<T> implements Maybe<T> {
 
