@@ -193,37 +193,49 @@ Q&gt;&nbsp;<a href="Either.html" title="interface in io.github.senthilganeshs.fj
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Creates a Left instance.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A,<wbr>
-B&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;A&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#lefts(io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">lefts</a><wbr>(<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;A,<wbr>B&gt;&gt;&nbsp;es)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;L,<wbr>
+R&gt;&nbsp;<a href="Prism.html" title="interface in io.github.senthilganeshs.fj.ds">Prism</a><wbr>&lt;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;L,<wbr>R&gt;,<wbr>L&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#leftP()" class="member-name-link">leftP</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Returns a Prism that focuses on the Left (error) value.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A,<wbr>
+B&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;A&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#lefts(io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">lefts</a><wbr>(<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;A,<wbr>B&gt;&gt;&nbsp;es)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Extracts all Left values from a collection of Eithers.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a><wbr>&lt;<a href="Either.html" title="type parameter in Either">A</a>,<wbr>R&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">B</a>,<wbr>R&gt;&nbsp;fn)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;R&gt;&nbsp;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a><wbr>&lt;<a href="Either.html" title="type parameter in Either">A</a>,<wbr>R&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Either.html" title="type parameter in Either">B</a>,<wbr>R&gt;&nbsp;fn)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Transforms each element of the collection using the provided function.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Either.html" title="type parameter in Either">B</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#orElse(B)" class="member-name-link">orElse</a><wbr>(<a href="Either.html" title="type parameter in Either">B</a>&nbsp;def)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Either.html" title="type parameter in Either">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#orElse(B)" class="member-name-link">orElse</a><wbr>(<a href="Either.html" title="type parameter in Either">B</a>&nbsp;def)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the Right value if present, otherwise returns the provided default.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Either.html" title="type parameter in Either">B</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#orElseGet(java.util.function.Supplier)" class="member-name-link">orElseGet</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends <a href="Either.html" title="type parameter in Either">B</a>&gt;&nbsp;supplier)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Either.html" title="type parameter in Either">B</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#orElseGet(java.util.function.Supplier)" class="member-name-link">orElseGet</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends <a href="Either.html" title="type parameter in Either">B</a>&gt;&nbsp;supplier)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the Right value if present, otherwise returns the result of the supplier.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;X extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&gt;<br><a href="Either.html" title="type parameter in Either">B</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#orElseThrow(java.util.function.Supplier)" class="member-name-link">orElseThrow</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends X&gt;&nbsp;exceptionSupplier)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;X extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&gt;<br><a href="Either.html" title="type parameter in Either">B</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#orElseThrow(java.util.function.Supplier)" class="member-name-link">orElseThrow</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;? extends X&gt;&nbsp;exceptionSupplier)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the Right value if present, otherwise throws the exception from the supplier.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;P,<wbr>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;P,<wbr>
 Q&gt;&nbsp;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a><wbr>&lt;P,<wbr>Q&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#right(Q)" class="member-name-link">right</a><wbr>(Q&nbsp;value)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#right(Q)" class="member-name-link">right</a><wbr>(Q&nbsp;value)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Creates a Right instance.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;L,<wbr>
+R&gt;&nbsp;<a href="Prism.html" title="interface in io.github.senthilganeshs.fj.ds">Prism</a><wbr>&lt;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;L,<wbr>R&gt;,<wbr>R&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#rightP()" class="member-name-link">rightP</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Returns a Prism that focuses on the Right (success) value.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A,<wbr>
 B&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;B&gt;</code></div>
@@ -524,6 +536,22 @@ D&gt;</span>&nbsp;<span class="return-type"><a href="Either.html" title="interfa
 <dt>Returns:</dt>
 <dd>An Either where Right is now Left and vice-versa.</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="rightP()">
+<h3>rightP</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;L,<wbr>
+R&gt;</span>&nbsp;<span class="return-type"><a href="Prism.html" title="interface in io.github.senthilganeshs.fj.ds">Prism</a>&lt;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;L,<wbr>R&gt;,<wbr>R&gt;</span>&nbsp;<span class="element-name">rightP</span>()</div>
+<div class="block">Returns a Prism that focuses on the Right (success) value.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="leftP()">
+<h3>leftP</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;L,<wbr>
+R&gt;</span>&nbsp;<span class="return-type"><a href="Prism.html" title="interface in io.github.senthilganeshs.fj.ds">Prism</a>&lt;<a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;L,<wbr>R&gt;,<wbr>L&gt;</span>&nbsp;<span class="element-name">leftP</span>()</div>
+<div class="block">Returns a Prism that focuses on the Left (error) value.</div>
 </section>
 </li>
 </ul>

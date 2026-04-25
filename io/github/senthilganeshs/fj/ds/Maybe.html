@@ -190,6 +190,11 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R&gt;&nbsp;<a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a><wbr>&lt;R&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#some(R)" class="member-name-link">some</a><wbr>(R&nbsp;value)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;<a href="Prism.html" title="interface in io.github.senthilganeshs.fj.ds">Prism</a><wbr>&lt;<a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;T&gt;,<wbr>T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#someP()" class="member-name-link">someP</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Returns a Prism that focuses on the value inside a Some.</div>
+</div>
 </div>
 </div>
 </div>
@@ -337,6 +342,13 @@ extends <a href="Collection.html" title="interface in io.github.senthilganeshs.f
 <section class="detail" id="safeCast(java.lang.Class)">
 <h3>safeCast</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;R&gt;</span>&nbsp;<span class="element-name">safeCast</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;R&gt;&nbsp;clazz)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="someP()">
+<h3>someP</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="Prism.html" title="interface in io.github.senthilganeshs.fj.ds">Prism</a>&lt;<a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;T&gt;,<wbr>T&gt;</span>&nbsp;<span class="element-name">someP</span>()</div>
+<div class="block">Returns a Prism that focuses on the value inside a Some.</div>
 </section>
 </li>
 </ul>
