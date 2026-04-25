@@ -16,11 +16,14 @@ To add support for a new data structure in this library, one only needs to imple
 
 ### Derived Functional Power
 By implementing the triad above, a data structure instantly gains:
-*   **Transformations**: `map`, `flatMap`, `filter`, `reverse`
+*   **Transformations**: `map`, `flatMap`, `mapMaybe`, `filter`, `partition`, `reverse`
 *   **Combinators**: `concat`, `intersperse`, `intercalate`
 *   **Applicative Functors**: `apply`, `liftA2`, `liftA3`, `liftA4`
 *   **Traversable**: `traverse`, `sequence`
-*   **Utilities**: `take`, `drop`, `slice`, `find`, `any`, `all`, `mkString`
+*   **Zipping**: `zip`, `zipWith`, `zipWithIndex`
+*   **Categorization**: `groupBy`
+*   **State Tracking**: `scanl`
+*   **Utilities**: `take`, `takeWhile`, `drop`, `dropWhile`, `slice`, `find`, `any`, `all`, `mkString`, `reduce`
 
 ---
 

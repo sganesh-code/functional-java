@@ -60,6 +60,11 @@ public interface Tuple<A, B> {
         public int hashCode() {
             return a.hashCode() ^ b.hashCode();
         }
+
+        @Override
+        public String toString() {
+            return "(" + a.fromMaybe(null) + "," + b.fromMaybe(null) + ")";
+        }
     }
 
 }

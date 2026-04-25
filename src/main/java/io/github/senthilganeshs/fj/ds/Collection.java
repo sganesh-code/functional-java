@@ -90,6 +90,24 @@ public interface Collection<T> {
             (rs, t) -> rs.build(fn.apply(t)));
     }
 
+    @SuppressWarnings("unchecked")
+    default <R> Collection<R> mapMaybe (final Function<T, Maybe<R>> fn) {
+        return foldl(empty(), (rs, t) -> {
+            Maybe<R> res = fn.apply(t);
+            return res.isSome() ? rs.build(res.fromMaybe(null)) : rs;
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    default Tuple<Collection<T>, Collection<T>> partition (final Predicate<T> pred) {
+        return (Tuple<Collection<T>, Collection<T>>) foldl(Tuple.of(this.<T>empty(), this.<T>empty()), (acc, t) -> {
+            Tuple<Collection<T>, Collection<T>> tuple = (Tuple<Collection<T>, Collection<T>>) acc;
+            Collection<T> left = tuple.getA().fromMaybe(empty());
+            Collection<T> right = tuple.getB().fromMaybe(empty());
+            return pred.test(t) ? Tuple.of(left.build(t), right) : Tuple.of(left, right.build(t));
+        });
+    }
+
     default Collection<T> concat (final Collection<T> first) {
         return first.foldl(this, (ts, t) -> ts.build(t));
     }
@@ -98,6 +116,28 @@ public interface Collection<T> {
         return foldl (
             empty(),
             (rs, t) -> rs.concat(fn.apply(t)));
+    }
+
+    @SuppressWarnings("unchecked")
+    default Collection<Tuple<T, Integer>> zipWithIndex() {
+        Object[] res = new Object[2];
+        res[0] = 0; // Current index
+        res[1] = empty();
+        
+        return (Collection<Tuple<T, Integer>>)foldl(res,
+            (r, t) -> new Object[] { (Integer) r[0] + 1, ((Collection<Tuple<T, Integer>>)r[1]).build(Tuple.of(t, (Integer) r[0]))})[1];
+    }
+
+    @SuppressWarnings("unchecked")
+    default <R, S> Collection<S> zipWith(final BiFunction<T, R, S> fn, final List<R> other) {
+        // We use the already implemented List.zip() logic
+        List<T> thisAsList;
+        if (this instanceof List) {
+            thisAsList = (List<T>) this;
+        } else {
+            thisAsList = foldl(List.<T>nil(), (l, t) -> (List<T>) l.build(t));
+        }
+        return (Collection<S>) thisAsList.zip(other).map(t -> fn.apply(t.getA().fromMaybe(null), t.getB().fromMaybe(null)));
     }
 
     default <R> Collection<R> apply (final Collection<Function<T, R>> fns) {
@@ -111,6 +151,30 @@ public interface Collection<T> {
                 return this;
             });
     }    
+
+    @SuppressWarnings("unchecked")
+    default <K> HashMap<K, Collection<T>> groupBy(final Function<T, K> keyFn) {
+        return (HashMap<K, Collection<T>>) foldl(HashMap.<K, Collection<T>>nil(), (acc, t) -> {
+            HashMap<K, Collection<T>> map = (HashMap<K, Collection<T>>) acc;
+            K key = keyFn.apply(t);
+            Collection<T> group = ((Maybe<Collection<T>>) map.get(key)).fromMaybe(this.<T>empty());
+            return (HashMap<K, Collection<T>>) map.put(key, group.build(t));
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    default <R> Collection<R> scanl(final R seed, final BiFunction<R, T, R> fn) {
+        Object[] state = new Object[2];
+        state[0] = seed;
+        state[1] = this.<R>empty().build(seed);
+        
+        return (Collection<R>) foldl(state, (acc, t) -> {
+            R current = (R) acc[0];
+            Collection<R> results = (Collection<R>) acc[1];
+            R next = fn.apply(current, t);
+            return new Object[] { next, results.build(next) };
+        })[1];
+    }
 
     default int length() {
         return foldl(0, (r, t) -> r + 1);
@@ -130,6 +194,30 @@ public interface Collection<T> {
     default Collection<T> reverse () {
         return foldr (empty(), 
             (t, r) -> r.build(t));
+    }
+    
+    @SuppressWarnings("unchecked")
+    default Collection<T> takeWhile (final Predicate<T> pred) {
+        Object[] res = new Object[2];
+        res[0] = true; // Boolean flag: still taking?
+        res[1] = empty();
+        
+        return (Collection<T>)foldl(res,
+            (r, t) -> ((Boolean) r[0] && pred.test(t)) ?
+                new Object[] { true, ((Collection<T>)r[1]).build(t)} :
+                new Object[] { false, r[1]})[1];
+    }
+
+    @SuppressWarnings("unchecked")
+    default Collection<T> dropWhile (final Predicate<T> pred) {
+        Object[] res = new Object[2];
+        res[0] = true; // Boolean flag: still dropping?
+        res[1] = empty();
+        
+        return (Collection<T>)foldl(res,
+            (r, t) -> ((Boolean) r[0] && pred.test(t)) ?
+                new Object[] { true, r[1]} :
+                new Object[] { false, ((Collection<T>)r[1]).build(t)})[1];
     }
     
     @SuppressWarnings("unchecked")
