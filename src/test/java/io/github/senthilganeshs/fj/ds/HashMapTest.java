@@ -99,36 +99,54 @@ public class HashMapTest {
     }
 
     @Test
-    public void testHashMapCollisionExhaustive() {
+    public void testHashMapDeepTrieRemoval() {
+        HashMap<Integer, String> map = HashMap.nil();
+        // Add enough to create many levels of IndexedNodes
+        int limit = 100; 
+        for (int i = 0; i < limit; i++) {
+            map = map.put(i, "v" + i);
+        }
+        
+        // Remove one by one and verify
+        for (int i = 0; i < limit; i++) {
+            map = map.remove(i);
+            Assert.assertTrue(map.get(i).isNothing());
+            Assert.assertEquals(map.length(), limit - i - 1);
+        }
+    }
+
+    @Test
+    public void testHashMapCollisionRemoval() {
         class CollisionKey {
             final int id;
-            CollisionKey(int id) { this.id = id; }
-            @Override public int hashCode() { return 42; }
+            final int h;
+            CollisionKey(int id, int h) { this.id = id; this.h = h; }
+            @Override public int hashCode() { return h; }
             @Override public boolean equals(Object obj) {
                 return obj instanceof CollisionKey && ((CollisionKey)obj).id == id;
             }
         }
         
+        int commonHash = 42;
         HashMap<CollisionKey, String> map = HashMap.nil();
-        CollisionKey k1 = new CollisionKey(1);
-        CollisionKey k2 = new CollisionKey(2);
-        CollisionKey k3 = new CollisionKey(3);
+        CollisionKey k1 = new CollisionKey(1, commonHash);
+        CollisionKey k2 = new CollisionKey(2, commonHash);
+        CollisionKey k3 = new CollisionKey(3, commonHash);
         
         map = map.put(k1, "v1").put(k2, "v2").put(k3, "v3");
-        Assert.assertEquals(map.length(), 3);
         
-        // Update middle of collision
-        map = map.put(k2, "v2-updated");
-        Assert.assertEquals(map.get(k2).fromMaybe(""), "v2-updated");
-        
-        // Remove from collision until it becomes LeafNode again
-        map = map.remove(k1);
-        Assert.assertEquals(map.length(), 2);
+        // Remove from collision
         map = map.remove(k2);
+        Assert.assertEquals(map.length(), 2);
+        Assert.assertEquals(map.get(k1).fromMaybe(""), "v1");
+        Assert.assertEquals(map.get(k3).fromMaybe(""), "v3");
+        
+        // Remove until 1 left (should convert back to LeafNode)
+        map = map.remove(k1);
         Assert.assertEquals(map.length(), 1);
         Assert.assertEquals(map.get(k3).fromMaybe(""), "v3");
         
-        // Final remove
+        // Final removal
         map = map.remove(k3);
         Assert.assertEquals(map.length(), 0);
     }

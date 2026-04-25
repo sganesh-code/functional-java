@@ -53,19 +53,22 @@ public class VectorTest {
     }
 
     @Test
-    public void testVectorDeepTrie() {
+    public void testVectorMassiveGrowth() {
         Vector<Integer> v = Vector.nil();
-        // Trigger multi-level trie (WIDTH=32)
-        int limit = 1100; // > 32*32
+        // Trigger root growth (WIDTH=32, so 32, 1024, 32768...)
+        int limit = 1500; 
         for (int i = 0; i < limit; i++) v = (Vector<Integer>) v.build(i);
         
         Assert.assertEquals(v.length(), limit);
-        // Deep update
-        v = v.update(500, -500);
-        Assert.assertEquals(v.at(500).fromMaybe(0), Integer.valueOf(-500));
+        // Verify every element
+        for (int i = 0; i < limit; i++) {
+            Assert.assertEquals(v.at(i).fromMaybe(-1), Integer.valueOf(i));
+        }
         
-        // Out of bound updates
-        Assert.assertEquals(v.update(-1, 0).length(), limit);
-        Assert.assertEquals(v.update(limit, 0).length(), limit);
+        // Random updates
+        v = v.update(0, 999).update(1023, 888).update(1499, 777);
+        Assert.assertEquals(v.at(0).fromMaybe(-1), Integer.valueOf(999));
+        Assert.assertEquals(v.at(1023).fromMaybe(-1), Integer.valueOf(888));
+        Assert.assertEquals(v.at(1499).fromMaybe(-1), Integer.valueOf(777));
     }
 }

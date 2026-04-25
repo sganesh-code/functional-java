@@ -47,18 +47,22 @@ public class SetTest {
 
     @Test
     public void testSetBalanceExhaustive() {
-        // Simple Left
+        // Simple Left (1-2-3)
         Set<Integer> s1 = Set.of(1, 2, 3);
-        // Simple Right
+        // Simple Right (3-2-1)
         Set<Integer> s2 = Set.of(3, 2, 1);
-        // Left-Right
+        // Left-Right (3-1-2)
         Set<Integer> s3 = Set.of(3, 1, 2);
-        // Right-Left
+        // Right-Left (1-3-2)
         Set<Integer> s4 = Set.of(1, 3, 2);
         
         Assert.assertTrue(s1.contains(2));
         Assert.assertTrue(s2.contains(2));
         Assert.assertTrue(s3.contains(2));
         Assert.assertTrue(s4.contains(2));
+
+        // Deeper balancing
+        Set<Integer> s5 = Set.of(10, 20, 30, 40, 50, 25);
+        Assert.assertEquals(s5.length(), 6);
     }
 }

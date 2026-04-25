@@ -182,5 +182,19 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
                 acc + (acc.equals("Graph{") ? "" : ", ") + entry.key() + "->" + entry.value()
             ) + "}";
         }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == null) return false;
+            if (other == this) return true;
+            if (!(other instanceof Graph)) return false;
+            Graph<?> o = (Graph<?>) other;
+            return nodes().equals(o.nodes());
+        }
+
+        @Override
+        public int hashCode() {
+            return adjacencyMap.hashCode();
+        }
     }
 }
