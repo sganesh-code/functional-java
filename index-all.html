@@ -29,7 +29,6 @@ loadScripts(document, 'script');</script>
 <li><a href="io/github/senthilganeshs/fj/ds/package-summary.html">Package</a></li>
 <li>Class</li>
 <li><a href="overview-tree.html">Tree</a></li>
-<li><a href="deprecated-list.html">Deprecated</a></li>
 <li class="nav-bar-cell1-rev">Index</li>
 <li><a href="help-doc.html#index">Help</a></li>
 </ul>
@@ -143,8 +142,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Vector.VectorImpl.html#build(T)" class="member-name-link">build(T)</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Vector.VectorImpl.html" title="class in io.github.senthilganeshs.fj.ds">Vector.VectorImpl</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/github/senthilganeshs/fj/ds/Set.html#build(T,java.util.Comparator)" class="member-name-link">build(T, Comparator&lt;T&gt;)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.html" title="interface in io.github.senthilganeshs.fj.ds">Set</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Graph.AdjacencyMapGraph.html#build(V)" class="member-name-link">build(V)</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Graph.AdjacencyMapGraph.html" title="class in io.github.senthilganeshs.fj.ds">Graph.AdjacencyMapGraph</a></dt>
 <dd>&nbsp;</dd>
 </dl>
@@ -164,11 +161,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Monoid.html#combine(T,T)" class="member-name-link">combine(T, T)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Monoid.html" title="interface in io.github.senthilganeshs.fj.ds">Monoid</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Semigroup.html#combine(T,T)" class="member-name-link">combine(T, T)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Semigroup.html" title="interface in io.github.senthilganeshs.fj.ds">Semigroup</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ord.html#compare(T,T)" class="member-name-link">compare(T, T)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Ord.html" title="interface in io.github.senthilganeshs.fj.ds">Ord</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Map.Entry.html#compareTo(io.github.senthilganeshs.fj.ds.Map.Entry)" class="member-name-link">compareTo(Map.Entry&lt;K, V&gt;)</a> - Method in record class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Map.Entry.html" title="class in io.github.senthilganeshs.fj.ds">Map.Entry</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="io/github/senthilganeshs/fj/ds/Set.Empty.html#compareTo(T)" class="member-name-link">compareTo(T)</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.Empty.html" title="class in io.github.senthilganeshs.fj.ds">Set.Empty</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="io/github/senthilganeshs/fj/ds/Set.NonEmpty.html#compareTo(T)" class="member-name-link">compareTo(T)</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.NonEmpty.html" title="class in io.github.senthilganeshs.fj.ds">Set.NonEmpty</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Collection.html#concat(io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">concat(Collection&lt;T&gt;)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a></dt>
 <dd>
@@ -211,7 +208,11 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Collection.html#distinct()" class="member-name-link">distinct()</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a></dt>
 <dd>
-<div class="block">Returns a new collection containing only unique elements.</div>
+<div class="block">Returns a new collection containing only unique elements using standard equals.</div>
+</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Collection.html#distinct(io.github.senthilganeshs.fj.ds.Eq)" class="member-name-link">distinct(Eq&lt;T&gt;)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a></dt>
+<dd>
+<div class="block">Returns a new collection containing only unique elements using the provided Eq strategy.</div>
 </dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Monoid.html#DOUBLE_SUM" class="member-name-link">DOUBLE_SUM</a> - Static variable in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Monoid.html" title="interface in io.github.senthilganeshs.fj.ds">Monoid</a></dt>
 <dd>&nbsp;</dd>
@@ -284,8 +285,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/RoseTree.RoseTreeImpl.html#empty()" class="member-name-link">empty()</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/RoseTree.RoseTreeImpl.html" title="class in io.github.senthilganeshs.fj.ds">RoseTree.RoseTreeImpl</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/github/senthilganeshs/fj/ds/Set.html#empty()" class="member-name-link">empty()</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.html" title="interface in io.github.senthilganeshs.fj.ds">Set</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Set.Empty.html#empty()" class="member-name-link">empty()</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.Empty.html" title="class in io.github.senthilganeshs.fj.ds">Set.Empty</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Set.NonEmpty.html#empty()" class="member-name-link">empty()</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.NonEmpty.html" title="class in io.github.senthilganeshs.fj.ds">Set.NonEmpty</a></dt>
@@ -296,17 +295,19 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Vector.VectorImpl.html#empty()" class="member-name-link">empty()</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Vector.VectorImpl.html" title="class in io.github.senthilganeshs.fj.ds">Vector.VectorImpl</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/github/senthilganeshs/fj/ds/LazyList.Empty.html#%3Cinit%3E()" class="member-name-link">Empty()</a> - Constructor for class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/LazyList.Empty.html" title="class in io.github.senthilganeshs.fj.ds">LazyList.Empty</a></dt>
+<dt><a href="io/github/senthilganeshs/fj/ds/PriorityQueue.html#empty(io.github.senthilganeshs.fj.ds.Ord)" class="member-name-link">empty(Ord&lt;R&gt;)</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/PriorityQueue.html" title="interface in io.github.senthilganeshs.fj.ds">PriorityQueue</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/github/senthilganeshs/fj/ds/Set.Empty.html#%3Cinit%3E()" class="member-name-link">Empty()</a> - Constructor for class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.Empty.html" title="class in io.github.senthilganeshs.fj.ds">Set.Empty</a></dt>
+<dt><a href="io/github/senthilganeshs/fj/ds/Set.html#empty(io.github.senthilganeshs.fj.ds.Ord)" class="member-name-link">empty(Ord&lt;R&gt;)</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.html" title="interface in io.github.senthilganeshs.fj.ds">Set</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/LazyList.Empty.html#%3Cinit%3E()" class="member-name-link">Empty()</a> - Constructor for class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/LazyList.Empty.html" title="class in io.github.senthilganeshs.fj.ds">LazyList.Empty</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Stack.Empty.html#%3Cinit%3E()" class="member-name-link">Empty()</a> - Constructor for class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Stack.Empty.html" title="class in io.github.senthilganeshs.fj.ds">Stack.Empty</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/List.html#EMPTY" class="member-name-link">EMPTY</a> - Static variable in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/List.html" title="interface in io.github.senthilganeshs.fj.ds">List</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/github/senthilganeshs/fj/ds/Set.html#EMPTY" class="member-name-link">EMPTY</a> - Static variable in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.html" title="interface in io.github.senthilganeshs.fj.ds">Set</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/List.EmptyList.html#%3Cinit%3E()" class="member-name-link">EmptyList()</a> - Constructor for class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/List.EmptyList.html" title="class in io.github.senthilganeshs.fj.ds">List.EmptyList</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Set.html#emptyNatural()" class="member-name-link">emptyNatural()</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.html" title="interface in io.github.senthilganeshs.fj.ds">Set</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/List.html#emptyQueue()" class="member-name-link">emptyQueue()</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/List.html" title="interface in io.github.senthilganeshs.fj.ds">List</a></dt>
 <dd>&nbsp;</dd>
@@ -323,6 +324,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="io/github/senthilganeshs/fj/ds/Map.Entry.html#%3Cinit%3E(K,V)" class="member-name-link">Entry(K, V)</a> - Constructor for record class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Map.Entry.html" title="class in io.github.senthilganeshs.fj.ds">Map.Entry</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>Entry</code> record class.</div>
+</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Eq.html#eq(T,T)" class="member-name-link">eq(T, T)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Eq.html" title="interface in io.github.senthilganeshs.fj.ds">Eq</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ord.html#eq(T,T)" class="member-name-link">eq(T, T)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Ord.html" title="interface in io.github.senthilganeshs.fj.ds">Ord</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Eq.html" class="type-name-link" title="interface in io.github.senthilganeshs.fj.ds">Eq&lt;T&gt;</a> - Interface in <a href="io/github/senthilganeshs/fj/ds/package-summary.html">io.github.senthilganeshs.fj.ds</a></dt>
+<dd>
+<div class="block">A typeclass for types that support equality.</div>
 </dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Deque.BankersDeque.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Deque.BankersDeque.html" title="class in io.github.senthilganeshs.fj.ds">Deque.BankersDeque</a></dt>
 <dd>&nbsp;</dd>
@@ -477,6 +486,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Vector.html#from(io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">from(Collection&lt;R&gt;)</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Vector.html" title="interface in io.github.senthilganeshs.fj.ds">Vector</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ord.html#fromComparator(java.util.Comparator)" class="member-name-link">fromComparator(Comparator&lt;R&gt;)</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Ord.html" title="interface in io.github.senthilganeshs.fj.ds">Ord</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Eq.html#fromEquals()" class="member-name-link">fromEquals()</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Eq.html" title="interface in io.github.senthilganeshs.fj.ds">Eq</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Either.html#fromLeft(A)" class="member-name-link">fromLeft(A)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Maybe.html#fromMaybe(T)" class="member-name-link">fromMaybe(T)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a></dt>
@@ -516,6 +529,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Categorizes elements into a HashMap based on a key extraction function.</div>
 </dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ord.html#gt(T,T)" class="member-name-link">gt(T, T)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Ord.html" title="interface in io.github.senthilganeshs.fj.ds">Ord</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ord.html#gte(T,T)" class="member-name-link">gte(T, T)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Ord.html" title="interface in io.github.senthilganeshs.fj.ds">Ord</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:H">H</h2>
 <dl class="index">
@@ -672,6 +689,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Map.html#lookup(K)" class="member-name-link">lookup(K)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Map.html" title="interface in io.github.senthilganeshs.fj.ds">Map</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ord.html#lt(T,T)" class="member-name-link">lt(T, T)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Ord.html" title="interface in io.github.senthilganeshs.fj.ds">Ord</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ord.html#lte(T,T)" class="member-name-link">lte(T, T)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Ord.html" title="interface in io.github.senthilganeshs.fj.ds">Ord</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:M">M</h2>
 <dl class="index">
@@ -735,6 +756,8 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:N">N</h2>
 <dl class="index">
+<dt><a href="io/github/senthilganeshs/fj/ds/Ord.html#natural()" class="member-name-link">natural()</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Ord.html" title="interface in io.github.senthilganeshs.fj.ds">Ord</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/List.html#newQueue(R%5B%5D)" class="member-name-link">newQueue(R[])</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/List.html" title="interface in io.github.senthilganeshs.fj.ds">List</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Stack.html#newStack(R%5B%5D)" class="member-name-link">newStack(R[])</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Stack.html" title="interface in io.github.senthilganeshs.fj.ds">Stack</a></dt>
@@ -754,9 +777,7 @@ loadScripts(document, 'script');</script>
 <dt><a href="io/github/senthilganeshs/fj/ds/Queue.html#nil()" class="member-name-link">nil()</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Queue.html" title="interface in io.github.senthilganeshs.fj.ds">Queue</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Set.html#nil()" class="member-name-link">nil()</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.html" title="interface in io.github.senthilganeshs.fj.ds">Set</a></dt>
-<dd>
-<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
-</dd>
+<dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Vector.html#nil()" class="member-name-link">nil()</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Vector.html" title="interface in io.github.senthilganeshs.fj.ds">Vector</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Graph.AdjacencyMapGraph.html#nodes()" class="member-name-link">nodes()</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Graph.AdjacencyMapGraph.html" title="class in io.github.senthilganeshs.fj.ds">Graph.AdjacencyMapGraph</a></dt>
@@ -777,6 +798,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="io/github/senthilganeshs/fj/ds/Tuple.html#of(A,B)" class="member-name-link">of(A, B)</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Set.html#of(io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">of(Collection&lt;R&gt;)</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.html" title="interface in io.github.senthilganeshs.fj.ds">Set</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Set.html#of(io.github.senthilganeshs.fj.ds.Ord,io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">of(Ord&lt;R&gt;, Collection&lt;R&gt;)</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.html" title="interface in io.github.senthilganeshs.fj.ds">Set</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Set.html#of(io.github.senthilganeshs.fj.ds.Ord,java.util.Collection)" class="member-name-link">of(Ord&lt;R&gt;, Collection&lt;R&gt;)</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.html" title="interface in io.github.senthilganeshs.fj.ds">Set</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/PriorityQueue.html#of(io.github.senthilganeshs.fj.ds.Ord,R...)" class="member-name-link">of(Ord&lt;R&gt;, R...)</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/PriorityQueue.html" title="interface in io.github.senthilganeshs.fj.ds">PriorityQueue</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Set.html#of(io.github.senthilganeshs.fj.ds.Ord,R...)" class="member-name-link">of(Ord&lt;R&gt;, R...)</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.html" title="interface in io.github.senthilganeshs.fj.ds">Set</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Set.html#of(java.util.Collection)" class="member-name-link">of(Collection&lt;R&gt;)</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.html" title="interface in io.github.senthilganeshs.fj.ds">Set</a></dt>
 <dd>&nbsp;</dd>
@@ -802,6 +831,18 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Monoid.html#of(R,java.util.function.BiFunction)" class="member-name-link">of(R, BiFunction&lt;R, R, R&gt;)</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Monoid.html" title="interface in io.github.senthilganeshs.fj.ds">Monoid</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ord.html" class="type-name-link" title="interface in io.github.senthilganeshs.fj.ds">Ord&lt;T&gt;</a> - Interface in <a href="io/github/senthilganeshs/fj/ds/package-summary.html">io.github.senthilganeshs.fj.ds</a></dt>
+<dd>
+<div class="block">A typeclass for types that support ordering.</div>
+</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Set.Empty.html#order()" class="member-name-link">order()</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.Empty.html" title="class in io.github.senthilganeshs.fj.ds">Set.Empty</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Set.NonEmpty.html#order()" class="member-name-link">order()</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.NonEmpty.html" title="class in io.github.senthilganeshs.fj.ds">Set.NonEmpty</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Set.html#order()" class="member-name-link">order()</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.html" title="interface in io.github.senthilganeshs.fj.ds">Set</a></dt>
+<dd>
+<div class="block">Returns the ordering strategy used by this set.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:P">P</h2>
 <dl class="index">
@@ -926,10 +967,17 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Like foldl, but returns a collection of all intermediate accumulation states.</div>
 </dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Semigroup.html" class="type-name-link" title="interface in io.github.senthilganeshs.fj.ds">Semigroup&lt;T&gt;</a> - Interface in <a href="io/github/senthilganeshs/fj/ds/package-summary.html">io.github.senthilganeshs.fj.ds</a></dt>
+<dd>
+<div class="block">An algebraic structure consisting of a set together with a single 
+ associative binary operation.</div>
+</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Collection.html#sequence(io.github.senthilganeshs.fj.ds.Collection)" class="member-name-link">sequence(Collection&lt;Collection&lt;R&gt;&gt;)</a> - Static method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Set.html" class="type-name-link" title="interface in io.github.senthilganeshs.fj.ds">Set&lt;T&gt;</a> - Interface in <a href="io/github/senthilganeshs/fj/ds/package-summary.html">io.github.senthilganeshs.fj.ds</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">A purely functional Set implementation using a self-balancing AVL Tree.</div>
+</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Set.AVLTree.html" class="type-name-link" title="interface in io.github.senthilganeshs.fj.ds">Set.AVLTree&lt;T&gt;</a> - Interface in <a href="io/github/senthilganeshs/fj/ds/package-summary.html">io.github.senthilganeshs.fj.ds</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Set.Empty.html" class="type-name-link" title="class in io.github.senthilganeshs.fj.ds">Set.Empty&lt;T&gt;</a> - Class in <a href="io/github/senthilganeshs/fj/ds/package-summary.html">io.github.senthilganeshs.fj.ds</a></dt>
