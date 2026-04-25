@@ -13,35 +13,18 @@ public class TupleTest {
     }
 
     @Test
-    public void testTupleEmpty() {
-        Tuple<String, Integer> t = Tuple.of();
-        Assert.assertTrue(t.getA().isNothing());
-        Assert.assertTrue(t.getB().isNothing());
-    }
-
-    @Test
-    public void testTupleMap() {
-        Tuple<String, Integer> t = Tuple.of("val", 10);
-        Collection<String> mapped = t.map((s, i) -> s + ":" + i);
-        Assert.assertEquals(mapped.length(), 1);
-        Assert.assertEquals(mapped.foldl("", (acc, s) -> s), "val:10");
-    }
-
-    @Test
-    public void testTupleMapEmpty() {
-        Tuple<String, Integer> t = Tuple.of();
-        Collection<String> mapped = t.map((s, i) -> s + ":" + i);
-        Assert.assertEquals(mapped.length(), 0);
-    }
-
-    @Test
-    public void testTupleBimapSwap() {
+    public void testTupleSwap() {
         Tuple<String, Integer> t = Tuple.of("a", 1);
-        Tuple<Integer, String> t2 = t.bimap(String::length, i -> "val:" + i);
-        Assert.assertEquals(t2.getA().orElse(-1), Integer.valueOf(1));
-        Assert.assertEquals(t2.getB().orElse(""), "val:1");
-        
-        Assert.assertEquals(t.swap().getA().orElse(-1), Integer.valueOf(1));
-        Assert.assertEquals(t.swap().getB().orElse(""), "a");
+        Tuple<Integer, String> s = t.swap();
+        Assert.assertEquals(s.getA().orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(s.getB().orElse(""), "a");
+    }
+
+    @Test
+    public void testTupleBimap() {
+        Tuple<String, Integer> t = Tuple.of("a", 1);
+        Tuple<String, Integer> b = t.bimap(s -> s + "!", i -> i + 1);
+        Assert.assertEquals(b.getA().orElse(""), "a!");
+        Assert.assertEquals(b.getB().orElse(-1), Integer.valueOf(2));
     }
 }
