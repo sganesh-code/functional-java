@@ -46,6 +46,41 @@ By implementing these three, every data structure automatically inherits the ful
 
 ---
 
+## 🛠 Custom Data Structures & Zero-Cost Interop
+
+One of the most powerful traits of `functional-java` is that it makes interoperability a first-class citizen. When you create a custom data structure by implementing the **Core Triad**, it doesn't just gain functional methods—it instantly gains the ability to interoperate with every other data structure in the library without writing a single line of integration code.
+
+### 1. Implement your Triad
+```java
+public class MyBinaryTree<T> implements Collection<T> {
+    // 1. Core Triad: empty(), build(), foldl()
+    @Override public <R> Collection<R> empty() { return new MyBinaryTree<>(); }
+    @Override public Collection<T> build(T val) { /* persistent insert logic */ }
+    @Override public <R> R foldl(R seed, BiFunction<R, T, R> fn) { /* traversal logic */ }
+}
+```
+
+### 2. Get Interop "For Free"
+Because everything is built on the same abstraction, you can convert, combine, and query across types seamlessly:
+
+```java
+MyBinaryTree<User> myTree = ...;
+
+// Convert custom tree to a persistent Vector
+Vector<User> userVector = Vector.from(myTree);
+
+// Perform atomic batch operations across disparate types
+// (Custom Tree -> Maybe -> functional List)
+Maybe<List<Profile>> profiles = myTree.traverse(user -> db.findProfile(user.id));
+
+// Combine with standard lists
+Collection<User> joined = myTree.concat(List.of(new User("Alice")));
+```
+
+This "Zero-Cost Interop" ensures that your custom domain-specific structures are never isolated; they are full citizens of the functional ecosystem.
+
+---
+
 ## Supported Data Structures
 
 ### 📦 Sequential
