@@ -168,20 +168,20 @@ Decouple ordering and equality logic from your data types.
 
 ---
 
-## Installation (Version 1.0.1)
+## Installation (Version 1.0.2)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
-### Gradle
+#### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.0.1'
+implementation 'io.github.sganesh-code:functional-java:1.0.2'
 ```
 
 ---

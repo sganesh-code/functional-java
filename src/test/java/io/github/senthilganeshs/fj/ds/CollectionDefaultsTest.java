@@ -132,4 +132,12 @@ public class CollectionDefaultsTest {
         Assert.assertEquals(list.reduce(Integer::sum).orElse(0), Integer.valueOf(10));
         Assert.assertTrue(List.<Integer>nil().reduce(Integer::sum).isNothing());
     }
+
+    @Test
+    public void testSearchUtilities() {
+        List<String> list = List.of("a", "b", "c");
+        Assert.assertEquals(list.findIndex(s -> s.equals("b")).orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(list.indexOf("c").orElse(-1), Integer.valueOf(2));
+        Assert.assertTrue(list.indexOf("z").isNothing());
+    }
 }

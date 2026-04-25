@@ -69,7 +69,7 @@ jobs:
             --fail \
             --header "Authorization: Basic $(cat auth.txt)" \
             --form "bundle=@build/bundle.zip" \
-            --url https://central.sonatype.com/api/v1/publisher/upload
+            --url "https://central.sonatype.com/api/v1/publisher/upload?publishingType=AUTOMATIC"
           rm auth.txt
 
 

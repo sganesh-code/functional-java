@@ -65,4 +65,18 @@ public class SetTest {
         Set<Integer> s5 = Set.of(10, 20, 30, 40, 50, 25);
         Assert.assertEquals(s5.length(), 6);
     }
+
+    @Test
+    public void testSetAlgebra() {
+        Set<Integer> s1 = Set.of(1, 2, 3);
+        Set<Integer> s2 = Set.of(3, 4, 5);
+        
+        Assert.assertEquals(s1.union(s2).length(), 5);
+        Assert.assertEquals(s1.intersect(s2).length(), 1);
+        Assert.assertTrue(s1.intersect(s2).contains(3));
+        
+        Assert.assertEquals(s1.difference(s2).length(), 2);
+        Assert.assertTrue(s1.difference(s2).contains(1));
+        Assert.assertFalse(s1.difference(s2).contains(3));
+    }
 }

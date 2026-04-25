@@ -22,6 +22,18 @@ public interface Set<T> extends Collection<T> {
      */
     Ord<T> order();
 
+    default Set<T> union(Set<T> other) {
+        return other.foldl(this, Set::build);
+    }
+
+    default Set<T> intersect(Set<T> other) {
+        return filter(other::contains).foldl(empty(order()), Set::build);
+    }
+
+    default Set<T> difference(Set<T> other) {
+        return filter(t -> !other.contains(t)).foldl(empty(order()), Set::build);
+    }
+
     static <R extends Comparable<R>> Collection<R> sort(Collection<R> collection) {
         return of(collection).foldl(collection.empty(), (rs, t) -> rs.build(t));
     }

@@ -111,6 +111,24 @@ public interface Collection<T> {
         return foldl(Maybe.nothing(), (acc, t) -> acc.isSome() ? acc : (pred.test(t) ? Maybe.some(t) : acc));
     }
 
+    @SuppressWarnings("unchecked")
+    default Maybe<Integer> findIndex(final Predicate<T> pred) {
+        Object[] state = new Object[2];
+        state[0] = 0; // index
+        state[1] = Maybe.nothing(); // result
+        
+        return (Maybe<Integer>) foldl(state, (acc, t) -> {
+            int idx = (Integer) acc[0];
+            Maybe<Integer> res = (Maybe<Integer>) acc[1];
+            if (res.isSome()) return new Object[] { idx + 1, res };
+            return new Object[] { idx + 1, pred.test(t) ? Maybe.some(idx) : Maybe.nothing() };
+        })[1];
+    }
+
+    default Maybe<Integer> indexOf(T value) {
+        return findIndex(t -> t.equals(value));
+    }
+
     default <R, S> Collection<S> liftA2 (final Function<T, Function<R, S>> fn, final Collection<R> rs) {
         return rs.apply(map(fn::apply));        
     }
