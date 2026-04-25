@@ -80,6 +80,13 @@ public interface Maybe<T> extends Collection<T> {
     default <R> Maybe<R> safeCast(Class<R> clazz) {
         return filter(clazz::isInstance).map(clazz::cast);
     }
+
+    /**
+     * Returns a Prism that focuses on the value inside a Some.
+     */
+    static <T> Prism<Maybe<T>, T> someP() {
+        return Prism.of(m -> m, Maybe::some);
+    }
     
     final static class Nothing<T> implements Maybe<T> {
 

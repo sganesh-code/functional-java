@@ -641,5 +641,12 @@ public interface Collection<T> {
             }
         );
     }
+
+    /**
+     * Returns a Traversal that focuses on every element in a collection.
+     */
+    static <T> Traversal<Collection<T>, T> eachP() {
+        return Traversal.fromCollection();
+    }
  
 }

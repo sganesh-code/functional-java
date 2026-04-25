@@ -185,6 +185,20 @@ public interface Either<A, B> extends Collection<B> {
         return either(Either::right, Either::left);
     }
 
+    /**
+     * Returns a Prism that focuses on the Right (success) value.
+     */
+    static <L, R> Prism<Either<L, R>, R> rightP() {
+        return Prism.of(e -> e.isRight() ? Maybe.some(e.orElse(null)) : Maybe.nothing(), Either::right);
+    }
+
+    /**
+     * Returns a Prism that focuses on the Left (error) value.
+     */
+    static <L, R> Prism<Either<L, R>, L> leftP() {
+        return Prism.of(e -> e.isLeft() ? Maybe.some(e.fromLeft(null)) : Maybe.nothing(), Either::left);
+    }
+
     final static class Left <A, B> implements Either <A, B> {
         private final A value;
 
