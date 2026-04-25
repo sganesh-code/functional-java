@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'io.github.sganesh-code'
-version = '1.0.0'
+version = '1.0.1'
 
 java {
     toolchain {
@@ -80,10 +80,14 @@ publishing {
     }
     repositories {
         maven {
-            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-            credentials {
-                username = project.findProperty("ossrhUsername")
-                password = project.findProperty("ossrhPassword")
+            if (System.getenv("CI") == "true") {
+                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                credentials {
+                    username = System.getenv("ossrhUsername")
+                    password = System.getenv("ossrhPassword")
+                }
+            } else {
+                url = layout.buildDirectory.dir("repos")
             }
         }
     }
@@ -91,6 +95,13 @@ publishing {
 
 signing {
     required { gradle.taskGraph.hasTask("publish") }
+    if (System.getenv("CI") == "true") {
+        useInMemoryPgpKeys(
+            System.getenv("GPG_KEY_ID"),
+            System.getenv("GPG_PRIVATE_KEY"),
+            System.getenv("GPG_PASSPHRASE")
+        )
+    }
     sign publishing.publications.mavenJava
 }
 

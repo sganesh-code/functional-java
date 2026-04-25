@@ -56,7 +56,9 @@ jobs:
       - name: Publish Artifacts
         run: ./gradlew publish
         env:
+          CI: "true"
           ossrhUsername: ${{ secrets.OSSRH_USERNAME }}
           ossrhPassword: ${{ secrets.OSSRH_PASSWORD }}
-          signing.keyId: ${{ secrets.GPG_KEY_ID }}
-          signing.password: ${{ secrets.GPG_PASSPHRASE }}
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

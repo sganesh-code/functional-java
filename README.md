@@ -57,20 +57,20 @@ The library provides a variety of persistent data structures optimized for funct
 
 ## Usage
 
-### Installation (Version 1.0.0)
+### Installation (Version 1.0.1)
 
 #### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.0.0'
+implementation 'io.github.sganesh-code:functional-java:1.0.1'
 ```
 
 ---
