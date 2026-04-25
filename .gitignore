@@ -11,4 +11,5 @@ gradle.properties
 .DS_Store
 *.gpg
 bundle.zip
-private_key_armored.asc\npublic_key.asc
+private_key_armored.asc
+public_key.asc
