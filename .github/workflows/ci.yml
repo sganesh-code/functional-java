@@ -93,7 +93,9 @@ jobs:
         run: chmod +x gradlew
 
       - name: Generate Javadoc
-        run: ./gradlew javadoc
+        run: |
+          ./gradlew javadoc
+          touch build/docs/javadoc/.nojekyll
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
