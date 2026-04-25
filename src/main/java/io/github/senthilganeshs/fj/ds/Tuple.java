@@ -18,6 +18,14 @@ public interface Tuple<A, B> {
     Maybe<A> getA();
     Maybe<B> getB();
 
+    default <C, D> Tuple<C, D> bimap (final Function<A, C> fa, final Function<B, D> fb) {
+        return Tuple.of(((Maybe<C>)getA().map(fa)).fromMaybe(null), ((Maybe<D>)getB().map(fb)).fromMaybe(null));
+    }
+
+    default Tuple<B, A> swap () {
+        return Tuple.of(getB().fromMaybe(null), getA().fromMaybe(null));
+    }
+
     class TupleImpl<A, B> implements Tuple<A, B> {
         private final Maybe<A> a;
         private final Maybe<B> b;

@@ -122,4 +122,44 @@ public class DefaultCollectionImplTest {
         Collection<Integer> result = s.scanl(0, Integer::sum);
         Assert.assertEquals(result.toString(), "[0,1,3,6]");
     }
+
+    @Test
+    public void testDistinct() {
+        StubCollection<Integer> s = new StubCollection<>(List.of(1, 2, 1, 3, 2, 4));
+        Assert.assertEquals(s.distinct().toString(), "[1,2,3,4]");
+    }
+
+    @Test
+    public void testUnfold() {
+        // Generate [5, 4, 3, 2, 1]
+        Collection<Integer> result = Collection.unfold(5, i -> i > 0 ? Maybe.some(Tuple.of(i, i - 1)) : Maybe.nothing());
+        Assert.assertEquals(result.toString(), "[5,4,3,2,1]");
+    }
+
+    @Test
+    public void testSpan() {
+        StubCollection<Integer> s = new StubCollection<>(List.of(1, 2, 3, 4, 1, 2));
+        Tuple<Collection<Integer>, Collection<Integer>> result = s.span(i -> i < 4);
+        Assert.assertEquals(result.getA().fromMaybe(List.nil()).toString(), "[1,2,3]");
+        Assert.assertEquals(result.getB().fromMaybe(List.nil()).toString(), "[4,1,2]");
+    }
+
+    @Test
+    public void testChunk() {
+        StubCollection<Integer> s = new StubCollection<>(List.of(1, 2, 3, 4, 5));
+        Collection<Collection<Integer>> result = s.chunk(2);
+        // [[1,2], [3,4], [5]]
+        Assert.assertEquals(result.toString(), "[[1,2],[3,4],[5]]");
+    }
+
+    @Test
+    public void testHeadLastMaybe() {
+        StubCollection<Integer> s = new StubCollection<>(List.of(1, 2, 3));
+        Assert.assertEquals(s.headMaybe().fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(s.lastMaybe().fromMaybe(-1), Integer.valueOf(3));
+        
+        StubCollection<Integer> empty = new StubCollection<>(List.nil());
+        Assert.assertTrue(empty.headMaybe().isNothing());
+        Assert.assertTrue(empty.lastMaybe().isNothing());
+    }
 }

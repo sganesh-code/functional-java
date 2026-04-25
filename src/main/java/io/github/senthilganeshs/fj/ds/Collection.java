@@ -171,6 +171,53 @@ public interface Collection<T> {
         })[1];
     }
 
+    @SuppressWarnings("unchecked")
+    default Tuple<Collection<T>, Collection<T>> span (final Predicate<T> pred) {
+        Object[] res = new Object[3];
+        res[0] = true; // Flag: still taking?
+        res[1] = empty(); // TakeWhile part
+        res[2] = empty(); // DropWhile part
+        
+        Object[] finalRes = (Object[]) foldl(res, (r, t) -> {
+            boolean taking = (Boolean) r[0];
+            Collection<T> taken = (Collection<T>) r[1];
+            Collection<T> dropped = (Collection<T>) r[2];
+            
+            if (taking && pred.test(t)) {
+                return new Object[] { true, taken.build(t), dropped };
+            } else {
+                return new Object[] { false, taken, dropped.build(t) };
+            }
+        });
+        return Tuple.of((Collection<T>)finalRes[1], (Collection<T>)finalRes[2]);
+    }
+
+    @SuppressWarnings("unchecked")
+    default Collection<Collection<T>> chunk (int size) {
+        if (size <= 0) return empty();
+        
+        Object[] res = new Object[3];
+        res[0] = 0;       // Current chunk count
+        res[1] = empty(); // Current chunk being built
+        res[2] = this.<Collection<T>>empty(); // Final collection of chunks
+        
+        Object[] finalRes = (Object[]) foldl(res, (r, t) -> {
+            int count = (Integer) r[0];
+            Collection<T> current = (Collection<T>) r[1];
+            Collection<Collection<T>> chunks = (Collection<Collection<T>>) r[2];
+            
+            if (count < size) {
+                return new Object[] { count + 1, current.build(t), chunks };
+            } else {
+                return new Object[] { 1, this.<T>empty().build(t), chunks.build(current) };
+            }
+        });
+        
+        Collection<T> last = (Collection<T>) finalRes[1];
+        Collection<Collection<T>> chunks = (Collection<Collection<T>>) finalRes[2];
+        return last.count() > 0 ? chunks.build(last) : chunks;
+    }
+
     default int length() {
         return foldl(0, (r, t) -> r + 1);
     }
@@ -251,6 +298,14 @@ public interface Collection<T> {
         return foldl(true, (acc, t) -> acc && pred.test(t));
     }
 
+    default Maybe<T> headMaybe() {
+        return find(i -> true);
+    }
+
+    default Maybe<T> lastMaybe() {
+        return foldl(Maybe.nothing(), (acc, t) -> Maybe.some(t));
+    }
+
     @SuppressWarnings("unchecked")
     default Maybe<T> reduce(BiFunction<T, T, T> fn) {
         return (Maybe<T>) foldl((Collection<T>) Maybe.nothing(), (acc, t) -> {
@@ -268,6 +323,16 @@ public interface Collection<T> {
         return mkString("", sep, "");
     }
 
+    @SuppressWarnings("unchecked")
+    default Collection<T> distinct() {
+        java.util.Set<T> seen = new java.util.HashSet<>();
+        return foldl(empty(), (results, t) -> {
+            if (seen.contains(t)) return results;
+            seen.add(t);
+            return results.build(t);
+        });
+    }
+
     public static <S, R extends Collection<S>> Collection<S> flatten(Collection<R> rs) {
         return rs.flatMap(id -> id);
     }
@@ -278,6 +343,17 @@ public interface Collection<T> {
 
     public static <R extends Number> double sum(Collection<R> rs) {
         return rs.foldl(0.0, (acc, r) -> acc + r.doubleValue());
+    }
+
+    public static <T, S> Collection<T> unfold(S seed, Function<S, Maybe<Tuple<T, S>>> f) {
+        return (Collection<T>) f.apply(seed).foldl(
+            (Collection<T>) List.<T>nil(),
+            (nil, tuple) -> {
+                T val = tuple.getA().fromMaybe(null);
+                S nextSeed = tuple.getB().fromMaybe(null);
+                return (Collection<T>) List.of(val).concat(unfold(nextSeed, f));
+            }
+        );
     }
  
 }

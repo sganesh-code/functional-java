@@ -49,6 +49,14 @@ public interface Either<A, B> extends Collection<B> {
         return either(Either::left, fn::apply);
     }
 
+    default <C, D> Either<C, D> bimap (final Function<A, C> fa, final Function<B, D> fb) {
+        return either(a -> left(fa.apply(a)), b -> right(fb.apply(b)));
+    }
+
+    default Either<B, A> swap () {
+        return either(Either::right, Either::left);
+    }
+
     final static class Left <A, B> implements Either <A, B> {
         private final A value;
 

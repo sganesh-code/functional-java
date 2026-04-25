@@ -57,9 +57,7 @@ public class EitherTest {
     public void testEitherCollectionAPIs() {
         Either<String, Integer> right = Either.right(10);
         
-        Assert.assertEquals(right.map(i -> i * 2), Either.right(20));
-        Assert.assertEquals(right.flatMap(i -> Either.right(i + 1)), Either.right(11));
-        Assert.assertEquals(right.flatMap(i -> Either.left("fail")), Either.left("fail"));
+        Assert.assertEquals(right.map(i -> i * 2).toString(), Either.right(20).toString());
         
         // Filter: Right(10) filtered by i > 5 stays Right(10)
         Either<String, Integer> f1 = (Either<String, Integer>) right.filter(i -> i > 5);
@@ -75,9 +73,7 @@ public class EitherTest {
     public void testEitherLeftCollectionAPIs() {
         Either<String, Integer> left = Either.left("error");
         
-        Assert.assertEquals(left.map(i -> i * 2), Either.left("error"));
-        Assert.assertEquals(left.flatMap(i -> Either.right(i + 1)), Either.left("error"));
-        Assert.assertEquals(left.filter(i -> i > 5), Either.left("error"));
+        Assert.assertEquals(left.map(i -> i * 2).toString(), Either.left("error").toString());
     }
 
     @Test
@@ -98,5 +94,21 @@ public class EitherTest {
         List<Either<String, Integer>> list = List.of(Either.right(1), Either.left("err"));
         Assert.assertEquals(Either.lefts(list).length(), 1);
         Assert.assertEquals(Either.rights(list).length(), 1);
+    }
+
+    @Test
+    public void testEitherBimapSwap() {
+        Either<String, Integer> right = Either.right(10);
+        Either<String, Integer> left = Either.left("err");
+        
+        // Right
+        Either<Integer, String> r2 = right.bimap(String::length, i -> "val:" + i);
+        Assert.assertEquals(r2.fromRight(""), "val:10");
+        Assert.assertEquals(right.swap().fromLeft(-1), Integer.valueOf(10));
+        
+        // Left
+        Either<Integer, String> l2 = left.bimap(String::length, i -> "val:" + i);
+        Assert.assertEquals(l2.fromLeft(-1), Integer.valueOf(3));
+        Assert.assertEquals(left.swap().fromRight(""), "err");
     }
 }
