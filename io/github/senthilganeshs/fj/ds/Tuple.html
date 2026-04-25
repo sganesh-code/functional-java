@@ -86,11 +86,17 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>A</code> - Type of the first element.</dd>
+<dd><code>B</code> - Type of the second element.</dd>
+</dl>
+<dl class="notes">
 <dt>All Known Implementing Classes:</dt>
 <dd><code><a href="Tuple.TupleImpl.html" title="class in io.github.senthilganeshs.fj.ds">Tuple.TupleImpl</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Tuple&lt;A,<wbr>B&gt;</span></div>
+<div class="block">A purely functional Tuple (Pair) of two values.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -103,7 +109,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Interface</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static class&nbsp;</code></div>
+<div class="col-first even-row-color"><code>static final class&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="Tuple.TupleImpl.html" class="type-name-link" title="class in io.github.senthilganeshs.fj.ds">Tuple.TupleImpl</a>&lt;<a href="Tuple.TupleImpl.html" title="type parameter in Tuple.TupleImpl">A</a>,<wbr><a href="Tuple.TupleImpl.html" title="type parameter in Tuple.TupleImpl">B</a>&gt;</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
@@ -125,27 +131,27 @@ D&gt;&nbsp;<a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#bimap(java.util.function.Function,java.util.function.Function)" class="member-name-link">bimap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Tuple.html" title="type parameter in Tuple">A</a>,<wbr>C&gt;&nbsp;fa,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Tuple.html" title="type parameter in Tuple">B</a>,<wbr>D&gt;&nbsp;fb)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a><wbr>&lt;<a href="Tuple.html" title="type parameter in Tuple">A</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getA()" class="member-name-link">getA</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a><wbr>&lt;<a href="Tuple.html" title="type parameter in Tuple">B</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getB()" class="member-name-link">getB</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A,<wbr>
+B&gt;&nbsp;<a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a><wbr>&lt;A,<wbr>B&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#fromMaybe(io.github.senthilganeshs.fj.ds.Maybe,io.github.senthilganeshs.fj.ds.Maybe)" class="member-name-link">fromMaybe</a><wbr>(<a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;A&gt;&nbsp;a,
+ <a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;B&gt;&nbsp;b)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Internal helper to create a tuple from Maybe values.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a><wbr>&lt;<a href="Tuple.html" title="type parameter in Tuple">A</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getA()" class="member-name-link">getA</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;R&gt;&nbsp;<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;R&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#map(java.util.function.BiFunction)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="Tuple.html" title="type parameter in Tuple">A</a>,<wbr><a href="Tuple.html" title="type parameter in Tuple">B</a>,<wbr>R&gt;&nbsp;fn)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a><wbr>&lt;<a href="Tuple.html" title="type parameter in Tuple">B</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getB()" class="member-name-link">getB</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A,<wbr>
 B&gt;&nbsp;<a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a><wbr>&lt;A,<wbr>B&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#of()" class="member-name-link">of</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A,<wbr>
-B&gt;&nbsp;<a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a><wbr>&lt;A,<wbr>B&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(A,B)" class="member-name-link">of</a><wbr>(A&nbsp;a,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(A,B)" class="member-name-link">of</a><wbr>(A&nbsp;a,
  B&nbsp;b)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a><wbr>&lt;<a href="Tuple.html" title="type parameter in Tuple">B</a>,<wbr><a href="Tuple.html" title="type parameter in Tuple">A</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#swap()" class="member-name-link">swap</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a><wbr>&lt;<a href="Tuple.html" title="type parameter in Tuple">B</a>,<wbr><a href="Tuple.html" title="type parameter in Tuple">A</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#swap()" class="member-name-link">swap</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -160,27 +166,6 @@ B&gt;&nbsp;<a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
-<li>
-<section class="detail" id="map(java.util.function.BiFunction)">
-<h3>map</h3>
-<div class="member-signature"><span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;R&gt;</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="Tuple.html" title="type parameter in Tuple">A</a>,<wbr><a href="Tuple.html" title="type parameter in Tuple">B</a>,<wbr>R&gt;&nbsp;fn)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="of(A,B)">
-<h3 id="of(java.lang.Object,java.lang.Object)">of</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;A,<wbr>
-B&gt;</span>&nbsp;<span class="return-type"><a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a>&lt;A,<wbr>B&gt;</span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(A&nbsp;a,
- B&nbsp;b)</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="of()">
-<h3>of</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;A,<wbr>
-B&gt;</span>&nbsp;<span class="return-type"><a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a>&lt;A,<wbr>B&gt;</span>&nbsp;<span class="element-name">of</span>()</div>
-</section>
-</li>
 <li>
 <section class="detail" id="getA()">
 <h3>getA</h3>
@@ -205,6 +190,23 @@ D&gt;</span>&nbsp;<span class="return-type"><a href="Tuple.html" title="interfac
 <section class="detail" id="swap()">
 <h3>swap</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a>&lt;<a href="Tuple.html" title="type parameter in Tuple">B</a>,<wbr><a href="Tuple.html" title="type parameter in Tuple">A</a>&gt;</span>&nbsp;<span class="element-name">swap</span>()</div>
+</section>
+</li>
+<li>
+<section class="detail" id="of(A,B)">
+<h3 id="of(java.lang.Object,java.lang.Object)">of</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;A,<wbr>
+B&gt;</span>&nbsp;<span class="return-type"><a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a>&lt;A,<wbr>B&gt;</span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(A&nbsp;a,
+ B&nbsp;b)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="fromMaybe(io.github.senthilganeshs.fj.ds.Maybe,io.github.senthilganeshs.fj.ds.Maybe)">
+<h3>fromMaybe</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;A,<wbr>
+B&gt;</span>&nbsp;<span class="return-type"><a href="Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a>&lt;A,<wbr>B&gt;</span>&nbsp;<span class="element-name">fromMaybe</span><wbr><span class="parameters">(<a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;A&gt;&nbsp;a,
+ <a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;B&gt;&nbsp;b)</span></div>
+<div class="block">Internal helper to create a tuple from Maybe values.</div>
 </section>
 </li>
 </ul>
