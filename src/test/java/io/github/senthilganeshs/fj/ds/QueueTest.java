@@ -16,14 +16,14 @@ public class QueueTest {
     public void testQueueDequeue() {
         Queue<Integer> q = Queue.of(1, 2);
         
-        Tuple<Integer, Queue<Integer>> d1 = q.dequeue().fromMaybe(null);
-        Assert.assertEquals(d1.getA().fromMaybe(-1), Integer.valueOf(1));
+        Tuple<Integer, Queue<Integer>> d1 = q.dequeue().orElse(null);
+        Assert.assertEquals(d1.getA().orElse(-1), Integer.valueOf(1));
         
-        Queue<Integer> q2 = d1.getB().fromMaybe(Queue.nil());
-        Tuple<Integer, Queue<Integer>> d2 = q2.dequeue().fromMaybe(null);
-        Assert.assertEquals(d2.getA().fromMaybe(-1), Integer.valueOf(2));
+        Queue<Integer> q2 = d1.getB().orElse(Queue.nil());
+        Tuple<Integer, Queue<Integer>> d2 = q2.dequeue().orElse(null);
+        Assert.assertEquals(d2.getA().orElse(-1), Integer.valueOf(2));
         
-        Assert.assertTrue(d2.getB().fromMaybe(Queue.nil()).dequeue().isNothing());
+        Assert.assertTrue(d2.getB().orElse(Queue.nil()).dequeue().isNothing());
     }
 
     @Test

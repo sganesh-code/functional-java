@@ -58,8 +58,8 @@ public class DefaultCollectionImplTest {
     public void testPartition() {
         StubCollection<Integer> s = new StubCollection<>(List.of(1, 2, 3, 4));
         Tuple<Collection<Integer>, Collection<Integer>> result = s.partition(i -> i % 2 == 0);
-        Assert.assertEquals(result.getA().fromMaybe(List.nil()).toString(), "[2,4]");
-        Assert.assertEquals(result.getB().fromMaybe(List.nil()).toString(), "[1,3]");
+        Assert.assertEquals(result.getA().orElse(List.nil()).toString(), "[2,4]");
+        Assert.assertEquals(result.getB().orElse(List.nil()).toString(), "[1,3]");
     }
 
     @Test
@@ -88,17 +88,17 @@ public class DefaultCollectionImplTest {
     @Test
     public void testReduceExhaustive() {
         StubCollection<Integer> s = new StubCollection<>(List.of(10));
-        Assert.assertEquals(s.reduce(Integer::sum).fromMaybe(-1), Integer.valueOf(10));
+        Assert.assertEquals(s.reduce(Integer::sum).orElse(-1), Integer.valueOf(10));
         
         StubCollection<Integer> s2 = new StubCollection<>(List.of(1, 2, 3));
-        Assert.assertEquals(s2.reduce(Integer::sum).fromMaybe(-1), Integer.valueOf(6));
+        Assert.assertEquals(s2.reduce(Integer::sum).orElse(-1), Integer.valueOf(6));
     }
 
     @Test
     public void testHeadLastMaybe() {
         StubCollection<Integer> s = new StubCollection<>(List.of(1, 2, 3));
-        Assert.assertEquals(s.headMaybe().fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(s.lastMaybe().fromMaybe(-1), Integer.valueOf(3));
+        Assert.assertEquals(s.headMaybe().orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(s.lastMaybe().orElse(-1), Integer.valueOf(3));
     }
 
     @Test
@@ -117,8 +117,8 @@ public class DefaultCollectionImplTest {
     public void testSpan() {
         StubCollection<Integer> s = new StubCollection<>(List.of(1, 2, 3, 4, 1, 2));
         Tuple<Collection<Integer>, Collection<Integer>> result = s.span(i -> i < 4);
-        Assert.assertEquals(result.getA().fromMaybe(List.nil()).toString(), "[1,2,3]");
-        Assert.assertEquals(result.getB().fromMaybe(List.nil()).toString(), "[4,1,2]");
+        Assert.assertEquals(result.getA().orElse(List.nil()).toString(), "[1,2,3]");
+        Assert.assertEquals(result.getB().orElse(List.nil()).toString(), "[4,1,2]");
     }
 
     @Test

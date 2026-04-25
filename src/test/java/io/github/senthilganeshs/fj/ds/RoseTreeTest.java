@@ -62,7 +62,7 @@ public class RoseTreeTest {
         tree = (RoseTree<String>) tree.build("child");
         
         Assert.assertEquals(tree.children().length(), 1);
-        Assert.assertEquals(tree.children().find(i -> true).fromMaybe(RoseTree.of("")).value(), "child");
+        Assert.assertEquals(tree.children().find(i -> true).orElse(RoseTree.of("")).value(), "child");
     }
 
     @Test

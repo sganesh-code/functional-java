@@ -23,11 +23,11 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
 
         while (true) {
             Maybe<Tuple<V, Queue<V>>> dequeued = queue.dequeue();
-            Tuple<V, Queue<V>> t = dequeued.fromMaybe(null);
+            Tuple<V, Queue<V>> t = dequeued.orElse(null);
             if (t == null) break;
 
-            V current = t.getA().fromMaybe(null);
-            queue = (Queue<V>) t.getB().fromMaybe(Queue.nil());
+            V current = t.getA().orElse(null);
+            queue = (Queue<V>) t.getB().orElse(Queue.nil());
 
             if (visited.contains(current)) continue;
 
@@ -48,10 +48,10 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
 
         while (true) {
             Maybe<V> top = stack.head();
-            V current = top.fromMaybe(null);
+            V current = top.orElse(null);
             if (current == null) break;
 
-            stack = (Stack<V>) stack.tail().fromMaybe(Stack.emptyStack());
+            stack = (Stack<V>) stack.tail().orElse(Stack.emptyStack());
 
             if (visited.contains(current)) continue;
 
@@ -75,15 +75,15 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
         
         // 1. Calculate in-degrees
         final HashMap<V, Integer> initialInDegree = nodes().foldl(HashMap.nil(), (acc, n) -> 
-            successors(n).foldl(((HashMap<V, Integer>)acc).put(n, acc.get(n).fromMaybe(0)), (accInner, succ) -> {
-                int count = accInner.get(succ).fromMaybe(0);
+            successors(n).foldl(((HashMap<V, Integer>)acc).put(n, acc.get(n).orElse(0)), (accInner, succ) -> {
+                int count = accInner.get(succ).orElse(0);
                 return accInner.put(succ, count + 1);
             })
         );
 
         // 2. Initial queue with 0 in-degree nodes
         Queue<V> initialQueue = nodes().foldl(Queue.nil(), (q, n) -> 
-            initialInDegree.get(n).fromMaybe(0) == 0 ? (Queue<V>) q.build(n) : q
+            initialInDegree.get(n).orElse(0) == 0 ? (Queue<V>) q.build(n) : q
         );
 
         List<V> result = List.nil();
@@ -93,11 +93,11 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
 
         while (true) {
             Maybe<Tuple<V, Queue<V>>> dequeued = currentQueue.dequeue();
-            Tuple<V, Queue<V>> t = dequeued.fromMaybe(null);
+            Tuple<V, Queue<V>> t = dequeued.orElse(null);
             if (t == null) break;
 
-            V u = t.getA().fromMaybe(null);
-            currentQueue = t.getB().fromMaybe(Queue.nil());
+            V u = t.getA().orElse(null);
+            currentQueue = t.getB().orElse(Queue.nil());
             result = (List<V>) result.build(u);
             count++;
 
@@ -108,16 +108,16 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
             // This is tricky to do purely inside a loop without mutation of the outer local variables.
             // We'll use a custom record or Tuple to carry the state through foldl.
             Tuple<HashMap<V, Integer>, Queue<V>> state = neighbors.foldl(Tuple.of(loopInDegree, loopQueue), (acc, v) -> {
-                HashMap<V, Integer> d = (HashMap<V, Integer>) acc.getA().fromMaybe(null);
-                Queue<V> q = (Queue<V>) acc.getB().fromMaybe(null);
-                int newDeg = d.get(v).fromMaybe(0) - 1;
+                HashMap<V, Integer> d = (HashMap<V, Integer>) acc.getA().orElse(null);
+                Queue<V> q = (Queue<V>) acc.getB().orElse(null);
+                int newDeg = d.get(v).orElse(0) - 1;
                 HashMap<V, Integer> nextD = d.put(v, newDeg);
                 Queue<V> nextQ = (newDeg == 0) ? (Queue<V>) q.build(v) : q;
                 return Tuple.of(nextD, nextQ);
             });
             
-            currentInDegree = state.getA().fromMaybe(null);
-            currentQueue = state.getB().fromMaybe(null);
+            currentInDegree = state.getA().orElse(null);
+            currentQueue = state.getB().orElse(null);
         }
 
         if (count != nodes().length()) {
@@ -140,14 +140,14 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
         @Override
         public Graph<V> addNode(V node) {
             return ((Maybe<Graph<V>>) adjacencyMap.get(node).map(__ -> (Graph<V>) this))
-                .fromMaybe(new AdjacencyMapGraph<>(adjacencyMap.put(node, Set.emptyNatural())));
+                .orElse(new AdjacencyMapGraph<>(adjacencyMap.put(node, Set.emptyNatural())));
         }
 
         @Override
         public Graph<V> addEdge(V from, V to) {
             Graph<V> g = addNode(from).addNode(to);
             HashMap<V, Set<V>> map = ((AdjacencyMapGraph<V>) g).adjacencyMap;
-            Set<V> neighbors = map.get(from).fromMaybe(Set.emptyNatural());
+            Set<V> neighbors = map.get(from).orElse(Set.emptyNatural());
             return new AdjacencyMapGraph<>(map.put(from, (Set<V>) neighbors.build(to)));
         }
 
@@ -158,7 +158,7 @@ public interface Graph<V extends Comparable<V>> extends Collection<V> {
 
         @Override
         public Set<V> successors(V node) {
-            return adjacencyMap.get(node).fromMaybe(Set.emptyNatural());
+            return adjacencyMap.get(node).orElse(Set.emptyNatural());
         }
 
         @Override

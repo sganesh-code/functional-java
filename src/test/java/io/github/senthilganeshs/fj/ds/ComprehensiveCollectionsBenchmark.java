@@ -148,7 +148,7 @@ public class ComprehensiveCollectionsBenchmark {
     public Queue<Integer> fj_queueMixedOps() {
         Queue<Integer> q = Queue.nil();
         for (Integer i : testData) q = (Queue<Integer>) q.build(i);
-        for (int i = 0; i < size; i++) q = q.dequeue().fromMaybe(Tuple.of(0, q)).getB().fromMaybe(Queue.nil());
+        for (int i = 0; i < size; i++) q = q.dequeue().orElse(Tuple.of(0, q)).getB().orElse(Queue.nil());
         return q;
     }
 
@@ -164,7 +164,7 @@ public class ComprehensiveCollectionsBenchmark {
     public PriorityQueue<Integer> fj_priorityQueueOps() {
         PriorityQueue<Integer> pq = PriorityQueue.nil();
         for (Integer i : testData) pq = (PriorityQueue<Integer>) pq.build(i);
-        for (int i = 0; i < size; i++) pq = pq.deleteMin().fromMaybe(PriorityQueue.nil());
+        for (int i = 0; i < size; i++) pq = pq.deleteMin().orElse(PriorityQueue.nil());
         return pq;
     }
 

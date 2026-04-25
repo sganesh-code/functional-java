@@ -15,7 +15,7 @@ public class CollectionDefaultsTest {
         Assert.assertTrue(traversed instanceof Maybe);
         Maybe<List<Integer>> result = (Maybe<List<Integer>>) (Collection<?>) traversed;
         Assert.assertTrue(result.isSome());
-        Assert.assertEquals(result.fromMaybe(List.nil()).toString(), "[2,4,6]");
+        Assert.assertEquals(result.orElse(List.nil()).toString(), "[2,4,6]");
         
         // Failure case
         Collection<Collection<Integer>> failed = list.traverse(i -> i == 2 ? Maybe.nothing() : Maybe.some(i));
@@ -28,7 +28,7 @@ public class CollectionDefaultsTest {
         Collection<Collection<Integer>> sequenced = Collection.sequence((Collection<Collection<Integer>>) (Collection<?>) list);
         
         Assert.assertTrue(sequenced instanceof Maybe);
-        Assert.assertEquals(((Maybe<List<Integer>>) (Collection<?>) sequenced).fromMaybe(List.nil()).toString(), "[1,2]");
+        Assert.assertEquals(((Maybe<List<Integer>>) (Collection<?>) sequenced).orElse(List.nil()).toString(), "[1,2]");
     }
 
     @Test
@@ -37,7 +37,7 @@ public class CollectionDefaultsTest {
         Maybe<Integer> m2 = Maybe.some(20);
         
         Collection<Integer> lifted = m1.liftA2((a, b) -> a + b, m2);
-        Assert.assertEquals(((Maybe<Integer>)lifted).fromMaybe(0), Integer.valueOf(30));
+        Assert.assertEquals(((Maybe<Integer>)lifted).orElse(0), Integer.valueOf(30));
         
         Assert.assertTrue(((Maybe<Integer>) m1.liftA2((a, b) -> a + b, Maybe.<Integer>nothing())).isNothing());
     }
@@ -74,7 +74,7 @@ public class CollectionDefaultsTest {
         Maybe<Integer> m3 = Maybe.some(3);
         
         Collection<Integer> lifted = m1.liftA3(a -> (b, c) -> a + b + c, m2, m3);
-        Assert.assertEquals(((Maybe<Integer>)lifted).fromMaybe(0), Integer.valueOf(6));
+        Assert.assertEquals(((Maybe<Integer>)lifted).orElse(0), Integer.valueOf(6));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class CollectionDefaultsTest {
         Maybe<Integer> m4 = Maybe.some(4);
         
         Collection<Integer> lifted = m1.liftA4(a -> b -> (c, d) -> a + b + c + d, m2, m3, m4);
-        Assert.assertEquals(((Maybe<Integer>)lifted).fromMaybe(0), Integer.valueOf(10));
+        Assert.assertEquals(((Maybe<Integer>)lifted).orElse(0), Integer.valueOf(10));
     }
 
     @Test
@@ -129,7 +129,7 @@ public class CollectionDefaultsTest {
     @Test
     public void testReduce() {
         List<Integer> list = List.of(1, 2, 3, 4);
-        Assert.assertEquals(list.reduce(Integer::sum).fromMaybe(0), Integer.valueOf(10));
+        Assert.assertEquals(list.reduce(Integer::sum).orElse(0), Integer.valueOf(10));
         Assert.assertTrue(List.<Integer>nil().reduce(Integer::sum).isNothing());
     }
 }

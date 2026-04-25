@@ -29,8 +29,8 @@ public class Illustration {
         
         // Use HashMap to accumulate total spend per customer
         HashMap<String, Double> customerSpend = orders.foldl(HashMap.nil(), (acc, order) -> {
-            double orderTotal = calculateOrderTotal(catalog, order).fromMaybe(0.0);
-            double currentTotal = acc.get(order.customerId).fromMaybe(0.0);
+            double orderTotal = calculateOrderTotal(catalog, order).orElse(0.0);
+            double currentTotal = acc.get(order.customerId).orElse(0.0);
             return acc.put(order.customerId, currentTotal + orderTotal);
         });
 

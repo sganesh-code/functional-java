@@ -10,9 +10,9 @@ public class HashMapTest {
         HashMap<String, Integer> map = HashMap.nil();
         map = map.put("a", 1).put("b", 2).put("c", 3);
         
-        Assert.assertEquals(map.get("a").fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(map.get("b").fromMaybe(-1), Integer.valueOf(2));
-        Assert.assertEquals(map.get("c").fromMaybe(-1), Integer.valueOf(3));
+        Assert.assertEquals(map.get("a").orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(map.get("b").orElse(-1), Integer.valueOf(2));
+        Assert.assertEquals(map.get("c").orElse(-1), Integer.valueOf(3));
         Assert.assertEquals(map.length(), 3);
     }
 
@@ -21,7 +21,7 @@ public class HashMapTest {
         HashMap<String, Integer> map = HashMap.<String, Integer>nil().put("a", 1);
         map = map.put("a", 10);
         
-        Assert.assertEquals(map.get("a").fromMaybe(-1), Integer.valueOf(10));
+        Assert.assertEquals(map.get("a").orElse(-1), Integer.valueOf(10));
         Assert.assertEquals(map.length(), 1);
     }
 
@@ -31,7 +31,7 @@ public class HashMapTest {
         HashMap<String, Integer> removed = map.remove("a");
         
         Assert.assertTrue(removed.get("a").isNothing());
-        Assert.assertEquals(removed.get("b").fromMaybe(-1), Integer.valueOf(2));
+        Assert.assertEquals(removed.get("b").orElse(-1), Integer.valueOf(2));
         Assert.assertEquals(removed.length(), 1);
         
         // Remove non-existent
@@ -58,7 +58,7 @@ public class HashMapTest {
         
         Assert.assertEquals(map.length(), limit);
         for (int i = 0; i < limit; i++) {
-            Assert.assertEquals(map.get(i).fromMaybe(""), "val" + i);
+            Assert.assertEquals(map.get(i).orElse(""), "val" + i);
         }
         
         // Remove some
@@ -67,7 +67,7 @@ public class HashMapTest {
         }
         Assert.assertEquals(map.length(), limit / 2);
         for (int i = 1; i < limit; i += 2) {
-            Assert.assertEquals(map.get(i).fromMaybe(""), "val" + i);
+            Assert.assertEquals(map.get(i).orElse(""), "val" + i);
         }
     }
 
@@ -89,13 +89,13 @@ public class HashMapTest {
         
         map = map.put(k1, "v1").put(k2, "v2");
         
-        Assert.assertEquals(map.get(k1).fromMaybe(""), "v1");
-        Assert.assertEquals(map.get(k2).fromMaybe(""), "v2");
+        Assert.assertEquals(map.get(k1).orElse(""), "v1");
+        Assert.assertEquals(map.get(k2).orElse(""), "v2");
         Assert.assertEquals(map.length(), 2);
         
         map = map.remove(k1);
         Assert.assertTrue(map.get(k1).isNothing());
-        Assert.assertEquals(map.get(k2).fromMaybe(""), "v2");
+        Assert.assertEquals(map.get(k2).orElse(""), "v2");
     }
 
     @Test
@@ -138,13 +138,13 @@ public class HashMapTest {
         // Remove from collision
         map = map.remove(k2);
         Assert.assertEquals(map.length(), 2);
-        Assert.assertEquals(map.get(k1).fromMaybe(""), "v1");
-        Assert.assertEquals(map.get(k3).fromMaybe(""), "v3");
+        Assert.assertEquals(map.get(k1).orElse(""), "v1");
+        Assert.assertEquals(map.get(k3).orElse(""), "v3");
         
         // Remove until 1 left (should convert back to LeafNode)
         map = map.remove(k1);
         Assert.assertEquals(map.length(), 1);
-        Assert.assertEquals(map.get(k3).fromMaybe(""), "v3");
+        Assert.assertEquals(map.get(k3).orElse(""), "v3");
         
         // Final removal
         map = map.remove(k3);

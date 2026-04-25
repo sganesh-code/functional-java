@@ -28,8 +28,45 @@ public interface Either<A, B> extends Collection<B> {
     }   
 
     
+    /**
+     * @deprecated Use {@link #orElse(Object)} instead.
+     */
+    @Deprecated
     default B fromRight (final B def) {
         return either (a -> def, b -> b);
+    }
+
+    /**
+     * Returns the Right value if present, otherwise returns the provided default.
+     * 
+     * @param def The fallback value.
+     * @return The Right value or def.
+     */
+    default B orElse (final B def) {
+        return fromRight(def);
+    }
+
+    /**
+     * Returns the Right value if present, otherwise returns the result of the supplier.
+     * 
+     * @param supplier The supplier of the fallback value.
+     * @return The Right value or supplier result.
+     */
+    default B orElseGet(java.util.function.Supplier<? extends B> supplier) {
+        return isRight() ? fromRight(null) : supplier.get();
+    }
+
+    /**
+     * Returns the Right value if present, otherwise throws the exception from the supplier.
+     * 
+     * @param <X> Type of the exception.
+     * @param exceptionSupplier The supplier of the exception.
+     * @return The Right value.
+     * @throws X if this is a Left.
+     */
+    default <X extends Throwable> B orElseThrow(java.util.function.Supplier<? extends X> exceptionSupplier) throws X {
+        if (isRight()) return fromRight(null);
+        throw exceptionSupplier.get();
     }
     
     default A fromLeft (final A def) {

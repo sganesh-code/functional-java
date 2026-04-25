@@ -8,17 +8,17 @@ public class StackTest {
     @Test
     public void testStackBasic() {
         Stack<Integer> s = (Stack<Integer>) Stack.<Integer>emptyStack().build(1).build(2).build(3);
-        Assert.assertEquals(s.head().fromMaybe(-1), Integer.valueOf(3));
+        Assert.assertEquals(s.head().orElse(-1), Integer.valueOf(3));
         Assert.assertEquals(s.length(), 3);
     }
 
     @Test
     public void testStackPop() {
         Stack<Integer> s = (Stack<Integer>) Stack.<Integer>emptyStack().build(1).build(2);
-        Assert.assertEquals(s.head().fromMaybe(-1), Integer.valueOf(2));
-        s = s.tail().fromMaybe(Stack.emptyStack());
-        Assert.assertEquals(s.head().fromMaybe(-1), Integer.valueOf(1));
-        s = s.tail().fromMaybe(Stack.emptyStack());
+        Assert.assertEquals(s.head().orElse(-1), Integer.valueOf(2));
+        s = s.tail().orElse(Stack.emptyStack());
+        Assert.assertEquals(s.head().orElse(-1), Integer.valueOf(1));
+        s = s.tail().orElse(Stack.emptyStack());
         Assert.assertTrue(s.head().isNothing());
     }
 
@@ -26,7 +26,7 @@ public class StackTest {
     public void testStackReverse() {
         Stack<Integer> s = (Stack<Integer>) Stack.<Integer>emptyStack().build(1).build(2).build(3);
         Stack<Integer> reversed = s.reverse();
-        Assert.assertEquals(reversed.head().fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(reversed.head().orElse(-1), Integer.valueOf(1));
         Assert.assertEquals(reversed.toString(), "[1,2,3]");
     }
 

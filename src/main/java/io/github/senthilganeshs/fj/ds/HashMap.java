@@ -44,8 +44,8 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
                 : root.put(0, key.hashCode(), key, value);
             
             // This size calculation is a bit naive if the key already exists
-            // We can check if the key already exists using map().fromMaybe()
-            int newSize = size + ((Maybe<Integer>) get(key).map(v -> 0)).fromMaybe(1);
+            // We can check if the key already exists using map().orElse()
+            int newSize = size + ((Maybe<Integer>) get(key).map(v -> 0)).orElse(1);
             return new HAMT<>(newRoot, newSize);
         }
 

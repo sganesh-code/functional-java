@@ -24,8 +24,45 @@ public interface Maybe<T> extends Collection<T> {
         return this instanceof Nothing;
     }
 
+    /**
+     * @deprecated Use {@link #orElse(Object)} instead.
+     */
+    @Deprecated
     default T fromMaybe(T def) {
         return foldl(def, (__, t) -> t);
+    }
+
+    /**
+     * Returns the contained value if present, otherwise returns the provided default.
+     * 
+     * @param def The fallback value.
+     * @return The value or def.
+     */
+    default T orElse(T def) {
+        return fromMaybe(def);
+    }
+
+    /**
+     * Returns the contained value if present, otherwise returns the result of the supplier.
+     * 
+     * @param supplier The supplier of the fallback value.
+     * @return The value or supplier result.
+     */
+    default T orElseGet(java.util.function.Supplier<? extends T> supplier) {
+        return isSome() ? fromMaybe(null) : supplier.get();
+    }
+
+    /**
+     * Returns the contained value if present, otherwise throws the exception from the supplier.
+     * 
+     * @param <X> Type of the exception.
+     * @param exceptionSupplier The supplier of the exception.
+     * @return The value.
+     * @throws X if no value is present.
+     */
+    default <X extends Throwable> T orElseThrow(java.util.function.Supplier<? extends X> exceptionSupplier) throws X {
+        if (isSome()) return fromMaybe(null);
+        throw exceptionSupplier.get();
     }
 
     @Override

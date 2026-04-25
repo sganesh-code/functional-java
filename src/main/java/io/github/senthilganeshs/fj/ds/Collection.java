@@ -143,7 +143,7 @@ public interface Collection<T> {
     default <R> Collection<R> mapMaybe (final Function<T, Maybe<R>> fn) {
         return foldl(empty(), (rs, t) -> {
             Maybe<R> res = fn.apply(t);
-            return res.isSome() ? rs.build(res.fromMaybe(null)) : rs;
+            return res.isSome() ? rs.build(res.orElse(null)) : rs;
         });
     }
 
@@ -151,8 +151,8 @@ public interface Collection<T> {
     default Tuple<Collection<T>, Collection<T>> partition (final Predicate<T> pred) {
         return (Tuple<Collection<T>, Collection<T>>) foldl(Tuple.of(this.<T>empty(), this.<T>empty()), (acc, t) -> {
             Tuple<Collection<T>, Collection<T>> tuple = (Tuple<Collection<T>, Collection<T>>) acc;
-            Collection<T> left = tuple.getA().fromMaybe(empty());
-            Collection<T> right = tuple.getB().fromMaybe(empty());
+            Collection<T> left = tuple.getA().orElse(empty());
+            Collection<T> right = tuple.getB().orElse(empty());
             return pred.test(t) ? Tuple.of(left.build(t), right) : Tuple.of(left, right.build(t));
         });
     }
@@ -208,7 +208,7 @@ public interface Collection<T> {
     default <R, S> Collection<S> zipWith(final BiFunction<T, R, S> fn, final List<R> other) {
         // We use the already implemented List.zip() logic
         List<T> thisAsList = (this instanceof List) ? (List<T>) this : List.from(this);
-        return (Collection<S>) thisAsList.zip(other).map(t -> fn.apply(t.getA().fromMaybe(null), t.getB().fromMaybe(null)));
+        return (Collection<S>) thisAsList.zip(other).map(t -> fn.apply(t.getA().orElse(null), t.getB().orElse(null)));
     }
 
     /**
@@ -248,7 +248,7 @@ public interface Collection<T> {
         return (HashMap<K, Collection<T>>) foldl(HashMap.<K, Collection<T>>nil(), (acc, t) -> {
             HashMap<K, Collection<T>> map = (HashMap<K, Collection<T>>) acc;
             K key = keyFn.apply(t);
-            Collection<T> group = ((Maybe<Collection<T>>) map.get(key)).fromMaybe(this.<T>empty());
+            Collection<T> group = ((Maybe<Collection<T>>) map.get(key)).orElse(this.<T>empty());
             return (HashMap<K, Collection<T>>) map.put(key, group.build(t));
         });
     }
@@ -589,8 +589,8 @@ public interface Collection<T> {
         return (Collection<T>) f.apply(seed).foldl(
             (Collection<T>) List.<T>nil(),
             (nil, tuple) -> {
-                T val = tuple.getA().fromMaybe(null);
-                S nextSeed = tuple.getB().fromMaybe(null);
+                T val = tuple.getA().orElse(null);
+                S nextSeed = tuple.getB().orElse(null);
                 return (Collection<T>) List.of(val).concat(unfold(nextSeed, f));
             }
         );

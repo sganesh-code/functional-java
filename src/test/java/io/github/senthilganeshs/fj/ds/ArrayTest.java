@@ -12,9 +12,9 @@ public class ArrayTest {
         arr.build(1).build(2).build(3);
         
         Assert.assertEquals(arr.length(), 3);
-        Assert.assertEquals(arr.at(0).fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(arr.at(1).fromMaybe(-1), Integer.valueOf(2));
-        Assert.assertEquals(arr.at(2).fromMaybe(-1), Integer.valueOf(3));
+        Assert.assertEquals(arr.at(0).orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(arr.at(1).orElse(-1), Integer.valueOf(2));
+        Assert.assertEquals(arr.at(2).orElse(-1), Integer.valueOf(3));
         Assert.assertEquals(arr.at(3), Maybe.nothing());
     }
 
@@ -24,10 +24,10 @@ public class ArrayTest {
         arr.build(1).build(2).build(3);
         
         Maybe<Integer> removed = arr.remove(1);
-        Assert.assertEquals(removed.fromMaybe(-1), Integer.valueOf(2));
+        Assert.assertEquals(removed.orElse(-1), Integer.valueOf(2));
         Assert.assertEquals(arr.length(), 2);
-        Assert.assertEquals(arr.at(0).fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(arr.at(1).fromMaybe(-1), Integer.valueOf(3));
+        Assert.assertEquals(arr.at(0).orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(arr.at(1).orElse(-1), Integer.valueOf(3));
     }
 
     @Test
@@ -37,12 +37,12 @@ public class ArrayTest {
         
         arr.shift();
         Assert.assertEquals(arr.length(), 2);
-        Assert.assertEquals(arr.at(0).fromMaybe(-1), Integer.valueOf(2));
-        Assert.assertEquals(arr.at(1).fromMaybe(-1), Integer.valueOf(3));
+        Assert.assertEquals(arr.at(0).orElse(-1), Integer.valueOf(2));
+        Assert.assertEquals(arr.at(1).orElse(-1), Integer.valueOf(3));
         
         arr.shift();
         Assert.assertEquals(arr.length(), 1);
-        Assert.assertEquals(arr.at(0).fromMaybe(-1), Integer.valueOf(3));
+        Assert.assertEquals(arr.at(0).orElse(-1), Integer.valueOf(3));
         
         arr.shift();
         Assert.assertEquals(arr.length(), 0);
@@ -73,7 +73,7 @@ public class ArrayTest {
         }
         Assert.assertEquals(arr.length(), 10);
         for (int i = 0; i < 10; i++) {
-            Assert.assertEquals(arr.at(i).fromMaybe(-1), Integer.valueOf(i));
+            Assert.assertEquals(arr.at(i).orElse(-1), Integer.valueOf(i));
         }
         
         // Shrinking

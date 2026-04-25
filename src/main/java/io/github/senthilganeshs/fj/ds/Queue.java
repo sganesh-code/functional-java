@@ -72,7 +72,7 @@ public interface Queue<T> extends Collection<T> {
         private Queue<T> check(Stack<T> f, Stack<T> r) {
             return ((Maybe<Queue<T>>) f.head()
                 .map(h -> (Queue<T>) new BankersQueue<>(f, r)))
-                .fromMaybe(new BankersQueue<>((Stack<T>) r.reverse(), Stack.emptyStack()));
+                .orElse(new BankersQueue<>((Stack<T>) r.reverse(), Stack.emptyStack()));
         }
 
         @Override

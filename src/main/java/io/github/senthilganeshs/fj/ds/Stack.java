@@ -26,13 +26,13 @@ public interface Stack<T> extends Collection<T>{
     @Override
     default Stack<T> take(int n) {
         if (n <= 0) return emptyStack();
-        return (Stack<T>) ((Maybe<Stack<T>>) head().flatMap(h -> tail().map(t -> (Stack<T>) new NonEmpty<>(h, t.take(n - 1))))).fromMaybe(this);
+        return (Stack<T>) ((Maybe<Stack<T>>) head().flatMap(h -> tail().map(t -> (Stack<T>) new NonEmpty<>(h, t.take(n - 1))))).orElse(this);
     }
 
     @Override
     default Stack<T> drop(int n) {
         if (n <= 0) return this;
-        return (Stack<T>) ((Maybe<Stack<T>>) tail().flatMap(t -> Maybe.some(t.drop(n - 1)))).fromMaybe(emptyStack());
+        return (Stack<T>) ((Maybe<Stack<T>>) tail().flatMap(t -> Maybe.some(t.drop(n - 1)))).orElse(emptyStack());
     }
 
     @Override

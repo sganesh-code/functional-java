@@ -18,9 +18,9 @@ public class DequeTest {
         d = d.pushFront(3).pushFront(2).pushFront(1);
         Assert.assertEquals(d.toString(), "[1,2,3]");
         
-        Tuple<Integer, Deque<Integer>> pop1 = d.popFront().fromMaybe(null);
-        Assert.assertEquals(pop1.getA().fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(pop1.getB().fromMaybe(null).toString(), "[2,3]");
+        Tuple<Integer, Deque<Integer>> pop1 = d.popFront().orElse(null);
+        Assert.assertEquals(pop1.getA().orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(pop1.getB().orElse(null).toString(), "[2,3]");
     }
 
     @Test
@@ -29,9 +29,9 @@ public class DequeTest {
         d = d.pushBack(1).pushBack(2).pushBack(3);
         Assert.assertEquals(d.toString(), "[1,2,3]");
         
-        Tuple<Integer, Deque<Integer>> pop1 = d.popBack().fromMaybe(null);
-        Assert.assertEquals(pop1.getA().fromMaybe(-1), Integer.valueOf(3));
-        Assert.assertEquals(pop1.getB().fromMaybe(null).toString(), "[1,2]");
+        Tuple<Integer, Deque<Integer>> pop1 = d.popBack().orElse(null);
+        Assert.assertEquals(pop1.getA().orElse(-1), Integer.valueOf(3));
+        Assert.assertEquals(pop1.getB().orElse(null).toString(), "[1,2]");
     }
 
     @Test
@@ -55,10 +55,10 @@ public class DequeTest {
     @Test
     public void testDequeBalanceExhaustive() {
         Deque<Integer> d1 = Deque.<Integer>nil().pushBack(1).pushBack(2).pushBack(3);
-        Assert.assertEquals(d1.popFront().fromMaybe(null).getA().fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(d1.popFront().orElse(null).getA().orElse(-1), Integer.valueOf(1));
         
         Deque<Integer> d2 = Deque.<Integer>nil().pushFront(1).pushFront(2).pushFront(3);
-        Assert.assertEquals(d2.popBack().fromMaybe(null).getA().fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(d2.popBack().orElse(null).getA().orElse(-1), Integer.valueOf(1));
     }
 
     @Test

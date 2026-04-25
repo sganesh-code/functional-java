@@ -21,8 +21,8 @@ public class MaybeTest {
         Maybe<Integer> some = Maybe.some(10);
         Maybe<Integer> nothing = Maybe.nothing();
         
-        Assert.assertEquals(some.fromMaybe(0), Integer.valueOf(10));
-        Assert.assertEquals(nothing.fromMaybe(0), Integer.valueOf(0));
+        Assert.assertEquals(some.orElse(0), Integer.valueOf(10));
+        Assert.assertEquals(nothing.orElse(0), Integer.valueOf(0));
     }
 
     @Test

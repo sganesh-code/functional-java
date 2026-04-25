@@ -20,19 +20,19 @@ public interface LazyList<T> extends List<T> {
 
     @Override
     default <R> List<Tuple<T, R>> zip(List<R> other) {
-        T h = head().fromMaybe(null);
+        T h = head().orElse(null);
         if (h == null) return LazyList.nil();
         
         Tuple<Maybe<R>, List<R>> otherUnzipped = other.unzip();
-        R oh = ((Maybe<R>) otherUnzipped.getA().fromMaybe(Maybe.nothing())).fromMaybe(null);
+        R oh = ((Maybe<R>) otherUnzipped.getA().orElse(Maybe.nothing())).orElse(null);
         if (oh == null) return LazyList.nil();
         
-        return cons(Tuple.of(h, oh), () -> (LazyList<Tuple<T, R>>) tail().zip(otherUnzipped.getB().fromMaybe(List.nil())));
+        return cons(Tuple.of(h, oh), () -> (LazyList<Tuple<T, R>>) tail().zip(otherUnzipped.getB().orElse(List.nil())));
     }
 
     @Override
     default <R> LazyList<R> map(java.util.function.Function<T, R> fn) {
-        return ((Maybe<LazyList<R>>) head().map(h -> cons(fn.apply(h), () -> tail().map(fn)))).fromMaybe((LazyList<R>) nil());
+        return ((Maybe<LazyList<R>>) head().map(h -> cons(fn.apply(h), () -> tail().map(fn)))).orElse((LazyList<R>) nil());
     }
 
     @Override
@@ -43,24 +43,24 @@ public interface LazyList<T> extends List<T> {
             } else {
                 return tail().filter(pred);
             }
-        })).fromMaybe(this);
+        })).orElse(this);
     }
 
     @Override
     default LazyList<T> take(int n) {
         if (n <= 0) return nil();
-        return ((Maybe<LazyList<T>>) head().map(h -> cons(h, () -> tail().take(n - 1)))).fromMaybe(this);
+        return ((Maybe<LazyList<T>>) head().map(h -> cons(h, () -> tail().take(n - 1)))).orElse(this);
     }
 
     @Override
     default LazyList<T> drop(int n) {
         if (n <= 0) return this;
-        return ((Maybe<LazyList<T>>) head().map(__ -> tail().drop(n - 1))).fromMaybe(this);
+        return ((Maybe<LazyList<T>>) head().map(__ -> tail().drop(n - 1))).orElse(this);
     }
 
     @Override
     default Collection<T> concat(Collection<T> other) {
-        return ((Maybe<LazyList<T>>) head().map(h -> cons(h, () -> (LazyList<T>) tail().concat(other)))).fromMaybe((LazyList<T>) other);
+        return ((Maybe<LazyList<T>>) head().map(h -> cons(h, () -> (LazyList<T>) tail().concat(other)))).orElse((LazyList<T>) other);
     }
 
     static <R> LazyList<R> nil() {
@@ -119,7 +119,7 @@ public interface LazyList<T> extends List<T> {
             R acc = seed;
             LazyList<T> curr = this;
             while (curr instanceof NonEmpty) {
-                acc = fn.apply(acc, curr.head().fromMaybe(null));
+                acc = fn.apply(acc, curr.head().orElse(null));
                 curr = curr.tail();
             }
             return acc;
@@ -142,7 +142,7 @@ public interface LazyList<T> extends List<T> {
             
             // To check if there is an 11th element without isSome, we can try to take(11) 
             // and see if it's longer than take(10), or just check if the 11th head exists
-            if (((Maybe<Boolean>) drop(10).head().map(h -> true)).fromMaybe(false)) {
+            if (((Maybe<Boolean>) drop(10).head().map(h -> true)).orElse(false)) {
                 sb.append(",...");
             }
             

@@ -11,8 +11,8 @@ public class LazyListTest {
     public void testLazyListBasic() {
         LazyList<Integer> l = LazyList.of(1, 2, 3);
         Assert.assertEquals(l.toString(), "[1,2,3]");
-        Assert.assertEquals(l.head().fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(l.tail().head().fromMaybe(-1), Integer.valueOf(2));
+        Assert.assertEquals(l.head().orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(l.tail().head().orElse(-1), Integer.valueOf(2));
         Assert.assertEquals(l.length(), 3);
     }
 
@@ -30,11 +30,11 @@ public class LazyListTest {
         
         LazyList<Integer> t1 = l.tail();
         Assert.assertEquals(counter.get(), 1);
-        Assert.assertEquals(t1.head().fromMaybe(-1), Integer.valueOf(2));
+        Assert.assertEquals(t1.head().orElse(-1), Integer.valueOf(2));
         
         LazyList<Integer> t2 = t1.tail();
         Assert.assertEquals(counter.get(), 2);
-        Assert.assertEquals(t2.head().fromMaybe(-1), Integer.valueOf(3));
+        Assert.assertEquals(t2.head().orElse(-1), Integer.valueOf(3));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class LazyListTest {
     public void testLazyListUnzip() {
         LazyList<Integer> l = LazyList.of(1, 2, 3);
         Tuple<Maybe<Integer>, List<Integer>> unzipped = l.unzip();
-        Assert.assertEquals(unzipped.getA().fromMaybe(Maybe.nothing()).fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(unzipped.getB().fromMaybe(List.nil()).length(), 2);
+        Assert.assertEquals(unzipped.getA().orElse(Maybe.nothing()).orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(unzipped.getB().orElse(List.nil()).length(), 2);
     }
 }

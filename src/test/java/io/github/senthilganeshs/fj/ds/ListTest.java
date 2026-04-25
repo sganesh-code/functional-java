@@ -33,8 +33,8 @@ public class ListTest {
         Tuple<Maybe<Integer>, List<Integer>> unzipped = l.unzip();
         
         // head is 1, tail is [2, 3]
-        Assert.assertEquals(unzipped.getA().fromMaybe(Maybe.nothing()).fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(unzipped.getB().fromMaybe(List.nil()).toString(), "[2,3]");
+        Assert.assertEquals(unzipped.getA().orElse(Maybe.nothing()).orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(unzipped.getB().orElse(List.nil()).toString(), "[2,3]");
     }
 
     @Test

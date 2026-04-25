@@ -8,8 +8,8 @@ public class TupleTest {
     @Test
     public void testTupleBasic() {
         Tuple<String, Integer> t = Tuple.of("a", 1);
-        Assert.assertEquals(t.getA().fromMaybe(""), "a");
-        Assert.assertEquals(t.getB().fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(t.getA().orElse(""), "a");
+        Assert.assertEquals(t.getB().orElse(-1), Integer.valueOf(1));
     }
 
     @Test
@@ -38,10 +38,10 @@ public class TupleTest {
     public void testTupleBimapSwap() {
         Tuple<String, Integer> t = Tuple.of("a", 1);
         Tuple<Integer, String> t2 = t.bimap(String::length, i -> "val:" + i);
-        Assert.assertEquals(t2.getA().fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(t2.getB().fromMaybe(""), "val:1");
+        Assert.assertEquals(t2.getA().orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(t2.getB().orElse(""), "val:1");
         
-        Assert.assertEquals(t.swap().getA().fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(t.swap().getB().fromMaybe(""), "a");
+        Assert.assertEquals(t.swap().getA().orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(t.swap().getB().orElse(""), "a");
     }
 }

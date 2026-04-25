@@ -10,8 +10,8 @@ public class MapTest {
         Map<String, Integer> map = new Map.BinaryTreeMap<>(Set.emptyNatural());
         map = map.put("a", 1).put("b", 2);
         
-        Assert.assertEquals(map.lookup("a").fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(map.lookup("b").fromMaybe(-1), Integer.valueOf(2));
+        Assert.assertEquals(map.lookup("a").orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(map.lookup("b").orElse(-1), Integer.valueOf(2));
         Assert.assertTrue(map.lookup("c").isNothing());
     }
 
@@ -20,7 +20,7 @@ public class MapTest {
         Map<String, Integer> map = new Map.BinaryTreeMap<>(Set.emptyNatural());
         map = map.put("a", 1).put("a", 10);
         
-        Assert.assertEquals(map.lookup("a").fromMaybe(-1), Integer.valueOf(10));
+        Assert.assertEquals(map.lookup("a").orElse(-1), Integer.valueOf(10));
         Assert.assertEquals(map.keys().length(), 1);
     }
 

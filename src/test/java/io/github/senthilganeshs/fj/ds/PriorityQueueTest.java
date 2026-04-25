@@ -8,7 +8,7 @@ public class PriorityQueueTest {
     @Test
     public void testPriorityQueueBasic() {
         PriorityQueue<Integer> pq = PriorityQueue.of(3, 1, 4, 1, 5);
-        Assert.assertEquals(pq.findMin().fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(pq.findMin().orElse(-1), Integer.valueOf(1));
         Assert.assertEquals(pq.length(), 5);
     }
 
@@ -16,16 +16,16 @@ public class PriorityQueueTest {
     public void testPriorityQueueDeleteMin() {
         PriorityQueue<Integer> pq = PriorityQueue.of(3, 1, 4, 5);
         
-        pq = pq.deleteMin().fromMaybe(PriorityQueue.nil());
-        Assert.assertEquals(pq.findMin().fromMaybe(-1), Integer.valueOf(3));
+        pq = pq.deleteMin().orElse(PriorityQueue.nil());
+        Assert.assertEquals(pq.findMin().orElse(-1), Integer.valueOf(3));
         
-        pq = pq.deleteMin().fromMaybe(PriorityQueue.nil());
-        Assert.assertEquals(pq.findMin().fromMaybe(-1), Integer.valueOf(4));
+        pq = pq.deleteMin().orElse(PriorityQueue.nil());
+        Assert.assertEquals(pq.findMin().orElse(-1), Integer.valueOf(4));
         
-        pq = pq.deleteMin().fromMaybe(PriorityQueue.nil());
-        Assert.assertEquals(pq.findMin().fromMaybe(-1), Integer.valueOf(5));
+        pq = pq.deleteMin().orElse(PriorityQueue.nil());
+        Assert.assertEquals(pq.findMin().orElse(-1), Integer.valueOf(5));
         
-        pq = pq.deleteMin().fromMaybe(PriorityQueue.nil());
+        pq = pq.deleteMin().orElse(PriorityQueue.nil());
         Assert.assertTrue(pq.findMin().isNothing());
     }
 
@@ -36,13 +36,13 @@ public class PriorityQueueTest {
         
         PriorityQueue<Integer> merged = pq1.merge(pq2);
         Assert.assertEquals(merged.length(), 6);
-        Assert.assertEquals(merged.findMin().fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(merged.findMin().orElse(-1), Integer.valueOf(1));
         
-        merged = merged.deleteMin().fromMaybe(PriorityQueue.nil());
-        Assert.assertEquals(merged.findMin().fromMaybe(-1), Integer.valueOf(2));
+        merged = merged.deleteMin().orElse(PriorityQueue.nil());
+        Assert.assertEquals(merged.findMin().orElse(-1), Integer.valueOf(2));
         
-        merged = merged.deleteMin().fromMaybe(PriorityQueue.nil());
-        Assert.assertEquals(merged.findMin().fromMaybe(-1), Integer.valueOf(3));
+        merged = merged.deleteMin().orElse(PriorityQueue.nil());
+        Assert.assertEquals(merged.findMin().orElse(-1), Integer.valueOf(3));
     }
 
     @Test
@@ -59,11 +59,11 @@ public class PriorityQueueTest {
     public void testPriorityQueueDuplicates() {
         PriorityQueue<Integer> pq = PriorityQueue.of(2, 2, 2);
         Assert.assertEquals(pq.length(), 3);
-        Assert.assertEquals(pq.findMin().fromMaybe(-1), Integer.valueOf(2));
+        Assert.assertEquals(pq.findMin().orElse(-1), Integer.valueOf(2));
         
-        pq = pq.deleteMin().fromMaybe(PriorityQueue.nil());
+        pq = pq.deleteMin().orElse(PriorityQueue.nil());
         Assert.assertEquals(pq.length(), 2);
-        Assert.assertEquals(pq.findMin().fromMaybe(-1), Integer.valueOf(2));
+        Assert.assertEquals(pq.findMin().orElse(-1), Integer.valueOf(2));
     }
 
     @Test

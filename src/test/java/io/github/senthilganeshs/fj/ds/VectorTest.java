@@ -8,8 +8,8 @@ public class VectorTest {
     @Test
     public void testVectorBasic() {
         Vector<Integer> v = Vector.of(1, 2, 3);
-        Assert.assertEquals(v.at(0).fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(v.at(2).fromMaybe(-1), Integer.valueOf(3));
+        Assert.assertEquals(v.at(0).orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(v.at(2).orElse(-1), Integer.valueOf(3));
         Assert.assertTrue(v.at(3).isNothing());
     }
 
@@ -18,8 +18,8 @@ public class VectorTest {
         Vector<Integer> v = Vector.of(1, 2, 3);
         Vector<Integer> v2 = v.update(1, 20);
         
-        Assert.assertEquals(v2.at(1).fromMaybe(-1), Integer.valueOf(20));
-        Assert.assertEquals(v.at(1).fromMaybe(-1), Integer.valueOf(2)); // Persistence
+        Assert.assertEquals(v2.at(1).orElse(-1), Integer.valueOf(20));
+        Assert.assertEquals(v.at(1).orElse(-1), Integer.valueOf(2)); // Persistence
     }
 
     @Test
@@ -32,13 +32,13 @@ public class VectorTest {
         
         Assert.assertEquals(v.length(), limit);
         for (int i = 0; i < limit; i++) {
-            Assert.assertEquals(v.at(i).fromMaybe(-1), Integer.valueOf(i));
+            Assert.assertEquals(v.at(i).orElse(-1), Integer.valueOf(i));
         }
         
         // Update in large vector
         v = v.update(1000, 9999);
-        Assert.assertEquals(v.at(1000).fromMaybe(-1), Integer.valueOf(9999));
-        Assert.assertEquals(v.at(999).fromMaybe(-1), Integer.valueOf(999));
+        Assert.assertEquals(v.at(1000).orElse(-1), Integer.valueOf(9999));
+        Assert.assertEquals(v.at(999).orElse(-1), Integer.valueOf(999));
     }
 
     @Test
@@ -69,8 +69,8 @@ public class VectorTest {
         Assert.assertEquals(v.dropWhile(i -> i < 3).toString(), "[3,4]");
         
         // head/last
-        Assert.assertEquals(v.headMaybe().fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(v.lastMaybe().fromMaybe(-1), Integer.valueOf(4));
+        Assert.assertEquals(v.headMaybe().orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(v.lastMaybe().orElse(-1), Integer.valueOf(4));
         
         // distinct
         Vector<Integer> dupes = Vector.of(1, 1, 2, 2);

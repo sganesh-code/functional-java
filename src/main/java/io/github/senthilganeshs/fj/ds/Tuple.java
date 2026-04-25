@@ -19,11 +19,11 @@ public interface Tuple<A, B> {
     Maybe<B> getB();
 
     default <C, D> Tuple<C, D> bimap (final Function<A, C> fa, final Function<B, D> fb) {
-        return Tuple.of(((Maybe<C>)getA().map(fa)).fromMaybe(null), ((Maybe<D>)getB().map(fb)).fromMaybe(null));
+        return Tuple.of(((Maybe<C>)getA().map(fa)).orElse(null), ((Maybe<D>)getB().map(fb)).orElse(null));
     }
 
     default Tuple<B, A> swap () {
-        return Tuple.of(getB().fromMaybe(null), getA().fromMaybe(null));
+        return Tuple.of(getB().orElse(null), getA().orElse(null));
     }
 
     class TupleImpl<A, B> implements Tuple<A, B> {
@@ -71,7 +71,7 @@ public interface Tuple<A, B> {
 
         @Override
         public String toString() {
-            return "(" + a.fromMaybe(null) + "," + b.fromMaybe(null) + ")";
+            return "(" + a.orElse(null) + "," + b.orElse(null) + ")";
         }
     }
 

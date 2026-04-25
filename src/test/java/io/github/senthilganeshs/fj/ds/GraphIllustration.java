@@ -27,7 +27,7 @@ public class GraphIllustration {
         String result = ((Maybe<String>) buildGraph.topologicalSort().map(order -> {
             System.out.println("Valid Build Order: " + order.mkString(" -> "));
             return "SUCCESS";
-        })).fromMaybe(null);
+        })).orElse(null);
         
         if (result == null) {
             System.out.println("[ERROR] Circular dependency detected! Cannot find a valid execution order.");
@@ -48,7 +48,7 @@ public class GraphIllustration {
         String cycleResult = ((Maybe<String>) cyclicGraph.topologicalSort().map(order -> {
             System.out.println("[ERROR] Failed to detect cycle! Order: " + order);
             return "FAILURE";
-        })).fromMaybe("SUCCESS");
+        })).orElse("SUCCESS");
 
         if (cycleResult.equals("SUCCESS")) {
             System.out.println("[SUCCESS] Cycle detected between 'Notify' and 'Clean'. Correctly refused to sort.");

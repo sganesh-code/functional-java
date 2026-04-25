@@ -13,35 +13,35 @@ public class CollectionsTest {
         Assert.assertEquals(q.toString(), "[1,2,3]");
         
         Maybe<Tuple<Integer, Queue<Integer>>> d1 = q.dequeue();
-        Tuple<Integer, Queue<Integer>> t1 = d1.fromMaybe(null);
+        Tuple<Integer, Queue<Integer>> t1 = d1.orElse(null);
         Assert.assertNotNull(t1);
-        Assert.assertEquals(t1.getA().fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(t1.getA().orElse(-1), Integer.valueOf(1));
         
-        Queue<Integer> q2 = t1.getB().fromMaybe(Queue.nil());
+        Queue<Integer> q2 = t1.getB().orElse(Queue.nil());
         Assert.assertEquals(q2.toString(), "[2,3]");
         
         Queue<Integer> q3 = (Queue<Integer>) q2.build(4);
         Assert.assertEquals(q3.toString(), "[2,3,4]");
         
         // Test empty queue dequeue
-        Assert.assertNull(Queue.nil().dequeue().fromMaybe(null));
+        Assert.assertNull(Queue.nil().dequeue().orElse(null));
         
         // Test single element queue
         Queue<Integer> single = Queue.of(10);
         Maybe<Tuple<Integer, Queue<Integer>>> dSingle = single.dequeue();
-        Tuple<Integer, Queue<Integer>> tSingle = dSingle.fromMaybe(null);
+        Tuple<Integer, Queue<Integer>> tSingle = dSingle.orElse(null);
         Assert.assertNotNull(tSingle);
-        Assert.assertEquals(tSingle.getA().fromMaybe(-1), Integer.valueOf(10));
-        Assert.assertEquals(tSingle.getB().fromMaybe(null).length(), 0);
+        Assert.assertEquals(tSingle.getA().orElse(-1), Integer.valueOf(10));
+        Assert.assertEquals(tSingle.getB().orElse(null).length(), 0);
     }
 
     @Test
     public void testVector() throws Exception {
         Vector<Integer> v = Vector.of(1, 2, 3);
         Assert.assertEquals(v.toString(), "[1,2,3]");
-        Assert.assertEquals(v.at(0).fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(v.at(2).fromMaybe(-1), Integer.valueOf(3));
-        Assert.assertNull(v.at(3).fromMaybe(null));
+        Assert.assertEquals(v.at(0).orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(v.at(2).orElse(-1), Integer.valueOf(3));
+        Assert.assertNull(v.at(3).orElse(null));
         
         Vector<Integer> v2 = v.update(1, 20);
         Assert.assertEquals(v2.toString(), "[1,20,3]");
@@ -53,8 +53,8 @@ public class CollectionsTest {
             large = (Vector<Integer>) large.build(i);
         }
         Assert.assertEquals(large.length(), 100);
-        Assert.assertEquals(large.at(50).fromMaybe(-1), Integer.valueOf(50));
-        Assert.assertEquals(large.at(99).fromMaybe(-1), Integer.valueOf(99));
+        Assert.assertEquals(large.at(50).orElse(-1), Integer.valueOf(50));
+        Assert.assertEquals(large.at(99).orElse(-1), Integer.valueOf(99));
     }
 
     @Test
@@ -83,8 +83,8 @@ public class CollectionsTest {
         Assert.assertFalse(list.all(i -> i < 5));
         
         // reduce
-        Assert.assertEquals(list.reduce(Integer::sum).fromMaybe(-1), Integer.valueOf(15));
-        Assert.assertNull(List.<Integer>nil().reduce(Integer::sum).fromMaybe(null));
+        Assert.assertEquals(list.reduce(Integer::sum).orElse(-1), Integer.valueOf(15));
+        Assert.assertNull(List.<Integer>nil().reduce(Integer::sum).orElse(null));
         
         // mkString
         Assert.assertEquals(list.mkString(","), "1,2,3,4,5");
@@ -120,8 +120,8 @@ public class CollectionsTest {
         Assert.assertTrue(topo.isSome());
         // One valid order is A, B, C, D (or A, C, B, D)
         // Given our foldl/Set order, let's verify it starts with A and ends with D
-        List<String> sorted = topo.fromMaybe(List.nil());
-        String first = ((Maybe<String>) sorted.unzip().getA().flatMap(id -> (Maybe<String>)id)).fromMaybe("");
+        List<String> sorted = topo.orElse(List.nil());
+        String first = ((Maybe<String>) sorted.unzip().getA().flatMap(id -> (Maybe<String>)id)).orElse("");
         Assert.assertEquals(first, "A");
         
         // Cycle detection
@@ -132,23 +132,23 @@ public class CollectionsTest {
     @Test
     public void testPriorityQueue() throws Exception {
         PriorityQueue<Integer> pq = PriorityQueue.of(3, 1, 4, 1, 5);
-        Assert.assertEquals(pq.findMin().fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(pq.findMin().orElse(-1), Integer.valueOf(1));
         
-        PriorityQueue<Integer> pq2 = pq.deleteMin().fromMaybe(PriorityQueue.nil());
+        PriorityQueue<Integer> pq2 = pq.deleteMin().orElse(PriorityQueue.nil());
         // There were two 1s, so the next min is still 1
-        Assert.assertEquals(pq2.findMin().fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(pq2.findMin().orElse(-1), Integer.valueOf(1));
         
-        PriorityQueue<Integer> pq3 = pq2.deleteMin().fromMaybe(PriorityQueue.nil());
-        Assert.assertEquals(pq3.findMin().fromMaybe(-1), Integer.valueOf(3));
+        PriorityQueue<Integer> pq3 = pq2.deleteMin().orElse(PriorityQueue.nil());
+        Assert.assertEquals(pq3.findMin().orElse(-1), Integer.valueOf(3));
         
-        PriorityQueue<Integer> pq4 = pq3.deleteMin().fromMaybe(PriorityQueue.nil());
-        Assert.assertEquals(pq4.findMin().fromMaybe(-1), Integer.valueOf(4));
+        PriorityQueue<Integer> pq4 = pq3.deleteMin().orElse(PriorityQueue.nil());
+        Assert.assertEquals(pq4.findMin().orElse(-1), Integer.valueOf(4));
         
-        PriorityQueue<Integer> pq5 = pq4.deleteMin().fromMaybe(PriorityQueue.nil());
-        Assert.assertEquals(pq5.findMin().fromMaybe(-1), Integer.valueOf(5));
+        PriorityQueue<Integer> pq5 = pq4.deleteMin().orElse(PriorityQueue.nil());
+        Assert.assertEquals(pq5.findMin().orElse(-1), Integer.valueOf(5));
         
-        PriorityQueue<Integer> pq6 = pq5.deleteMin().fromMaybe(PriorityQueue.nil());
-        Assert.assertNull(pq6.findMin().fromMaybe(null));
+        PriorityQueue<Integer> pq6 = pq5.deleteMin().orElse(PriorityQueue.nil());
+        Assert.assertNull(pq6.findMin().orElse(null));
     }
 
     @Test
@@ -156,19 +156,19 @@ public class CollectionsTest {
         HashMap<String, Integer> map = HashMap.nil();
         map = map.put("one", 1).put("two", 2).put("three", 3);
         
-        Assert.assertEquals(map.get("one").fromMaybe(-1), Integer.valueOf(1));
-        Assert.assertEquals(map.get("two").fromMaybe(-1), Integer.valueOf(2));
-        Assert.assertEquals(map.get("three").fromMaybe(-1), Integer.valueOf(3));
-        Assert.assertNull(map.get("four").fromMaybe(null));
+        Assert.assertEquals(map.get("one").orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(map.get("two").orElse(-1), Integer.valueOf(2));
+        Assert.assertEquals(map.get("three").orElse(-1), Integer.valueOf(3));
+        Assert.assertNull(map.get("four").orElse(null));
         
         HashMap<String, Integer> map2 = map.remove("two");
-        Assert.assertNull(map2.get("two").fromMaybe(null));
-        Assert.assertEquals(map.get("two").fromMaybe(-1), Integer.valueOf(2)); // Immutability
+        Assert.assertNull(map2.get("two").orElse(null));
+        Assert.assertEquals(map.get("two").orElse(-1), Integer.valueOf(2)); // Immutability
         
         // Test update
         HashMap<String, Integer> map3 = map.put("one", 10);
-        Assert.assertEquals(map3.get("one").fromMaybe(-1), Integer.valueOf(10));
-        Assert.assertEquals(map.get("one").fromMaybe(-1), Integer.valueOf(1));
+        Assert.assertEquals(map3.get("one").orElse(-1), Integer.valueOf(10));
+        Assert.assertEquals(map.get("one").orElse(-1), Integer.valueOf(1));
     }
 
     @Test
@@ -179,13 +179,13 @@ public class CollectionsTest {
         Deque<Integer> d2 = d.pushFront(0);
         Assert.assertEquals(d2.toString(), "[0,1,2,3]");
         
-        Tuple<Integer, Deque<Integer>> pop1 = d2.popFront().fromMaybe(null);
-        Assert.assertEquals(pop1.getA().fromMaybe(-1), Integer.valueOf(0));
-        Assert.assertEquals(pop1.getB().fromMaybe(null).toString(), "[1,2,3]");
+        Tuple<Integer, Deque<Integer>> pop1 = d2.popFront().orElse(null);
+        Assert.assertEquals(pop1.getA().orElse(-1), Integer.valueOf(0));
+        Assert.assertEquals(pop1.getB().orElse(null).toString(), "[1,2,3]");
         
-        Tuple<Integer, Deque<Integer>> pop2 = d2.popBack().fromMaybe(null);
-        Assert.assertEquals(pop2.getA().fromMaybe(-1), Integer.valueOf(3));
-        Assert.assertEquals(pop2.getB().fromMaybe(null).toString(), "[0,1,2]");
+        Tuple<Integer, Deque<Integer>> pop2 = d2.popBack().orElse(null);
+        Assert.assertEquals(pop2.getA().orElse(-1), Integer.valueOf(3));
+        Assert.assertEquals(pop2.getB().orElse(null).toString(), "[0,1,2]");
     }
 
     @Test
