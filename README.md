@@ -71,30 +71,85 @@ By implementing these three, every data structure automatically inherits the ful
 
 ## API Showcase
 
-### 1. Atomic Retrieval (`traverse`)
-Turn a list of IDs into a list of profiles, but only if **every** ID exists.
-```java
-// turns List<String> -> Maybe<List<Profile>>
-Maybe<List<Profile>> result = userIds.traverse(db::findMaybe);
-```
+### 1. Robust Safety & Validation
+Eliminate nested `if-present` or `null` checks with monadic pipelines and applicatives.
 
-### 2. Validation Pipelines (`Either`)
-Chain operations that can fail without manual null checks or exceptions.
-```java
-Either<String, Order> order = Either.right(cart)
-    .flatMap(this::checkStock)
-    .flatMap(this::applyDiscount)
-    .flatMap(this::calculateTax);
-```
+*   **Atomic Batch Retrieval (`traverse`)**: Turn a list of IDs into a list of profiles, but only if **every** ID exists.
+    ```java
+    // turns List<String> -> Maybe<List<Profile>>
+    Maybe<List<Profile>> result = userIds.traverse(db::findMaybe);
+    ```
+*   **Validation Pipelines (`Either`)**: Chain operations that can fail without exceptions.
+    ```java
+    Either<String, Order> order = Either.right(cart)
+        .flatMap(this::checkStock)
+        .flatMap(this::applyDiscount)
+        .flatMap(this::calculateTax);
+    ```
+*   **Safe Combinations (`liftA2`)**: Combine two `Maybe` or `Either` values using a function.
+    ```java
+    Maybe<Integer> sum = m1.liftA2(Integer::sum, m2);
+    ```
 
-### 3. Data Segmentation (`span` & `groupBy`)
-```java
-// Split a list at the first non-positive number
-Tuple<Collection<Integer>, Collection<Integer>> s = list.span(i -> i > 0);
+### 2. Powerful Transformations & Data Cleaning
+Cleanse and reshape data fluently.
 
-// Group users by their primary interest
-HashMap<String, Collection<User>> segments = users.groupBy(User::getInterest);
-```
+*   **Sparse Data Processing (`mapMaybe`)**: Filter and transform in a single pass.
+    ```java
+    // Get all valid email addresses from a list of user profiles
+    Collection<Email> emails = profiles.mapMaybe(p -> p.getEmailMaybe());
+    ```
+*   **Type-Safe Extraction (`filterType`)**: Safely extract specific types from mixed collections.
+    ```java
+    // Get only the Admin objects from a List<User>
+    Collection<Admin> admins = users.filterType(Admin.class);
+    ```
+*   **Deduplication (`distinct`)**: Keep only unique elements in any collection.
+    ```java
+    Collection<Integer> unique = list.distinct();
+    ```
+
+### 3. Data Analytics & Aggregation
+Transform collections into structured insights.
+
+*   **Categorization (`groupBy`)**: Group elements into a `HashMap` by a key.
+    ```java
+    // Group users by their primary interest
+    HashMap<String, Collection<User>> segments = users.groupBy(User::getInterest);
+    ```
+*   **Algebraic Summary (`foldMap`)**: Map elements to a `Monoid` and aggregate in one pass.
+    ```java
+    // Sum all order totals using the Double Sum monoid
+    Double total = orders.foldMap(Order::getAmount, Monoid.DOUBLE_SUM);
+    ```
+*   **State History (`scanl`)**: Track every intermediate state of a reduction (e.g., running balance).
+    ```java
+    // [100, -20, -10] -> [100, 80, 70]
+    Collection<Integer> balanceHistory = transactions.scanl(initialBalance, Integer::sum);
+    ```
+
+### 4. Advanced Segmentation & Batching
+Handle large datasets with structural precision.
+
+*   **Prefix Splitting (`span`)**: Split a collection at the first element that fails a condition.
+    ```java
+    // Returns Tuple of (Prefix matches, Remainder)
+    Tuple<Collection<Task>, Collection<Task>> t = tasks.span(task -> task.isHighPriority());
+    ```
+*   **Fixed-Size Batching (`chunk`)**: Break data into batches for processing.
+    ```java
+    // Process 10,000 items in batches of 100
+    Collection<Collection<Item>> batches = items.chunk(100);
+    ```
+
+### 5. Dynamic Data Generation
+Build complex structures from a simple seed.
+
+*   **Sequence Generation (`unfold`)**: Build a collection iteratively until a condition is met.
+    ```java
+    // Generate a range [10, 9, ..., 1]
+    Collection<Integer> countdown = Collection.unfold(10, i -> i > 0 ? Maybe.some(Tuple.of(i, i - 1)) : Maybe.nothing());
+    ```
 
 ---
 
