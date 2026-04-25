@@ -259,22 +259,31 @@ LazyList<Integer> naturalNumbers = Generator.iterate(1, i -> i + 1);
 LazyList<String> stream = Generator.repeat("A");
 ```
 
+### 10. Deferred Memoization (`Lazy`)
+Ensure expensive computations run **exactly once** and only when needed.
+
+```java
+Lazy<String> data = Lazy.of(() -> fetchFromRemote()); // No network call yet
+String s = data.get(); // Triggers call and caches result
+String cached = data.get(); // returns instantly
+```
+
 ---
 
-## Installation (Version 1.0.3)
+## Installation (Version 1.0.4)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.0.3'
+implementation 'io.github.sganesh-code:functional-java:1.0.4'
 ```
 
 ---
