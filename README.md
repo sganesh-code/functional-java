@@ -214,6 +214,32 @@ Decouple ordering and equality logic from your data types.
     Collection<User> uniqueUsers = users.distinct(Eq.fromEquals()); 
     ```
 
+### 7. Optics: Lenses, Prisms, and Traversals
+Effortlessly update deeply nested immutable structures without boilerplate.
+
+*   **Lens**: Focus on a single mandatory field (Records).
+    ```java
+    Lens<Shipment, Hub> hubL = Lens.of(Shipment::origin, (h, s) -> new Shipment(s.id(), h));
+    Lens<Hub, String> cityL = Lens.of(Hub::city, (c, h) -> new Hub(h.id(), c));
+    
+    // Compose them to update city 2 levels deep
+    Shipment updated = hubL.compose(cityL).set("Paris", oldShipment);
+    ```
+*   **Prism**: Focus on an optional case (Sum types like `Either` or `Maybe`).
+    ```java
+    // Target the Right value of an Either response
+    Prism<Either<Error, User>, User> userP = Prism.of(
+        e -> e.isRight() ? Maybe.some(e.orElse(null)) : Maybe.nothing(),
+        Either::right
+    );
+    ```
+*   **Traversal**: Focus on all elements in a collection at once.
+    ```java
+    Traversal<List<Hub>, Hub> eachHub = Traversal.fromCollection();
+    // Update every city in a list of hubs
+    List<Hub> allReset = eachHub.compose(cityL).set("UNKNOWN", hubList);
+    ```
+
 ---
 
 ## Installation (Version 1.0.2)
