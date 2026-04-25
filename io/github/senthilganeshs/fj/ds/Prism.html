@@ -107,25 +107,30 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Composes this prism with another prism.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a><wbr>&lt;<a href="Prism.html" title="type parameter in Prism">A</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getMaybe(S)" class="member-name-link">getMaybe</a><wbr>(<a href="Prism.html" title="type parameter in Prism">S</a>&nbsp;source)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Prism.html" title="type parameter in Prism">S</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#modify(S,java.util.function.Function)" class="member-name-link">modify</a><wbr>(<a href="Prism.html" title="type parameter in Prism">S</a>&nbsp;source,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Prism.html" title="type parameter in Prism">A</a>,<wbr><a href="Prism.html" title="type parameter in Prism">A</a>&gt;&nbsp;fn)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;S,<wbr>
-A&gt;&nbsp;<a href="Prism.html" title="interface in io.github.senthilganeshs.fj.ds">Prism</a><wbr>&lt;S,<wbr>A&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(java.util.function.Function,java.util.function.Function)" class="member-name-link">of</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;S,<wbr><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;A&gt;&gt;&nbsp;preview,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>S&gt;&nbsp;review)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Prism.html" title="type parameter in Prism">S</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#reverseGet(A)" class="member-name-link">reverseGet</a><wbr>(<a href="Prism.html" title="type parameter in Prism">A</a>&nbsp;value)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;B&gt;&nbsp;<a href="Traversal.html" title="interface in io.github.senthilganeshs.fj.ds">Traversal</a><wbr>&lt;<a href="Prism.html" title="type parameter in Prism">S</a>,<wbr>B&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#compose(io.github.senthilganeshs.fj.ds.Traversal)" class="member-name-link">compose</a><wbr>(<a href="Traversal.html" title="interface in io.github.senthilganeshs.fj.ds">Traversal</a>&lt;<a href="Prism.html" title="type parameter in Prism">A</a>,<wbr>B&gt;&nbsp;other)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Composes this prism with a traversal.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a><wbr>&lt;<a href="Prism.html" title="type parameter in Prism">A</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getMaybe(S)" class="member-name-link">getMaybe</a><wbr>(<a href="Prism.html" title="type parameter in Prism">S</a>&nbsp;source)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Prism.html" title="type parameter in Prism">S</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#set(A,S)" class="member-name-link">set</a><wbr>(<a href="Prism.html" title="type parameter in Prism">A</a>&nbsp;value,
- <a href="Prism.html" title="type parameter in Prism">S</a>&nbsp;source)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#modify(S,java.util.function.Function)" class="member-name-link">modify</a><wbr>(<a href="Prism.html" title="type parameter in Prism">S</a>&nbsp;source,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="Prism.html" title="type parameter in Prism">A</a>,<wbr><a href="Prism.html" title="type parameter in Prism">A</a>&gt;&nbsp;fn)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;S,<wbr>
+A&gt;&nbsp;<a href="Prism.html" title="interface in io.github.senthilganeshs.fj.ds">Prism</a><wbr>&lt;S,<wbr>A&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(java.util.function.Function,java.util.function.Function)" class="member-name-link">of</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;S,<wbr><a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a>&lt;A&gt;&gt;&nbsp;preview,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>S&gt;&nbsp;review)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Prism.html" title="type parameter in Prism">S</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#reverseGet(A)" class="member-name-link">reverseGet</a><wbr>(<a href="Prism.html" title="type parameter in Prism">A</a>&nbsp;value)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Prism.html" title="type parameter in Prism">S</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#set(A,S)" class="member-name-link">set</a><wbr>(<a href="Prism.html" title="type parameter in Prism">A</a>&nbsp;value,
+ <a href="Prism.html" title="type parameter in Prism">S</a>&nbsp;source)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -171,6 +176,13 @@ A&gt;&nbsp;<a href="Prism.html" title="interface in io.github.senthilganeshs.fj.
 <h3>compose</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;B&gt;</span>&nbsp;<span class="return-type"><a href="Prism.html" title="interface in io.github.senthilganeshs.fj.ds">Prism</a>&lt;<a href="Prism.html" title="type parameter in Prism">S</a>,<wbr>B&gt;</span>&nbsp;<span class="element-name">compose</span><wbr><span class="parameters">(<a href="Prism.html" title="interface in io.github.senthilganeshs.fj.ds">Prism</a>&lt;<a href="Prism.html" title="type parameter in Prism">A</a>,<wbr>B&gt;&nbsp;other)</span></div>
 <div class="block">Composes this prism with another prism.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="compose(io.github.senthilganeshs.fj.ds.Traversal)">
+<h3>compose</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;B&gt;</span>&nbsp;<span class="return-type"><a href="Traversal.html" title="interface in io.github.senthilganeshs.fj.ds">Traversal</a>&lt;<a href="Prism.html" title="type parameter in Prism">S</a>,<wbr>B&gt;</span>&nbsp;<span class="element-name">compose</span><wbr><span class="parameters">(<a href="Traversal.html" title="interface in io.github.senthilganeshs.fj.ds">Traversal</a>&lt;<a href="Prism.html" title="type parameter in Prism">A</a>,<wbr>B&gt;&nbsp;other)</span></div>
+<div class="block">Composes this prism with a traversal.</div>
 </section>
 </li>
 <li>
