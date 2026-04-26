@@ -164,6 +164,11 @@ public interface Either<A, B> extends Collection<B> {
         return either(Either::left, fn::apply);
     }
 
+    @SuppressWarnings("unchecked")
+    default <C> Either<A, C> flatMapEither(Function<B, Either<A, C>> fn) {
+        return either(Either::left, fn::apply);
+    }
+
     /**
      * Transforms both sides of the Either.
      * 

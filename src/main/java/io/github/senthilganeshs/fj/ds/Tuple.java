@@ -18,6 +18,14 @@ public interface Tuple<A, B> {
         return Tuple.of(getA().map(fa).orElse(null), getB().map(fb).orElse(null));
     }
 
+    default <C> Tuple<C, B> mapA (final Function<A, C> fa) {
+        return bimap(fa, Function.identity());
+    }
+
+    default <D> Tuple<A, D> mapB (final Function<B, D> fb) {
+        return bimap(Function.identity(), fb);
+    }
+
     default Tuple<B, A> swap () {
         return Tuple.of(getB().orElse(null), getA().orElse(null));
     }
