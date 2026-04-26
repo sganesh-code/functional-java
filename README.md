@@ -321,22 +321,36 @@ Iso<Point, Tuple<Integer, Integer>> pointIso = Iso.of(
 Iso<Tuple<Integer, Integer>, Point> tupleToPoint = pointIso.reverse();
 ```
 
+### 15. Sealed Interface Prisms (`SealedOptics`)
+Automatically generate Prisms for Java 17+ Sealed Interfaces.
+
+```java
+// Define a modern sealed hierarchy
+sealed interface Result permits Success, Failure {}
+
+// Generate Prisms instantly
+Prism<Result, Success> successP = SealedOptics.prism(Result.class, Success.class);
+
+// Usage: Safe conditional extraction
+Maybe<Success> s = successP.getMaybe(someResult);
+```
+
 ---
 
-## Installation (Version 1.0.8)
+## Installation (Version 1.0.9)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.0.8</version>
+    <version>1.0.9</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.0.8'
+implementation 'io.github.sganesh-code:functional-java:1.0.9'
 ```
 
 ---
