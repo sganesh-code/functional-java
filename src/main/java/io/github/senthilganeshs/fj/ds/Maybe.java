@@ -78,6 +78,11 @@ public interface Maybe<T> extends Collection<T> {
         return (isSome() && pred.test(orElse(null))) ? this : Maybe.nothing();
     }
 
+    @SuppressWarnings("unchecked")
+    default <R> Maybe<R> flatMapMaybe(java.util.function.Function<T, Maybe<R>> fn) {
+        return isSome() ? fn.apply(orElse(null)) : Maybe.nothing();
+    }
+
     default <R> Maybe<R> safeCast(Class<R> clazz) {
         return filter(clazz::isInstance).map(clazz::cast);
     }
