@@ -54,6 +54,20 @@ public interface AffineTraversal<S, A> {
     }
 
     /**
+     * Views this affine traversal as a Traversal.
+     */
+    default Traversal<S, A> asTraversal() {
+        return new Traversal<S, A>() {
+            @Override public Collection<A> getAll(S s) {
+                return (Collection<A>) getMaybe(s).foldl((Collection<A>) List.<A>nil(), Collection::build);
+            }
+            @Override public S modify(S s, Function<A, A> fn) {
+                return AffineTraversal.this.modify(s, fn);
+            }
+        };
+    }
+
+    /**
      * Composes this with a getter.
      */
     @SuppressWarnings("unchecked")
