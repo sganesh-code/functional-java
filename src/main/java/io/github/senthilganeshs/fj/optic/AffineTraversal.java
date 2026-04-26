@@ -1,5 +1,7 @@
 package io.github.senthilganeshs.fj.optic;
 
+import io.github.senthilganeshs.fj.ds.Collection;
+import io.github.senthilganeshs.fj.ds.List;
 import io.github.senthilganeshs.fj.ds.Maybe;
 import java.util.function.Function;
 
@@ -41,6 +43,29 @@ public interface AffineTraversal<S, A> {
                 return AffineTraversal.this.modify(s, a -> other.set(b, a));
             }
         };
+    }
+
+    /**
+     * Views this affine traversal as a read-only Fold.
+     */
+    @SuppressWarnings("unchecked")
+    default Fold<S, A> asFold() {
+        return s -> (Collection<A>) getMaybe(s).foldl((Collection<A>) List.<A>nil(), Collection::build);
+    }
+
+    /**
+     * Composes this with a getter.
+     */
+    @SuppressWarnings("unchecked")
+    default <B> Fold<S, B> compose(Getter<A, B> other) {
+        return s -> (Collection<B>) getMaybe(s).map(other::get).foldl((Collection<B>) List.<B>nil(), Collection::build);
+    }
+
+    /**
+     * Composes this with a fold.
+     */
+    default <B> Fold<S, B> compose(Fold<A, B> other) {
+        return s -> getMaybe(s).map(other::getAll).orElse(List.nil());
     }
 
     /**

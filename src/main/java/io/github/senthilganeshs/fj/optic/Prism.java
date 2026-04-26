@@ -76,6 +76,29 @@ public interface Prism<S, A> {
         };
     }
 
+    /**
+     * Views this prism as a read-only Fold.
+     */
+    @SuppressWarnings("unchecked")
+    default Fold<S, A> asFold() {
+        return s -> (Collection<A>) getMaybe(s).foldl((Collection<A>) List.<A>nil(), Collection::build);
+    }
+
+    /**
+     * Composes this prism with a getter.
+     */
+    @SuppressWarnings("unchecked")
+    default <B> Fold<S, B> compose(Getter<A, B> other) {
+        return s -> (Collection<B>) getMaybe(s).map(other::get).foldl((Collection<B>) List.<B>nil(), Collection::build);
+    }
+
+    /**
+     * Composes this prism with a fold.
+     */
+    default <B> Fold<S, B> compose(Fold<A, B> other) {
+        return s -> getMaybe(s).map(other::getAll).orElse(List.nil());
+    }
+
     static <S, A> Prism<S, A> of(Function<S, Maybe<A>> preview, Function<A, S> review) {
         return new Prism<S, A>() {
             @Override public Maybe<A> getMaybe(S s) { return preview.apply(s); }

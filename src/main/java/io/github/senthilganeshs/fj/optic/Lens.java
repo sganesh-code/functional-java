@@ -43,6 +43,27 @@ public interface Lens<S, A> {
     }
 
     /**
+     * Views this lens as a read-only Getter.
+     */
+    default Getter<S, A> asGetter() {
+        return this::get;
+    }
+
+    /**
+     * Composes this lens with a getter.
+     */
+    default <B> Getter<S, B> compose(Getter<A, B> other) {
+        return s -> other.get(get(s));
+    }
+
+    /**
+     * Composes this lens with a fold.
+     */
+    default <B> Fold<S, B> compose(Fold<A, B> other) {
+        return s -> other.getAll(get(s));
+    }
+
+    /**
      * Helper to create a lens from a getter and a setter.
      */
     static <S, A> Lens<S, A> of(Function<S, A> getter, BiFunction<A, S, S> setter) {

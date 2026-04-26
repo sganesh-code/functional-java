@@ -58,6 +58,27 @@ public interface Traversal<S, A> {
     }
 
     /**
+     * Views this traversal as a read-only Fold.
+     */
+    default Fold<S, A> asFold() {
+        return this::getAll;
+    }
+
+    /**
+     * Composes this traversal with a getter.
+     */
+    default <B> Fold<S, B> compose(Getter<A, B> other) {
+        return s -> getAll(s).map(other::get);
+    }
+
+    /**
+     * Composes this traversal with a fold.
+     */
+    default <B> Fold<S, B> compose(Fold<A, B> other) {
+        return s -> getAll(s).flatMap(other::getAll);
+    }
+
+    /**
      * Standard Traversal for any FJ Collection.
      */
     static <T> Traversal<Collection<T>, T> fromCollection() {

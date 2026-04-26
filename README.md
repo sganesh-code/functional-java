@@ -335,22 +335,36 @@ Prism<Result, Success> successP = SealedOptics.prism(Result.class, Success.class
 Maybe<Success> s = successP.getMaybe(someResult);
 ```
 
+### 16. Read-Only Optics (`Getter` & `Fold`)
+Lightweight, one-way optics for data extraction without the overhead of update logic.
+
+```java
+// Create a read-only Getter
+Getter<User, Integer> ageG = User::age;
+
+// Create a Fold to extract all names from a collection
+Fold<Collection<User>, String> namesF = users -> users.map(User::name);
+
+// Composition: Traversal -> Fold
+Fold<Collection<User>, Integer> allAges = Traversal.<User>fromCollection().asFold().compose(ageG);
+```
+
 ---
 
-## Installation (Version 1.0.9)
+## Installation (Version 1.1.0)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.0.9</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.0.9'
+implementation 'io.github.sganesh-code:functional-java:1.1.0'
 ```
 
 ---
