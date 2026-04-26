@@ -19,6 +19,9 @@
 *   **100% Immutable**: All structures are persistent; updates return new versions while sharing structure.
 *   **Unified API**: 40+ functional methods (map, filter, traverse, partition, etc.) available on every data structure via a single interface.
 *   **Algebraic Typeclasses**: Extensible `Eq`, `Ord`, `Semigroup`, and `Monoid` implementations for type-safe comparisons and reductions.
+*   **Optics Engine**: Advanced Lenses, Prisms, and Traversals for deep immutable updates.
+*   **Parser Combinators**: Build robust text parsers using monadic composition.
+*   **Functional Serialization**: Purely functional binary encoding/decoding framework.
 *   **Performance Optimized**: Core engines rewritten from recursion to iterative loops, achieving up to **400x speedup** for large datasets.
 *   **Zero Dependencies**: Lean and lightweight library with no external requirements.
 
@@ -46,53 +49,6 @@ By implementing these three, every data structure automatically inherits the ful
 
 ---
 
-## 🛠 Custom Data Structures & Zero-Cost Interop
-
-One of the most powerful traits of `functional-java` is that it makes interoperability a first-class citizen. When you create a custom data structure by implementing the **Core Triad**, it doesn't just gain functional methods—it instantly gains the ability to interoperate with every other data structure in the library without writing a single line of integration code.
-
-### 1. Implement your Triad (e.g., a Sliding Window)
-A `SlidingWindow` is a collection that only keeps the last `N` elements. By implementing the Triad, it becomes a first-class functional citizen.
-
-```java
-public class SlidingWindow<T> implements Collection<T> {
-    private final List<T> items; // Using FJ List internally
-    private final int maxSize;
-
-    @Override public <R> Collection<R> empty() { return new SlidingWindow<>(maxSize, List.nil()); }
-
-    // Domain Logic: If at capacity, drop the oldest element before adding new
-    @Override public Collection<T> build(T val) {
-        List<T> next = (items.length() >= maxSize) ? items.drop(1).build(val) : items.build(val);
-        return new SlidingWindow<>(maxSize, next);
-    }
-
-    @Override public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-        return items.foldl(seed, fn);
-    }
-}
-```
-
-### 2. Get Interop "For Free"
-Because everything is built on the same abstraction, you can convert, combine, and query across types seamlessly:
-
-```java
-SlidingWindow<Double> window = new SlidingWindow<>(3); // Window of size 3
-window = window.build(10.0).build(20.0).build(30.0).build(40.0); // Content: [20.0, 30.0, 40.0]
-
-// Interop: Convert window to a persistent Vector for O(1) random access
-Vector<Double> vector = Vector.from(window);
-
-// Interop: Perform atomic batch operations (Window -> Maybe -> functional List)
-Maybe<List<Price>> prices = window.traverse(id -> priceDB.find(id));
-
-// Interop: Categorize window data into a HashMap
-HashMap<Boolean, Collection<Double>> segments = window.groupBy(val -> val > 25.0);
-```
-
-This "Zero-Cost Interop" ensures that your custom domain-specific structures are never isolated; they are full citizens of the functional ecosystem.
-
----
-
 ## Supported Data Structures
 
 ### 📦 Sequential
@@ -110,17 +66,55 @@ This "Zero-Cost Interop" ensures that your custom domain-specific structures are
 *   **`Maybe`**: Safe optional values with monadic API.
 *   **`Either`**: Disjoint union type for expressive error handling.
 *   **`Tuple`**: Simple product types for grouping values.
+*   **`Validation`**: Success or error accumulation (Parallel Validation).
 
 ### 🌳 Structural
 *   **`RoseTree`**: Multi-way (N-ary) tree structure.
 *   **`Graph`**: Purely functional Directed Graph with BFS, DFS, and Topological Sort.
-*   **`Stack` / `Queue` / `Deque`**: Functional linear structures.
+
+### 🏗 Parsing & Serialization
+*   **`Parser`**: Monadic state-based parser combinator.
+*   **`JsonValue`**: Purely functional JSON AST with built-in optics.
+*   **`Encoder` / `Decoder`**: Purely functional binary serialization framework.
 
 ---
 
 ## API Showcase
 
-### 1. Robust Safety & Validation
+### 1. Monadic Parser Combinators
+Build complex grammars by composing simple parsers.
+
+```java
+// A simple CSV parser: letters separated by commas
+Parser<List<Character>> csv = Parser.letter().sepBy(Parser.character(','));
+List<Character> result = csv.parse("a,b,c").orElse(List.nil()); // ['a', 'b', 'c']
+```
+
+### 2. Streamlined JSON Navigation & Optics
+Navigate and update deeply nested JSON structures with zero boilerplate.
+
+```java
+// Deep update: { "user": { "profile": { "name": "Alice" } } }
+// Focus on user.profile.name and update to "Bob"
+JsonValue updated = JsonValue.path("user", "profile")
+    .compose(JsonValue.stringAt("name"))
+    .set("Bob", rootJson);
+```
+
+### 3. Functional Binary Serialization
+Encode and decode data structures to binary format fluently.
+
+```java
+// Encode a List of Integers to a DataOutput
+Encoder<List<Integer>> enc = Codec.listEncoder(Codec.intEncoder());
+enc.encode(dataOutput, List.of(1, 2, 3));
+
+// Decode it back from DataInput
+Decoder<List<Integer>> dec = Codec.listDecoder(Codec.intDecoder());
+List<Integer> list = dec.decode(dataInput).orElse(List.nil());
+```
+
+### 4. Robust Safety & Validation
 Eliminate nested `if-present` or `null` checks with monadic pipelines and applicatives.
 
 *   **Atomic Batch Retrieval (`traverse`)**: Turn a list of IDs into a list of profiles, but only if **every** ID exists.
@@ -131,222 +125,28 @@ Eliminate nested `if-present` or `null` checks with monadic pipelines and applic
 *   **Validation Pipelines (`Either`)**: Chain operations that can fail without exceptions.
     ```java
     Either<String, Order> order = Either.right(cart)
-        .flatMap(this::checkStock)
-        .flatMap(this::applyDiscount)
-        .flatMap(this::calculateTax);
-    ```
-*   **Safe Combinations (`liftA2`)**: Combine two `Maybe` or `Either` values using a function.
-    ```java
-    Maybe<Integer> sum = m1.liftA2(Integer::sum, m2);
+        .flatMapEither(this::checkStock)
+        .flatMapEither(this::applyDiscount);
     ```
 
-### 2. Powerful Transformations & Data Cleaning
-Cleanse and reshape data fluently.
+### 5. Optics: Lenses, Prisms, and Traversals
+Effortlessly update deeply nested immutable structures.
 
-*   **Sparse Data Processing (`mapMaybe`)**: Filter and transform in a single pass.
-    ```java
-    // Get all valid email addresses from a list of user profiles
-    Collection<Email> emails = profiles.mapMaybe(p -> p.getEmailMaybe());
-    ```
-*   **Type-Safe Extraction (`filterType`)**: Safely extract specific types from mixed collections.
-    ```java
-    // Get only the Admin objects from a List<User>
-    Collection<Admin> admins = users.filterType(Admin.class);
-    ```
-*   **Deduplication (`distinct`)**: Keep only unique elements in any collection.
-    ```java
-    Collection<Integer> unique = list.distinct();
-    ```
-
-### 3. Data Analytics & Aggregation
-Transform collections into structured insights.
-
-*   **Categorization (`groupBy`)**: Group elements into a `HashMap` by a key.
-    ```java
-    // Group users by their primary interest
-    HashMap<String, Collection<User>> segments = users.groupBy(User::getInterest);
-    ```
-*   **Algebraic Summary (`foldMap`)**: Map elements to a `Monoid` and aggregate in one pass.
-    ```java
-    // Sum all order totals using the Double Sum monoid
-    Double total = orders.foldMap(Order::getAmount, Monoid.DOUBLE_SUM);
-    ```
-*   **State History (`scanl`)**: Track every intermediate state of a reduction (e.g., running balance).
-    ```java
-    // [100, -20, -10] -> [100, 80, 70]
-    Collection<Integer> balanceHistory = transactions.scanl(initialBalance, Integer::sum);
-    ```
-
-### 4. Advanced Segmentation & Batching
-Handle large datasets with structural precision.
-
-*   **Prefix Splitting (`span`)**: Split a collection at the first element that fails a condition.
-    ```java
-    // Returns Tuple of (Prefix matches, Remainder)
-    Tuple<Collection<Task>, Collection<Task>> t = tasks.span(task -> task.isHighPriority());
-    ```
-*   **Fixed-Size Batching (`chunk`)**: Break data into batches for processing.
-    ```java
-    // Process 10,000 items in batches of 100
-    Collection<Collection<Item>> batches = items.chunk(100);
-    ```
-
-### 5. Dynamic Data Generation
-Build complex structures from a simple seed.
-
-*   **Sequence Generation (`unfold`)**: Build a collection iteratively until a condition is met.
-    ```java
-    // Generate a range [10, 9, ..., 1]
-    Collection<Integer> countdown = Collection.unfold(10, i -> i > 0 ? Maybe.some(Tuple.of(i, i - 1)) : Maybe.nothing());
-    ```
-
-### 6. Algebraic Strategies (`Eq` & `Ord`)
-Decouple ordering and equality logic from your data types.
-
-*   **Custom Ordering**: Create a Set for types that don't implement `Comparable`.
-    ```java
-    // Case-insensitive string set
-    Set<String> s = Set.empty(Ord.fromComparator(String.CASE_INSENSITIVE_ORDER));
-    ```
-*   **Domain-Specific Equality**: Define how elements are considered unique.
-    ```java
-    // Keep only unique users by their ID (uses distinct with custom Eq)
-    Collection<User> uniqueUsers = users.distinct(Eq.fromEquals()); 
-    ```
-
-### 7. Optics: Lenses, Prisms, and Traversals
-Effortlessly update deeply nested immutable structures without boilerplate.
-
-*   **Lens**: Focus on a single mandatory field (Records).
-    ```java
-    Lens<Shipment, Hub> hubL = Lens.of(Shipment::origin, (h, s) -> new Shipment(s.id(), h));
-    Lens<Hub, String> cityL = Lens.of(Hub::city, (c, h) -> new Hub(h.id(), c));
-    
-    // Compose them to update city 2 levels deep
-    Shipment updated = hubL.compose(cityL).set("Paris", oldShipment);
-    ```
-*   **Prism**: Focus on an optional case (Sum types like `Either` or `Maybe`).
-    ```java
-    // Target the Right value of an Either response
-    Prism<Either<Error, User>, User> userP = Prism.of(
-        e -> e.isRight() ? Maybe.some(e.orElse(null)) : Maybe.nothing(),
-        Either::right
-    );
-    ```
+*   **Lens**: Focus on a single mandatory field.
+*   **Prism**: Focus on an optional case (Sum types).
 *   **Traversal**: Focus on all elements in a collection at once.
     ```java
-    Traversal<List<Hub>, Hub> eachHub = Traversal.fromCollection();
-    // Update every city in a list of hubs
-    List<Hub> allReset = eachHub.compose(cityL).set("UNKNOWN", hubList);
+    // Update every value in a HashMap at once using optics
+    Traversal<HashMap<String, Integer>, Integer> eachVal = Traversal.fromCollection();
+    HashMap<String, Integer> doubled = eachVal.modify(myMap, i -> i * 2);
     ```
 
-### 8. Parallel Validation (`Validation`)
-Unlike `Either`, which stops at the first error, `Validation` accumulates **every** error using a `Semigroup`.
+### 6. Path Validation
+Explicitly verify if a hierarchical path exists before operating.
 
 ```java
-// Combine multiple validations; if both fail, errors are concatenated
-Validation<String, User> result = v1.liftA2(User::new, v2, Monoid.STRING_CONCAT);
-```
-
-### 9. Lazy Generators (`Generator`)
-Generate infinite or sequential sequences with zero memory overhead until evaluated.
-
-```java
-// Infinite sequence of 1, 2, 3, 4...
-LazyList<Integer> naturalNumbers = Generator.iterate(1, i -> i + 1);
-
-// Infinite repetition: [A, A, A, ...]
-LazyList<String> stream = Generator.repeat("A");
-```
-
-### 10. Deferred Memoization (`Lazy`)
-Ensure expensive computations run **exactly once** and only when needed.
-
-```java
-Lazy<String> data = Lazy.of(() -> fetchFromRemote()); // No network call yet
-String s = data.get(); // Triggers call and caches result
-String cached = data.get(); // returns instantly
-```
-
-### 11. Zero-Boilerplate Optics (`RecordOptics`)
-Automatically generate type-safe Lenses for any Java Record using Method References.
-
-```java
-// Define a standard Java Record
-record User(String name, int age) {}
-
-// Generate Lenses instantly with zero boilerplate
-Lens<User, String> nameL = RecordOptics.of(User.class, User::name);
-
-// Perform immutable updates
-User updated = nameL.set("Bob", user);
-```
-
-### 12. Affine Traversals (Optics with Defaults)
-Handle deeply nested optional fields safely and provide default values right in the optic.
-
-```java
-// Focus on User -> Optional Address -> City
-AffineTraversal<User, String> cityT = userAddressP.compose(cityLens);
-
-// Provide a default value at definition time
-Lens<User, String> cityWithDefaultL = cityT.withDefault("UNKNOWN-CITY");
-
-// Usage: Guaranteed String, never null or Maybe
-String city = cityWithDefaultL.get(user);
-```
-
-### 13. Indexed Optics (`at`)
-Target specific elements in a collection by their position.
-
-```java
-// Focus on the element at index 5
-AffineTraversal<Collection<User>, User> user5T = Collection.at(5);
-
-// Update only the 3rd user's name
-Collection<User> updated = Collection.at(2).compose(nameLens).set("Bob", userList);
-```
-
-### 14. Isomorphisms (`Iso`)
-Lossless, two-way transformations between types. Treat domain records and generic structures (like Tuples) as interchangeable.
-
-```java
-// Define an Iso between a Point record and a Tuple
-Iso<Point, Tuple<Integer, Integer>> pointIso = Iso.of(
-    p -> Tuple.of(p.x(), p.y()),
-    t -> new Point(t.getA().orElse(0), t.getB().orElse(0))
-);
-
-// Flip the transformation instantly
-Iso<Tuple<Integer, Integer>, Point> tupleToPoint = pointIso.reverse();
-```
-
-### 15. Sealed Interface Prisms (`SealedOptics`)
-Automatically generate Prisms for Java 17+ Sealed Interfaces.
-
-```java
-// Define a modern sealed hierarchy
-sealed interface Result permits Success, Failure {}
-
-// Generate Prisms instantly
-Prism<Result, Success> successP = SealedOptics.prism(Result.class, Success.class);
-
-// Usage: Safe conditional extraction
-Maybe<Success> s = successP.getMaybe(someResult);
-```
-
-### 16. Read-Only Optics (`Getter` & `Fold`)
-Lightweight, one-way optics for data extraction without the overhead of update logic.
-
-```java
-// Create a read-only Getter
-Getter<User, Integer> ageG = User::age;
-
-// Create a Fold to extract all names from a collection
-Fold<Collection<User>, String> namesF = users -> users.map(User::name);
-
-// Composition: Traversal -> Fold
-Fold<Collection<User>, Integer> allAges = Traversal.<User>fromCollection().asFold().compose(ageG);
+// Returns Validation.valid(node) or Validation.invalid("Key 'name' not found at step 2")
+Validation<String, JsonValue> result = json.validatePath("users", 0, "name");
 ```
 
 ---
@@ -371,12 +171,12 @@ implementation 'io.github.sganesh-code:functional-java:1.2.4'
 
 ## Performance
 
-The library is designed for the JVM. All recursive bottlenecks in the core traversal engine have been replaced with optimized iterative loops.
+The library is designed for the JVM. Core recursive bottlenecks have been replaced with optimized iterative loops.
 
 **Benchmark Highlights (1,000 Elements):**
-*   **List Folding**: ~4.5μs (Competitive with Java Streams).
-*   **Random Access**: ~0.003μs (Near constant time).
-*   **Map Lookup**: ~0.004μs (Optimized HAMT traversal).
+*   **List Folding**: ~4.5μs
+*   **Vector Access**: ~0.003μs
+*   **Map Lookup**: ~0.004μs
 
 *Full details available in [BENCHMARK.md](./BENCHMARK.md).*
 
