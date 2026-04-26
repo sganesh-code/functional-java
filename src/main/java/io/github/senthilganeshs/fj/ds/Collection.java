@@ -1,5 +1,6 @@
 package io.github.senthilganeshs.fj.ds;
 
+import io.github.senthilganeshs.fj.optic.AffineTraversal;
 import io.github.senthilganeshs.fj.optic.Traversal;
 import io.github.senthilganeshs.fj.typeclass.Eq;
 import io.github.senthilganeshs.fj.typeclass.Monoid;
@@ -650,6 +651,34 @@ public interface Collection<T> {
      */
     static <T> Traversal<Collection<T>, T> eachP() {
         return Traversal.fromCollection();
+    }
+
+    /**
+     * Returns an AffineTraversal that focuses on a single element at the specified index.
+     */
+    @SuppressWarnings("unchecked")
+    static <T> AffineTraversal<Collection<T>, T> at(int index) {
+        return AffineTraversal.of(
+            c -> {
+                if (c instanceof Vector) return ((Vector<T>)c).at(index);
+                // Fallback for generic collections
+                return c.drop(index).headMaybe();
+            },
+            (newValue, c) -> {
+                if (c instanceof Vector) return (Collection<T>) ((Vector<T>)c).update(index, newValue);
+                
+                // Generic reconstruction for any collection
+                Object[] res = new Object[2];
+                res[0] = 0; // current index
+                res[1] = c.empty();
+                
+                return (Collection<T>) c.foldl(res, (acc, t) -> {
+                    int i = (Integer) acc[0];
+                    Collection<T> built = (Collection<T>) acc[1];
+                    return new Object[] { i + 1, built.build(i == index ? newValue : t) };
+                })[1];
+            }
+        );
     }
  
 }

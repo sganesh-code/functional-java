@@ -2,6 +2,7 @@ package io.github.senthilganeshs.fj.ds;
 
 import io.github.senthilganeshs.fj.typeclass.*;
 
+import io.github.senthilganeshs.fj.optic.AffineTraversal;
 import io.github.senthilganeshs.fj.optic.Lens;
 import io.github.senthilganeshs.fj.optic.Prism;
 import io.github.senthilganeshs.fj.optic.Traversal;
@@ -47,13 +48,15 @@ public class OpticsTest {
     }
 
     @Test
-    public void testTraversal() {
-        Lens<Address, String> cityL = Lens.of(Address::city, (c, a) -> new Address(c));
-        Traversal<Collection<Address>, Address> eachAddr = Traversal.fromCollection();
+    public void testIndexedOptics() {
+        Collection<String> list = List.of("A", "B", "C");
         
-        Collection<Address> addrs = List.of(new Address("A"), new Address("B"));
-        Collection<Address> updated = eachAddr.compose(cityL).set("X", addrs);
+        // Focus on the second element (index 1)
+        AffineTraversal<Collection<String>, String> secondP = Collection.at(1);
         
-        Assert.assertTrue(updated.all(a -> a.city().equals("X")));
+        Assert.assertEquals(secondP.getMaybe(list).orElse(""), "B");
+        
+        Collection<String> updated = secondP.set("X", list);
+        Assert.assertEquals(updated.toString(), "[A,X,C]");
     }
 }

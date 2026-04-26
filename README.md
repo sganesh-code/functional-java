@@ -296,22 +296,33 @@ Lens<User, String> cityWithDefaultL = cityT.withDefault("UNKNOWN-CITY");
 String city = cityWithDefaultL.get(user);
 ```
 
+### 13. Indexed Optics (`at`)
+Target specific elements in a collection by their position.
+
+```java
+// Focus on the element at index 5
+AffineTraversal<Collection<User>, User> user5T = Collection.at(5);
+
+// Update only the 3rd user's name
+Collection<User> updated = Collection.at(2).compose(nameLens).set("Bob", userList);
+```
+
 ---
 
-## Installation (Version 1.0.6)
+## Installation (Version 1.0.7)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.0.6'
+implementation 'io.github.sganesh-code:functional-java:1.0.7'
 ```
 
 ---
