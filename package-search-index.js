@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"io.github.senthilganeshs.fj.ds"},{"l":"io.github.senthilganeshs.fj.optic"},{"l":"io.github.senthilganeshs.fj.typeclass"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"io.github.senthilganeshs.fj.ds"},{"l":"io.github.senthilganeshs.fj.optic"},{"l":"io.github.senthilganeshs.fj.parser"},{"l":"io.github.senthilganeshs.fj.typeclass"}];updateSearchResults();
