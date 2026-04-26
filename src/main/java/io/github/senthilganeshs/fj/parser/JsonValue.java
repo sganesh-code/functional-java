@@ -1,8 +1,10 @@
 package io.github.senthilganeshs.fj.parser;
 
+import io.github.senthilganeshs.fj.ds.Collection;
 import io.github.senthilganeshs.fj.ds.HashMap;
 import io.github.senthilganeshs.fj.ds.List;
 import io.github.senthilganeshs.fj.ds.Maybe;
+import io.github.senthilganeshs.fj.ds.Validation;
 import io.github.senthilganeshs.fj.optic.AffineTraversal;
 import io.github.senthilganeshs.fj.optic.Prism;
 import io.github.senthilganeshs.fj.optic.RecordOptics;
@@ -26,18 +28,48 @@ public sealed interface JsonValue {
             .compose(HashMap.<String, JsonValue>nil().at(key));
     }
 
+    static AffineTraversal<JsonValue, JsonValue> index(int i) {
+        return arrayP()
+            .compose(RecordOptics.of(JsonArray.class, JsonArray::elements))
+            .compose((AffineTraversal<List<JsonValue>, JsonValue>) (AffineTraversal<?, ?>) Collection.<JsonValue>at(i));
+    }
+
     static AffineTraversal<JsonValue, String> stringAt(String key) { return at(key).compose(stringP()); }
     static AffineTraversal<JsonValue, Double> numberAt(String key) { return at(key).compose(numberP()); }
     static AffineTraversal<JsonValue, Boolean> booleanAt(String key) { return at(key).compose(booleanP()); }
     static AffineTraversal<JsonValue, JsonObject> objectAt(String key) { return at(key).compose(objectP()); }
     static AffineTraversal<JsonValue, JsonArray> arrayAt(String key) { return at(key).compose(arrayP()); }
 
-    static AffineTraversal<JsonValue, JsonValue> path(String... keys) {
+    static AffineTraversal<JsonValue, JsonValue> path(Object... steps) {
         AffineTraversal<JsonValue, JsonValue> res = AffineTraversal.identity();
-        for (String key : keys) {
-            res = res.compose(at(key));
+        for (Object step : steps) {
+            if (step instanceof String s) res = res.compose(at(s));
+            else if (step instanceof Integer i) res = res.compose(index(i));
         }
         return res;
+    }
+
+    default Validation<String, JsonValue> validatePath(Object... steps) {
+        JsonValue current = this;
+        for (int i = 0; i < steps.length; i++) {
+            Object step = steps[i];
+            if (step instanceof String s) {
+                if (!(current instanceof JsonObject obj)) {
+                    return Validation.invalid("Expected JsonObject at step " + i + " ('" + s + "'), but found " + current.getClass().getSimpleName());
+                }
+                Maybe<JsonValue> next = obj.fields().get(s);
+                if (next.isNothing()) return Validation.invalid("Key '" + s + "' not found at step " + i);
+                current = next.orElse(null);
+            } else if (step instanceof Integer idx) {
+                if (!(current instanceof JsonArray arr)) {
+                    return Validation.invalid("Expected JsonArray at step " + i + " (" + idx + "), but found " + current.getClass().getSimpleName());
+                }
+                Maybe<JsonValue> next = arr.elements().drop(idx).headMaybe();
+                if (next.isNothing()) return Validation.invalid("Index " + idx + " out of bounds at step " + i);
+                current = next.orElse(null);
+            }
+        }
+        return Validation.valid(current);
     }
 
     // --- Prisms ---

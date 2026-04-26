@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'io.github.sganesh-code'
-version = '1.2.3'
+version = '1.2.4'
 
 java {
     toolchain {

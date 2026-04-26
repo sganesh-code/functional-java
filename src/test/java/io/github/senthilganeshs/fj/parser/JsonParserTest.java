@@ -86,6 +86,51 @@ public class JsonParserTest {
     }
 
     @Test
+    public void testPolymorphicPath() {
+        String json = """
+            {
+                "users": [
+                    {"name": "Alice"},
+                    {"name": "Bob"}
+                ]
+            }
+            """;
+        JsonValue v = JsonParser.parser().parse(json).orElse(null);
+
+        // Navigate via mixed steps: key "users", index 1, key "name"
+        var bobNameLens = JsonValue.path("users", 1, "name").compose(JsonValue.stringP());
+        
+        Assert.assertEquals(bobNameLens.getMaybe(v).orElse(""), "Bob");
+        
+        JsonValue updated = bobNameLens.set("Robert", v);
+        Assert.assertEquals(bobNameLens.getMaybe(updated).orElse(""), "Robert");
+    }
+
+    @Test
+    public void testPathValidation() {
+        String json = "{\"users\": [{\"name\": \"Alice\"}]}";
+        JsonValue v = JsonParser.parser().parse(json).orElse(null);
+
+        // Valid path
+        Assert.assertTrue(v.validatePath("users", 0, "name").isValid());
+
+        // Invalid: missing key
+        Validation<String, JsonValue> v1 = v.validatePath("users", 0, "age");
+        Assert.assertFalse(v1.isValid());
+        Assert.assertTrue(v1.getErrors().orElse("").contains("Key 'age' not found"));
+
+        // Invalid: wrong type (expecting array but found object)
+        Validation<String, JsonValue> v2 = v.validatePath("users", "name");
+        Assert.assertFalse(v2.isValid());
+        Assert.assertTrue(v2.getErrors().orElse("").contains("Expected JsonObject"));
+
+        // Invalid: index out of bounds
+        Validation<String, JsonValue> v3 = v.validatePath("users", 5);
+        Assert.assertFalse(v3.isValid());
+        Assert.assertTrue(v3.getErrors().orElse("").contains("Index 5 out of bounds"));
+    }
+
+    @Test
     public void testInvalidJson() {
         Either<ParseError, JsonValue> res = JsonParser.parser().parse("{ \"unclosed\": [1, 2 }");
         Assert.assertTrue(res.isLeft());
