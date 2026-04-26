@@ -84,4 +84,8 @@ public interface AffineTraversal<S, A> {
             @Override public S set(A a, S s) { return setter.apply(a, s); }
         };
     }
+
+    static <S> AffineTraversal<S, S> identity() {
+        return of(Maybe::some, (a, s) -> a);
+    }
 }

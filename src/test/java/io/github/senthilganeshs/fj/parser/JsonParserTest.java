@@ -76,20 +76,8 @@ public class JsonParserTest {
         String json = "{\"user\": {\"profile\": {\"name\": \"Alice\"}}}";
         JsonValue v = JsonParser.parser().parse(json).orElse(null);
 
-        // Define an optic that focuses on user.profile.name
-        // Use an anonymous instance of the map to avoid type inference issues with 'at' method reference
-        HashMap<String, JsonValue> dummy = HashMap.nil();
-        
-        var nameLens = JsonValue.objectP()
-            .compose(RecordOptics.of(JsonObject.class, JsonObject::fields))
-            .compose(dummy.at("user"))
-            .compose(JsonValue.objectP())
-            .compose(RecordOptics.of(JsonObject.class, JsonObject::fields))
-            .compose(dummy.at("profile"))
-            .compose(JsonValue.objectP())
-            .compose(RecordOptics.of(JsonObject.class, JsonObject::fields))
-            .compose(dummy.at("name"))
-            .compose(JsonValue.stringP());
+        // Define an optic that focuses on user.profile.name using the new navigation helpers
+        var nameLens = JsonValue.path("user", "profile").compose(JsonValue.stringAt("name"));
 
         JsonValue updated = nameLens.set("Bob", v);
         

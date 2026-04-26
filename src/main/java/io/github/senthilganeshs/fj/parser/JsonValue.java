@@ -3,7 +3,9 @@ package io.github.senthilganeshs.fj.parser;
 import io.github.senthilganeshs.fj.ds.HashMap;
 import io.github.senthilganeshs.fj.ds.List;
 import io.github.senthilganeshs.fj.ds.Maybe;
+import io.github.senthilganeshs.fj.optic.AffineTraversal;
 import io.github.senthilganeshs.fj.optic.Prism;
+import io.github.senthilganeshs.fj.optic.RecordOptics;
 
 /**
  * A purely functional JSON AST with built-in optics.
@@ -15,6 +17,28 @@ public sealed interface JsonValue {
     record JsonNumber(double value) implements JsonValue {}
     record JsonBoolean(boolean value) implements JsonValue {}
     record JsonNull() implements JsonValue {}
+
+    // --- Navigation Helpers ---
+
+    static AffineTraversal<JsonValue, JsonValue> at(String key) {
+        return objectP()
+            .compose(RecordOptics.of(JsonObject.class, JsonObject::fields))
+            .compose(HashMap.<String, JsonValue>nil().at(key));
+    }
+
+    static AffineTraversal<JsonValue, String> stringAt(String key) { return at(key).compose(stringP()); }
+    static AffineTraversal<JsonValue, Double> numberAt(String key) { return at(key).compose(numberP()); }
+    static AffineTraversal<JsonValue, Boolean> booleanAt(String key) { return at(key).compose(booleanP()); }
+    static AffineTraversal<JsonValue, JsonObject> objectAt(String key) { return at(key).compose(objectP()); }
+    static AffineTraversal<JsonValue, JsonArray> arrayAt(String key) { return at(key).compose(arrayP()); }
+
+    static AffineTraversal<JsonValue, JsonValue> path(String... keys) {
+        AffineTraversal<JsonValue, JsonValue> res = AffineTraversal.identity();
+        for (String key : keys) {
+            res = res.compose(at(key));
+        }
+        return res;
+    }
 
     // --- Prisms ---
 
