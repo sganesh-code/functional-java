@@ -48,6 +48,34 @@ public interface Prism<S, A> {
         };
     }
 
+    /**
+     * Composes this prism with a lens, resulting in an AffineTraversal.
+     */
+    default <B> AffineTraversal<S, B> compose(Lens<A, B> other) {
+        return new AffineTraversal<S, B>() {
+            @Override public Maybe<B> getMaybe(S s) {
+                return Prism.this.getMaybe(s).map(other::get);
+            }
+            @Override public S set(B b, S s) {
+                return Prism.this.modify(s, a -> other.set(b, a));
+            }
+        };
+    }
+
+    /**
+     * Composes this prism with an affine traversal.
+     */
+    default <B> AffineTraversal<S, B> compose(AffineTraversal<A, B> other) {
+        return new AffineTraversal<S, B>() {
+            @Override public Maybe<B> getMaybe(S s) {
+                return (Maybe<B>) Prism.this.getMaybe(s).flatMap(other::getMaybe);
+            }
+            @Override public S set(B b, S s) {
+                return Prism.this.modify(s, a -> other.set(b, a));
+            }
+        };
+    }
+
     static <S, A> Prism<S, A> of(Function<S, Maybe<A>> preview, Function<A, S> review) {
         return new Prism<S, A>() {
             @Override public Maybe<A> getMaybe(S s) { return preview.apply(s); }

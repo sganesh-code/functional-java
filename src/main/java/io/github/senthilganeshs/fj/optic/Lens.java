@@ -1,5 +1,6 @@
 package io.github.senthilganeshs.fj.optic;
 
+import io.github.senthilganeshs.fj.ds.Maybe;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -23,6 +24,20 @@ public interface Lens<S, A> {
             @Override public B get(S s) { return other.get(Lens.this.get(s)); }
             @Override public S set(B b, S s) {
                 return Lens.this.set(other.set(b, Lens.this.get(s)), s);
+            }
+        };
+    }
+
+    /**
+     * Composes this lens with a prism, resulting in an AffineTraversal.
+     */
+    default <B> AffineTraversal<S, B> compose(Prism<A, B> other) {
+        return new AffineTraversal<S, B>() {
+            @Override public Maybe<B> getMaybe(S s) {
+                return other.getMaybe(Lens.this.get(s));
+            }
+            @Override public S set(B b, S s) {
+                return Lens.this.modify(s, a -> other.set(b, a));
             }
         };
     }

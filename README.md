@@ -282,22 +282,36 @@ Lens<User, String> nameL = RecordOptics.of(User.class, User::name);
 User updated = nameL.set("Bob", user);
 ```
 
+### 12. Affine Traversals (Optics with Defaults)
+Handle deeply nested optional fields safely and provide default values right in the optic.
+
+```java
+// Focus on User -> Optional Address -> City
+AffineTraversal<User, String> cityT = userAddressP.compose(cityLens);
+
+// Provide a default value at definition time
+Lens<User, String> cityWithDefaultL = cityT.withDefault("UNKNOWN-CITY");
+
+// Usage: Guaranteed String, never null or Maybe
+String city = cityWithDefaultL.get(user);
+```
+
 ---
 
-## Installation (Version 1.0.5)
+## Installation (Version 1.0.6)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.0.5'
+implementation 'io.github.sganesh-code:functional-java:1.0.6'
 ```
 
 ---
