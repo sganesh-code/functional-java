@@ -30,13 +30,14 @@ This file defines the foundational rules for AI agents working on this repositor
 - **Publication Protocol**: NEVER push a version tag (e.g., `v1.0.4`) or trigger a Maven Central publication without explicit user confirmation.
 - **Triggering Deployment**: To deploy a new version to Maven Central:
   1.  Update the `version` in `build.gradle` (e.g., `1.1.1`).
-  2.  Commit and push the change to `master`.
-  3.  Create and push a Git tag matching the version (prefixed with 'v'):
+  2.  Update the version strings in the `Installation` and example snippets of `README.md`.
+  3.  Commit and push the change to `master`.
+  4.  Create and push a Git tag matching the version (prefixed with 'v'):
       ```bash
       git tag v1.1.1
       git push origin v1.1.1
       ```
-  4.  The GitHub CI runner will automatically detect the `v*` tag and execute the `publish` job.
+  5.  The GitHub CI runner will automatically detect the `v*` tag and execute the `publish` job.
 - **GPG & Secrets**: Never commit GPG keys, ring files, or `.asc` files. Ensure they are listed in `.gitignore`.
 
 ## 🔍 Optics & Typeclasses

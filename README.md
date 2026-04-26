@@ -351,20 +351,20 @@ Fold<Collection<User>, Integer> allAges = Traversal.<User>fromCollection().asFol
 
 ---
 
-## Installation (Version 1.1.0)
+## Installation (Version 1.1.1)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.1.0'
+implementation 'io.github.sganesh-code:functional-java:1.1.1'
 ```
 
 ---
