@@ -647,6 +647,30 @@ public interface Collection<T> {
     }
 
     /**
+     * Parallel version of map using the Task monad.
+     * 
+     * @param <R> The type of elements in the resulting collection.
+     * @param fn The transformation function.
+     * @return A Task producing the transformed collection.
+     */
+    default <R> Task<Collection<R>> parMap(final Function<T, R> fn) {
+        List<T> list = (this instanceof List) ? (List<T>) this : List.from(this);
+        return Task.parTraverse(list, t -> Task.of(() -> fn.apply(t))).map(l -> (Collection<R>) l);
+    }
+
+    /**
+     * Parallel version of foldMap using the Task monad.
+     * 
+     * @param <R> The type of the monoid result.
+     * @param fn The mapping function.
+     * @param monoid The monoid for reduction.
+     * @return A Task producing the reduced result.
+     */
+    default <R> Task<R> parFoldMap(final Function<T, R> fn, Monoid<R> monoid) {
+        return parMap(fn).map(c -> c.fold(monoid));
+    }
+
+    /**
      * Returns a Traversal that focuses on every element in a collection.
      */
     static <T> Traversal<Collection<T>, T> eachP() {

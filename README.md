@@ -104,6 +104,7 @@ HashMap<Boolean, Collection<Double>> segments = window.groupBy(val -> val > 25.0
 *   **`Either`**: Disjoint union type for expressive error handling.
 *   **`Tuple`**: Simple product types for grouping values.
 *   **`Validation`**: Success or error accumulation (Parallel Validation).
+*   **`Task`**: Purely functional abstraction for asynchronous, lazy computations.
 
 ### 🌳 Structural
 *   **`RoseTree`**: Multi-way (N-ary) tree structure.
@@ -238,20 +239,20 @@ Bridge the gap between static Java Records and dynamic JSON with zero boilerplat
 
 ---
 
-## Installation (Version 1.2.6)
+## Installation (Version 1.2.7)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.2.6</version>
+    <version>1.2.7</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.2.6'
+implementation 'io.github.sganesh-code:functional-java:1.2.7'
 ```
 
 ---
