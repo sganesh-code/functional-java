@@ -136,6 +136,8 @@ public final class RecordOptics {
 
     @SuppressWarnings("unchecked")
     private static Object fromJson(JsonValue json, Class<?> type, Type genericType) {
+        if (type.isAssignableFrom(json.getClass())) return json;
+
         if (json instanceof JsonNull) {
             if (type == Maybe.class) return Maybe.nothing();
             return null;
