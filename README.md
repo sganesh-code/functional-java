@@ -268,22 +268,36 @@ String s = data.get(); // Triggers call and caches result
 String cached = data.get(); // returns instantly
 ```
 
+### 11. Zero-Boilerplate Optics (`RecordOptics`)
+Automatically generate type-safe Lenses for any Java Record using Method References.
+
+```java
+// Define a standard Java Record
+record User(String name, int age) {}
+
+// Generate Lenses instantly with zero boilerplate
+Lens<User, String> nameL = RecordOptics.of(User.class, User::name);
+
+// Perform immutable updates
+User updated = nameL.set("Bob", user);
+```
+
 ---
 
-## Installation (Version 1.0.4)
+## Installation (Version 1.0.5)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.0.4'
+implementation 'io.github.sganesh-code:functional-java:1.0.5'
 ```
 
 ---
