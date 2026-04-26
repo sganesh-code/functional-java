@@ -1,10 +1,12 @@
 package io.github.senthilganeshs.fj.optic;
 
+import io.github.senthilganeshs.fj.ds.HashMap;
+import io.github.senthilganeshs.fj.ds.List;
 import io.github.senthilganeshs.fj.ds.Maybe;
+import io.github.senthilganeshs.fj.parser.JsonValue;
+import io.github.senthilganeshs.fj.parser.JsonValue.*;
 import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.RecordComponent;
+import java.lang.reflect.*;
 import java.util.Arrays;
 
 /**
@@ -16,12 +18,6 @@ public final class RecordOptics {
 
     /**
      * Automatically creates a Lens for a Record component using a method reference.
-     * 
-     * @param <S> The Record type (Source)
-     * @param <A> The Component type (Attribute)
-     * @param recordClass The class of the record
-     * @param getter A method reference to the record component (e.g., User::name)
-     * @return A Lens focusing on that component
      */
     @SuppressWarnings("unchecked")
     public static <S, A> Lens<S, A> of(Class<S> recordClass, RecordComponentFunction<S, A> getter) {
@@ -30,13 +26,11 @@ public final class RecordOptics {
         }
 
         try {
-            // 1. Extract the method name from the serialized lambda
             Method writeReplace = getter.getClass().getDeclaredMethod("writeReplace");
             writeReplace.setAccessible(true);
             SerializedLambda lambda = (SerializedLambda) writeReplace.invoke(getter);
             String methodName = lambda.getImplMethodName();
 
-            // 2. Find the RecordComponent matching the method name
             RecordComponent[] components = recordClass.getRecordComponents();
             int index = -1;
             for (int i = 0; i < components.length; i++) {
@@ -50,14 +44,12 @@ public final class RecordOptics {
                 throw new NoSuchMethodException("No record component found for method: " + methodName);
             }
 
-            // 3. Find the Canonical Constructor
             Class<?>[] paramTypes = Arrays.stream(components).map(RecordComponent::getType).toArray(Class[]::new);
             Constructor<S> constructor = recordClass.getDeclaredConstructor(paramTypes);
             constructor.setAccessible(true);
 
             final int targetIndex = index;
 
-            // 4. Build the Lens
             return Lens.of(getter, (newValue, source) -> {
                 try {
                     Object[] values = new Object[components.length];
@@ -76,5 +68,100 @@ public final class RecordOptics {
         } catch (Exception e) {
             throw new RuntimeException("Failed to generate Lens for record: " + recordClass.getName(), e);
         }
+    }
+
+    /**
+     * Automatically creates a bidirectional Isomorphism between a Record and a JsonValue.
+     */
+    public static <R> Iso<R, JsonValue> jsonIso(Class<R> recordClass) {
+        if (!recordClass.isRecord()) {
+            throw new IllegalArgumentException(recordClass.getName() + " is not a Record");
+        }
+
+        return Iso.of(
+            record -> {
+                RecordComponent[] components = recordClass.getRecordComponents();
+                HashMap<String, JsonValue> fields = HashMap.nil();
+                for (RecordComponent comp : components) {
+                    try {
+                        Method accessor = comp.getAccessor();
+                        accessor.setAccessible(true);
+                        Object val = accessor.invoke(record);
+                        fields = fields.put(comp.getName(), toJson(val));
+                    } catch (Exception e) {
+                        throw new RuntimeException("Failed to serialize record to JSON", e);
+                    }
+                }
+                return new JsonObject(fields);
+            },
+            json -> {
+                if (!(json instanceof JsonObject obj)) {
+                    throw new RuntimeException("Expected JsonObject for record conversion, found: " + json.getClass().getSimpleName());
+                }
+                RecordComponent[] components = recordClass.getRecordComponents();
+                Object[] values = new Object[components.length];
+                for (int i = 0; i < components.length; i++) {
+                    RecordComponent comp = components[i];
+                    JsonValue fieldVal = obj.fields().get(comp.getName()).orElse(new JsonNull());
+                    values[i] = fromJson(fieldVal, comp.getType(), comp.getGenericType());
+                }
+                try {
+                    Class<?>[] paramTypes = Arrays.stream(components).map(RecordComponent::getType).toArray(Class[]::new);
+                    Constructor<R> constructor = recordClass.getDeclaredConstructor(paramTypes);
+                    constructor.setAccessible(true);
+                    return constructor.newInstance(values);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to deserialize JSON to record: " + recordClass.getName(), e);
+                }
+            }
+        );
+    }
+
+    @SuppressWarnings("unchecked")
+    private static JsonValue toJson(Object val) {
+        if (val == null) return new JsonNull();
+        if (val instanceof JsonValue jv) return jv;
+        if (val instanceof String s) return new JsonString(s);
+        if (val instanceof Number n) return new JsonNumber(n.doubleValue());
+        if (val instanceof Boolean b) return new JsonBoolean(b);
+        if (val instanceof Maybe<?> m) return m.map(RecordOptics::toJson).orElse(new JsonNull());
+        if (val instanceof List<?> l) {
+            return new JsonArray(List.from(l.map(RecordOptics::toJson)));
+        }
+        if (val.getClass().isRecord()) {
+            return ((Iso<Object, JsonValue>) jsonIso((Class<Object>) val.getClass())).get(val);
+        }
+        return new JsonNull();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Object fromJson(JsonValue json, Class<?> type, Type genericType) {
+        if (json instanceof JsonNull) {
+            if (type == Maybe.class) return Maybe.nothing();
+            return null;
+        }
+
+        if (type == String.class && json instanceof JsonString s) return s.value();
+        if ((type == Integer.class || type == int.class) && json instanceof JsonNumber n) return (int) n.value();
+        if ((type == Double.class || type == double.class) && json instanceof JsonNumber n) return n.value();
+        if ((type == Boolean.class || type == boolean.class) && json instanceof JsonBoolean b) return b.value();
+        
+        if (type == Maybe.class && genericType instanceof ParameterizedType pt) {
+            Type innerType = pt.getActualTypeArguments()[0];
+            if (json instanceof JsonNull) return Maybe.nothing();
+            return Maybe.some(fromJson(json, (Class<?>) (innerType instanceof ParameterizedType ? ((ParameterizedType)innerType).getRawType() : innerType), innerType));
+        }
+
+        if (type == List.class && json instanceof JsonArray arr && genericType instanceof ParameterizedType pt) {
+            Type innerType = pt.getActualTypeArguments()[0];
+            Class<?> innerClass = (Class<?>) (innerType instanceof ParameterizedType ? ((ParameterizedType)innerType).getRawType() : innerType);
+            return List.from(arr.elements().map(jv -> fromJson(jv, innerClass, innerType)));
+        }
+
+        if (type.isRecord()) {
+            return jsonIso((Class<Object>) type).reverseGet(json);
+        }
+
+        return null;
     }
 }

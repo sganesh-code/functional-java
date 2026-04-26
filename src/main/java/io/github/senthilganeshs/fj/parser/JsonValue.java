@@ -108,4 +108,14 @@ public sealed interface JsonValue {
             JsonBoolean::new
         );
     }
+
+    // --- Record Conversion ---
+
+    default <R> R toRecord(Class<R> recordClass) {
+        return RecordOptics.jsonIso(recordClass).reverseGet(this);
+    }
+
+    static <R> JsonValue fromRecord(R record) {
+        return (JsonValue) RecordOptics.jsonIso((Class<R>) record.getClass()).get(record);
+    }
 }

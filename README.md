@@ -209,7 +209,23 @@ HashMap<Boolean, Collection<Double>> segments = window.groupBy(val -> val > 25.0
     enc.encode(dataOutput, List.of(1, 2, 3));
     ```
 
-### E. Deferred Execution (Lazy)
+### E. Automated JSON Isomorphisms
+
+Bridge the gap between static Java Records and dynamic JSON with zero boilerplate.
+
+*   **Bidirectional Mapping**: Automatically convert arbitrary records to/from `JsonValue`.
+    ```java
+    // 1. Define your domain records
+    record User(String name, List<String> roles) {}
+    
+    // 2. Convert to JSON
+    JsonValue json = JsonValue.fromRecord(new User("Alice", List.of("ADMIN")));
+    
+    // 3. Convert back to Record
+    User user = json.toRecord(User.class);
+    ```
+
+### F. Deferred Execution (Lazy)
 
 *   **Lazy Generators (`Generator`)**: Infinite sequences with zero memory overhead.
     ```java
@@ -222,20 +238,20 @@ HashMap<Boolean, Collection<Double>> segments = window.groupBy(val -> val > 25.0
 
 ---
 
-## Installation (Version 1.2.4)
+## Installation (Version 1.2.5)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.2.4'
+implementation 'io.github.sganesh-code:functional-java:1.2.5'
 ```
 
 ---
