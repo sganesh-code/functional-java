@@ -307,22 +307,36 @@ AffineTraversal<Collection<User>, User> user5T = Collection.at(5);
 Collection<User> updated = Collection.at(2).compose(nameLens).set("Bob", userList);
 ```
 
+### 14. Isomorphisms (`Iso`)
+Lossless, two-way transformations between types. Treat domain records and generic structures (like Tuples) as interchangeable.
+
+```java
+// Define an Iso between a Point record and a Tuple
+Iso<Point, Tuple<Integer, Integer>> pointIso = Iso.of(
+    p -> Tuple.of(p.x(), p.y()),
+    t -> new Point(t.getA().orElse(0), t.getB().orElse(0))
+);
+
+// Flip the transformation instantly
+Iso<Tuple<Integer, Integer>, Point> tupleToPoint = pointIso.reverse();
+```
+
 ---
 
-## Installation (Version 1.0.7)
+## Installation (Version 1.0.8)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.0.7'
+implementation 'io.github.sganesh-code:functional-java:1.0.8'
 ```
 
 ---
