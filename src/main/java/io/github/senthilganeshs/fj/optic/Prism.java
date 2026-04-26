@@ -8,14 +8,16 @@ import java.util.function.Function;
 /**
  * An optic that focuses on a case or a potentially missing field.
  */
-public interface Prism<S, A> {
+public interface Prism<S, A> extends AffineTraversal<S, A> {
     Maybe<A> getMaybe(S source);
     S reverseGet(A value);
 
+    @Override
     default S set(A value, S source) {
         return modify(source, __ -> value);
     }
 
+    @Override
     default S modify(S source, Function<A, A> fn) {
         return getMaybe(source).map(a -> reverseGet(fn.apply(a))).orElse(source);
     }
@@ -26,7 +28,7 @@ public interface Prism<S, A> {
     default <B> Prism<S, B> compose(Prism<A, B> other) {
         return new Prism<S, B>() {
             @Override public Maybe<B> getMaybe(S s) {
-                return (Maybe<B>) Prism.this.getMaybe(s).flatMap(other::getMaybe);
+                return (Maybe<B>) Prism.this.getMaybe(s).flatMapMaybe(other::getMaybe);
             }
             @Override public S reverseGet(B b) {
                 return Prism.this.reverseGet(other.reverseGet(b));
@@ -49,26 +51,13 @@ public interface Prism<S, A> {
     }
 
     /**
-     * Composes this prism with a lens, resulting in an AffineTraversal.
-     */
-    default <B> AffineTraversal<S, B> compose(Lens<A, B> other) {
-        return new AffineTraversal<S, B>() {
-            @Override public Maybe<B> getMaybe(S s) {
-                return Prism.this.getMaybe(s).map(other::get);
-            }
-            @Override public S set(B b, S s) {
-                return Prism.this.modify(s, a -> other.set(b, a));
-            }
-        };
-    }
-
-    /**
      * Composes this prism with an affine traversal.
      */
+    @Override
     default <B> AffineTraversal<S, B> compose(AffineTraversal<A, B> other) {
         return new AffineTraversal<S, B>() {
             @Override public Maybe<B> getMaybe(S s) {
-                return (Maybe<B>) Prism.this.getMaybe(s).flatMap(other::getMaybe);
+                return (Maybe<B>) Prism.this.getMaybe(s).flatMapMaybe(other::getMaybe);
             }
             @Override public S set(B b, S s) {
                 return Prism.this.modify(s, a -> other.set(b, a));
@@ -87,6 +76,7 @@ public interface Prism<S, A> {
     /**
      * Composes this prism with a getter.
      */
+    @Override
     @SuppressWarnings("unchecked")
     default <B> Fold<S, B> compose(Getter<A, B> other) {
         return s -> (Collection<B>) getMaybe(s).map(other::get).foldl((Collection<B>) List.<B>nil(), Collection::build);

@@ -18,26 +18,12 @@ public interface AffineTraversal<S, A> {
     }
 
     /**
-     * Composes this with a lens.
+     * Composes this with another affine traversal.
      */
-    default <B> AffineTraversal<S, B> compose(Lens<A, B> other) {
+    default <B> AffineTraversal<S, B> compose(AffineTraversal<A, B> other) {
         return new AffineTraversal<S, B>() {
             @Override public Maybe<B> getMaybe(S s) {
-                return AffineTraversal.this.getMaybe(s).map(other::get);
-            }
-            @Override public S set(B b, S s) {
-                return AffineTraversal.this.modify(s, a -> other.set(b, a));
-            }
-        };
-    }
-
-    /**
-     * Composes this with a prism.
-     */
-    default <B> AffineTraversal<S, B> compose(Prism<A, B> other) {
-        return new AffineTraversal<S, B>() {
-            @Override public Maybe<B> getMaybe(S s) {
-                return (Maybe<B>) AffineTraversal.this.getMaybe(s).flatMap(other::getMaybe);
+                return AffineTraversal.this.getMaybe(s).flatMapMaybe(other::getMaybe);
             }
             @Override public S set(B b, S s) {
                 return AffineTraversal.this.modify(s, a -> other.set(b, a));

@@ -1,5 +1,6 @@
 package io.github.senthilganeshs.fj.ds;
 
+import io.github.senthilganeshs.fj.optic.Lens;
 import java.util.function.Function;
 
 /**
@@ -32,6 +33,14 @@ public interface Tuple<A, B> {
 
     static <A, B> Tuple<A, B> of (final A a, final B b) {
         return new TupleImpl<>(Maybe.some(a), Maybe.some(b));
+    }
+
+    static <A, B> Lens<Tuple<A, B>, A> aL() {
+        return Lens.of(t -> t.getA().orElse(null), (a, t) -> Tuple.of(a, t.getB().orElse(null)));
+    }
+
+    static <A, B> Lens<Tuple<A, B>, B> bL() {
+        return Lens.of(t -> t.getB().orElse(null), (b, t) -> Tuple.of(t.getA().orElse(null), b));
     }
 
     /**

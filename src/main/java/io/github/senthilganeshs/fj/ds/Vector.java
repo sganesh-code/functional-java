@@ -184,41 +184,10 @@ public interface Vector<T> extends Collection<T> {
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
             R res = seed;
-            if (root != null) {
-                Deque<LevelNode> stack = new ArrayDeque<>();
-                stack.push(new LevelNode(shift, root));
-                while (!stack.isEmpty()) {
-                    LevelNode ln = stack.pop();
-                    if (ln.level == 0) {
-                        for (Object o : ln.node.array) {
-                            if (o == null) break;
-                            res = fn.apply(res, (T) o);
-                        }
-                    } else {
-                        for (int i = ln.node.array.length - 1; i >= 0; i--) {
-                            Object o = ln.node.array[i];
-                            if (o != null) {
-                                stack.push(new LevelNode(ln.level - BITS, (Node) o));
-                            }
-                        }
-                    }
-                }
-            }
-            if (tail != null) {
-                for (Object o : tail) {
-                    res = fn.apply(res, (T) o);
-                }
+            for (int i = 0; i < size; i++) {
+                res = fn.apply(res, at(i).orElse(null));
             }
             return res;
-        }
-
-        private static class LevelNode {
-            final int level;
-            final Node node;
-            LevelNode(int level, Node node) {
-                this.level = level;
-                this.node = node;
-            }
         }
 
         @Override

@@ -24,6 +24,13 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
 
     int size();
 
+    default io.github.senthilganeshs.fj.optic.AffineTraversal<HashMap<K, V>, V> at(K key) {
+        return io.github.senthilganeshs.fj.optic.AffineTraversal.of(
+            m -> m.get(key),
+            (v, m) -> m.put(key, v)
+        );
+    }
+
     @SuppressWarnings("unchecked")
     static <K, V> HashMap<K, V> nil() {
         return (HashMap<K, V>) HAMT.EMPTY;

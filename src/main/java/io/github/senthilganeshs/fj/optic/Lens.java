@@ -1,5 +1,7 @@
 package io.github.senthilganeshs.fj.optic;
 
+import io.github.senthilganeshs.fj.ds.Collection;
+import io.github.senthilganeshs.fj.ds.List;
 import io.github.senthilganeshs.fj.ds.Maybe;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -8,9 +10,14 @@ import java.util.function.Function;
  * An optic that focuses on a single mandatory field within a structure.
  * S is the Source, A is the Attribute.
  */
-public interface Lens<S, A> {
+public interface Lens<S, A> extends AffineTraversal<S, A> {
     A get(S source);
     S set(A value, S source);
+
+    @Override
+    default Maybe<A> getMaybe(S source) {
+        return Maybe.some(get(source));
+    }
 
     default S modify(S source, Function<A, A> fn) {
         return set(fn.apply(get(source)), source);
@@ -29,9 +36,10 @@ public interface Lens<S, A> {
     }
 
     /**
-     * Composes this lens with a prism, resulting in an AffineTraversal.
+     * Composes this lens with an affine traversal.
      */
-    default <B> AffineTraversal<S, B> compose(Prism<A, B> other) {
+    @Override
+    default <B> AffineTraversal<S, B> compose(AffineTraversal<A, B> other) {
         return new AffineTraversal<S, B>() {
             @Override public Maybe<B> getMaybe(S s) {
                 return other.getMaybe(Lens.this.get(s));
@@ -52,8 +60,9 @@ public interface Lens<S, A> {
     /**
      * Composes this lens with a getter.
      */
-    default <B> Getter<S, B> compose(Getter<A, B> other) {
-        return s -> other.get(get(s));
+    @Override
+    default <B> Fold<S, B> compose(Getter<A, B> other) {
+        return s -> (Collection<B>) List.of(other.get(get(s)));
     }
 
     /**

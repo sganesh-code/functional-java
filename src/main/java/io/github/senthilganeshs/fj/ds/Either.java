@@ -117,6 +117,11 @@ public interface Either<A, B> extends Collection<B> {
         if (isRight()) return fromRight(null);
         throw exceptionSupplier.get();
     }
+
+    default <X extends Throwable> B orElseThrow(java.util.function.Function<A, ? extends X> exceptionFunction) throws X {
+        if (isRight()) return fromRight(null);
+        throw exceptionFunction.apply(fromLeft(null));
+    }
     
     /**
      * Safely extracts the Left value or returns a default.
@@ -150,6 +155,11 @@ public interface Either<A, B> extends Collection<B> {
     @Override
     default <R> Either<A, R> map(Function<B, R> fn) {
         return either(Either::left, b -> Either.right(fn.apply(b)));
+    }
+
+    @SuppressWarnings("unchecked")
+    default <C> Either<C, B> mapLeft(Function<A, C> fn) {
+        return either(a -> Either.left(fn.apply(a)), Either::right);
     }
 
     @SuppressWarnings("unchecked")

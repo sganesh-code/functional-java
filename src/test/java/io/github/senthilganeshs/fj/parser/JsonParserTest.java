@@ -2,6 +2,7 @@ package io.github.senthilganeshs.fj.parser;
 
 import io.github.senthilganeshs.fj.ds.*;
 import io.github.senthilganeshs.fj.parser.JsonValue.*;
+import io.github.senthilganeshs.fj.optic.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -68,6 +69,32 @@ public class JsonParserTest {
         Assert.assertTrue(v instanceof JsonArray);
         JsonArray arr = (JsonArray) v;
         Assert.assertEquals(arr.elements().length(), 2);
+    }
+
+    @Test
+    public void testDeepUpdateWithOptics() {
+        String json = "{\"user\": {\"profile\": {\"name\": \"Alice\"}}}";
+        JsonValue v = JsonParser.parser().parse(json).orElse(null);
+
+        // Define an optic that focuses on user.profile.name
+        // Use an anonymous instance of the map to avoid type inference issues with 'at' method reference
+        HashMap<String, JsonValue> dummy = HashMap.nil();
+        
+        var nameLens = JsonValue.objectP()
+            .compose(RecordOptics.of(JsonObject.class, JsonObject::fields))
+            .compose(dummy.at("user"))
+            .compose(JsonValue.objectP())
+            .compose(RecordOptics.of(JsonObject.class, JsonObject::fields))
+            .compose(dummy.at("profile"))
+            .compose(JsonValue.objectP())
+            .compose(RecordOptics.of(JsonObject.class, JsonObject::fields))
+            .compose(dummy.at("name"))
+            .compose(JsonValue.stringP());
+
+        JsonValue updated = nameLens.set("Bob", v);
+        
+        Assert.assertEquals(nameLens.getMaybe(updated).orElse(""), "Bob");
+        Assert.assertEquals(nameLens.getMaybe(v).orElse(""), "Alice");
     }
 
     @Test

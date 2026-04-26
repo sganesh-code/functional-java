@@ -16,6 +16,10 @@ public interface Validation<E, T> extends Collection<T> {
 
     boolean isValid();
 
+    default Maybe<E> getErrors() {
+        return isValid() ? Maybe.nothing() : Maybe.some(((Invalid<E, T>) this).error);
+    }
+
     /**
      * Safely returns the valid value or a default.
      */

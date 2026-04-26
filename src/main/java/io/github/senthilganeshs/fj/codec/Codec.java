@@ -11,26 +11,55 @@ import java.io.IOException;
 public final class Codec {
     private Codec() {}
 
+    private static Either<String, Void> left(String msg) {
+        return Either.left(msg == null ? "Unknown IOException" : msg);
+    }
+
+    private static <T> Either<String, T> leftT(String msg) {
+        return Either.left(msg == null ? "Unknown IOException" : msg);
+    }
+
     // --- Encoders ---
 
     public static Encoder<Integer> intEncoder() {
         return (out, val) -> {
-            try { out.writeInt(val); return Either.right(null); }
-            catch (IOException e) { return Either.left(e.getMessage()); }
+            try {
+                if (val == null) {
+                    out.writeBoolean(false);
+                } else {
+                    out.writeBoolean(true);
+                    out.writeInt(val);
+                }
+                return Either.right(null);
+            } catch (IOException e) { return left(e.getMessage()); }
         };
     }
 
     public static Encoder<Double> doubleEncoder() {
         return (out, val) -> {
-            try { out.writeDouble(val); return Either.right(null); }
-            catch (IOException e) { return Either.left(e.getMessage()); }
+            try {
+                if (val == null) {
+                    out.writeBoolean(false);
+                } else {
+                    out.writeBoolean(true);
+                    out.writeDouble(val);
+                }
+                return Either.right(null);
+            } catch (IOException e) { return left(e.getMessage()); }
         };
     }
 
     public static Encoder<Boolean> booleanEncoder() {
         return (out, val) -> {
-            try { out.writeBoolean(val); return Either.right(null); }
-            catch (IOException e) { return Either.left(e.getMessage()); }
+            try {
+                if (val == null) {
+                    out.writeBoolean(false);
+                } else {
+                    out.writeBoolean(true);
+                    out.writeBoolean(val);
+                }
+                return Either.right(null);
+            } catch (IOException e) { return left(e.getMessage()); }
         };
     }
 
@@ -44,7 +73,7 @@ public final class Codec {
                     out.writeUTF(val);
                 }
                 return Either.right(null);
-            } catch (IOException e) { return Either.left(e.getMessage()); }
+            } catch (IOException e) { return left(e.getMessage()); }
         };
     }
 
@@ -55,7 +84,7 @@ public final class Codec {
                 return list.foldl(Either.right(null), (res, a) -> 
                     res.isRight() ? enc.encode(out, a) : res
                 );
-            } catch (IOException e) { return Either.left(e.getMessage()); }
+            } catch (IOException e) { return left(e.getMessage()); }
         };
     }
 
@@ -64,7 +93,7 @@ public final class Codec {
             try {
                 out.writeBoolean(maybe.isSome());
                 return maybe.foldl(Either.right(null), (res, a) -> enc.encode(out, a));
-            } catch (IOException e) { return Either.left(e.getMessage()); }
+            } catch (IOException e) { return left(e.getMessage()); }
         };
     }
 
@@ -86,7 +115,7 @@ public final class Codec {
                     if (resK.isLeft()) return resK;
                     return encV.encode(out, entry.value());
                 });
-            } catch (IOException e) { return Either.left(e.getMessage()); }
+            } catch (IOException e) { return left(e.getMessage()); }
         };
     }
 
@@ -94,22 +123,22 @@ public final class Codec {
 
     public static Decoder<Integer> intDecoder() {
         return in -> {
-            try { return Either.right(in.readInt()); }
-            catch (IOException e) { return Either.left(e.getMessage()); }
+            try { return in.readBoolean() ? Either.right(in.readInt()) : Either.right(null); }
+            catch (IOException e) { return leftT(e.getMessage()); }
         };
     }
 
     public static Decoder<Double> doubleDecoder() {
         return in -> {
-            try { return Either.right(in.readDouble()); }
-            catch (IOException e) { return Either.left(e.getMessage()); }
+            try { return in.readBoolean() ? Either.right(in.readDouble()) : Either.right(null); }
+            catch (IOException e) { return leftT(e.getMessage()); }
         };
     }
 
     public static Decoder<Boolean> booleanDecoder() {
         return in -> {
-            try { return Either.right(in.readBoolean()); }
-            catch (IOException e) { return Either.left(e.getMessage()); }
+            try { return in.readBoolean() ? Either.right(in.readBoolean()) : Either.right(null); }
+            catch (IOException e) { return leftT(e.getMessage()); }
         };
     }
 
@@ -118,7 +147,7 @@ public final class Codec {
             try {
                 if (in.readBoolean()) return Either.right(in.readUTF());
                 else return Either.right(null);
-            } catch (IOException e) { return Either.left(e.getMessage()); }
+            } catch (IOException e) { return leftT(e.getMessage()); }
         };
     }
 
@@ -133,7 +162,7 @@ public final class Codec {
                     list = (List<A>) list.build(res.orElse(null));
                 }
                 return Either.right(list);
-            } catch (IOException e) { return Either.left(e.getMessage()); }
+            } catch (IOException e) { return leftT(e.getMessage()); }
         };
     }
 
@@ -142,7 +171,7 @@ public final class Codec {
             try {
                 if (in.readBoolean()) return dec.decode(in).map(Maybe::some);
                 else return Either.right(Maybe.nothing());
-            } catch (IOException e) { return Either.left(e.getMessage()); }
+            } catch (IOException e) { return leftT(e.getMessage()); }
         };
     }
 
@@ -165,7 +194,7 @@ public final class Codec {
                     map = map.put(resK.orElse(null), resV.orElse(null));
                 }
                 return Either.right(map);
-            } catch (IOException e) { return Either.left(e.getMessage()); }
+            } catch (IOException e) { return leftT(e.getMessage()); }
         };
     }
 }
