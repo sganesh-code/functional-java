@@ -137,6 +137,17 @@ public interface List<T> extends Collection<T> {
     public static <R> List<R> cons(final List<R> head, final R tail) {
         return new LinkedList<>(head, tail);
     }
+
+    /**
+     * Generates a list of integers from start (inclusive) to end (exclusive).
+     */
+    public static List<Integer> range(int start, int end) {
+        List<Integer> res = nil();
+        for (int i = start; i < end; i++) {
+            res = (List<Integer>) res.build(i);
+        }
+        return res;
+    }
     
     final static class EmptyList<T> implements List<T> {
 
