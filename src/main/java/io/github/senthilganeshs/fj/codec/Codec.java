@@ -35,6 +35,34 @@ public final class Codec {
         };
     }
 
+    public static Encoder<Long> longEncoder() {
+        return (out, val) -> {
+            try {
+                if (val == null) {
+                    out.writeBoolean(false);
+                } else {
+                    out.writeBoolean(true);
+                    out.writeLong(val);
+                }
+                return Either.right(null);
+            } catch (IOException e) { return left(e.getMessage()); }
+        };
+    }
+
+    public static Encoder<Float> floatEncoder() {
+        return (out, val) -> {
+            try {
+                if (val == null) {
+                    out.writeBoolean(false);
+                } else {
+                    out.writeBoolean(true);
+                    out.writeFloat(val);
+                }
+                return Either.right(null);
+            } catch (IOException e) { return left(e.getMessage()); }
+        };
+    }
+
     public static Encoder<Double> doubleEncoder() {
         return (out, val) -> {
             try {
@@ -124,6 +152,20 @@ public final class Codec {
     public static Decoder<Integer> intDecoder() {
         return in -> {
             try { return in.readBoolean() ? Either.right(in.readInt()) : Either.right(null); }
+            catch (IOException e) { return leftT(e.getMessage()); }
+        };
+    }
+
+    public static Decoder<Long> longDecoder() {
+        return in -> {
+            try { return in.readBoolean() ? Either.right(in.readLong()) : Either.right(null); }
+            catch (IOException e) { return leftT(e.getMessage()); }
+        };
+    }
+
+    public static Decoder<Float> floatDecoder() {
+        return in -> {
+            try { return in.readBoolean() ? Either.right(in.readFloat()) : Either.right(null); }
             catch (IOException e) { return leftT(e.getMessage()); }
         };
     }
