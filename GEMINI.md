@@ -27,6 +27,7 @@ This file defines the foundational rules for AI agents working on this repositor
   - Edge cases (empty collections, single-element collections, extreme values).
 
 ## 📦 Release & Security
+- **Feature Completion & Release Nudge**: Once a feature branch's changes are validated and the build is passing with all tests, you MUST nudge the user to release the changes and tag a new version before proceeding to any unrelated tasks or new features. This ensures the library evolves incrementally and downstream consumers (like `transformation-engine`) remain synced.
 - **Publication Protocol**: NEVER push a version tag (e.g., `v1.0.4`) or trigger a Maven Central publication without explicit user confirmation.
 - **Triggering Deployment**: To deploy a new version to Maven Central:
   1.  Update the `version` in `build.gradle` (e.g., `1.1.1`).
