@@ -239,20 +239,20 @@ Bridge the gap between static Java Records and dynamic JSON with zero boilerplat
 
 ---
 
-## Installation (Version 1.2.7)
+## Installation (Version 1.2.10)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.2.7</version>
+    <version>1.2.10</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.2.7'
+implementation 'io.github.sganesh-code:functional-java:1.2.10'
 ```
 
 ---
