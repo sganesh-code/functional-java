@@ -140,6 +140,7 @@ public final class RecordOptics {
 
         if (json instanceof JsonNull) {
             if (type == Maybe.class) return Maybe.nothing();
+            if (type == List.class) return List.nil();
             return null;
         }
 
