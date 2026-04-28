@@ -2,6 +2,7 @@ package io.github.senthilganeshs.fj.ds;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -19,6 +20,30 @@ public interface List<T> extends Collection<T> {
     Tuple<Maybe<T>, List<T>> unzip();
 
     <R> List<Tuple<T, R>> zip(List<R> other);
+
+    /**
+     * Sorts the list using a provided comparator.
+     */
+    @SuppressWarnings("unchecked")
+    default List<T> sort(Comparator<? super T> cmp) {
+        if (isEmpty()) return this;
+        Object[] arr = new Object[length()];
+        int[] i = {0};
+        foldl(null, (acc, t) -> {
+            arr[i[0]++] = t;
+            return null;
+        });
+        Arrays.sort(arr, (Comparator<Object>) cmp);
+        List<T> res = nil();
+        for (Object t : arr) {
+            res = res.build((T) t);
+        }
+        return res;
+    }
+
+    default boolean isEmpty() {
+        return length() == 0;
+    }
 
     @SuppressWarnings("unchecked")
     @Override
