@@ -96,6 +96,20 @@ public interface Either<A, B> extends Collection<B> {
     }
 
     /**
+     * Converts the Either into a Maybe.
+     */
+    default Maybe<B> toMaybe() {
+        return isRight() ? Maybe.some(orElse(null)) : Maybe.nothing();
+    }
+
+    /**
+     * Converts the Either into a Validation.
+     */
+    default Validation<A, B> toValidation() {
+        return isRight() ? Validation.valid(orElse(null)) : Validation.invalid(fromLeft(null));
+    }
+
+    /**
      * Returns the Right value if present, otherwise returns the result of the supplier.
      * 
      * @param supplier The supplier of the fallback value.
