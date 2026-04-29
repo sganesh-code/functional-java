@@ -118,4 +118,45 @@ public sealed interface JsonValue {
     static <R> JsonValue fromRecord(R record) {
         return (JsonValue) RecordOptics.jsonIso((Class<R>) record.getClass()).get(record);
     }
+
+    // --- Serialization ---
+
+    default String serialize() {
+        if (this instanceof JsonObject o) {
+            StringBuilder sb = new StringBuilder("{");
+            o.fields().forEach(entry -> {
+                if (sb.length() > 1) sb.append(",");
+                sb.append("\"").append(escape(entry.key())).append("\":")
+                  .append(entry.value().serialize());
+            });
+            return sb.append("}").toString();
+        } else if (this instanceof JsonArray a) {
+            StringBuilder sb = new StringBuilder("[");
+            a.elements().forEach(val -> {
+                if (sb.length() > 1) sb.append(",");
+                sb.append(val.serialize());
+            });
+            return sb.append("]").toString();
+        } else if (this instanceof JsonString s) {
+            return "\"" + escape(s.value()) + "\"";
+        } else if (this instanceof JsonNumber n) {
+            double v = n.value();
+            if (v == (long) v) return String.valueOf((long) v);
+            return String.valueOf(v);
+        } else if (this instanceof JsonBoolean b) {
+            return String.valueOf(b.value());
+        } else {
+            return "null";
+        }
+    }
+
+    private static String escape(String s) {
+        return s.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\b", "\\b")
+                .replace("\f", "\\f")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
+    }
 }
