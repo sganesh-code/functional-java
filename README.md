@@ -12,261 +12,194 @@
 ## 🚀 Key Features
 
 *   **100% Immutable**: All structures are persistent; updates return new versions while sharing structure.
-*   **Unified API**: 40+ functional methods (map, filter, traverse, partition, etc.) available on every data structure via a single interface.
-*   **Algebraic Typeclasses**: Extensible `Eq`, `Ord`, `Semigroup`, and `Monoid` implementations for type-safe comparisons and reductions.
+*   **Unified API**: 40+ functional methods (map, filter, traverse, partition, etc.) available on every data structure.
+*   **Higher-Kinded Types (HKT)**: A lightweight polymorphism bridge allowing formal `Functor`, `Applicative`, and `Monad` typeclasses in Java.
+*   **Haskell-Style Effects**: Pure representations for side effects, including `IO`, `Reader`, `State`, `Writer`, and `TaskEither`.
+*   **Resource-Safe Streaming**: Lazy, effectful data streams with automatic resource management (`Stream`, `Pipe`, `Sink`, `bracket`).
+*   **Property-Based Testing**: QuickCheck-style validation framework with monadic data generators (`Gen`), property invariants, and automatic shrinking.
 *   **Optics Engine**: Advanced Lenses, Prisms, and Traversals for deep immutable updates.
-*   **Parser Combinators**: Build robust text parsers using monadic composition.
-*   **Functional Serialization**: Purely functional binary encoding/decoding framework.
-*   **Performance Optimized**: Core engines rewritten from recursion to iterative loops, achieving up to **400x speedup** for large datasets.
-*   **Zero Dependencies**: Lean and lightweight library with no external requirements.
+*   **Production-Grade Parser**: Monadic parser combinators with source-position tracking (line/column) and expression handling.
+*   **Performance Optimized**: Achieving up to **400x speedup** over recursive implementations for large datasets.
 
 ---
 
 ## 📋 Table of Contents
-1. [Core Triad Design](#core-triad-design)
-2. [Zero-Cost Interop](#zero-cost-interop)
-3. [Supported Data Structures](#supported-data-structures)
-4. [API Showcase](#api-showcase)
-5. [Installation](#installation)
-6. [Performance](#performance)
-7. [License](#license)
+1. [The HKT Bridge](#the-hkt-bridge)
+2. [Core Triad Design](#core-triad-design)
+3. [Zero-Cost Interop](#zero-cost-interop)
+4. [Supported Data Structures](#supported-data-structures)
+5. [API Showcase](#api-showcase)
+6. [Installation](#installation)
+7. [Performance](#performance)
+8. [License](#license)
+
+---
+
+## The HKT Bridge
+
+Java lacks native Higher-Kinded Types (abstracting over `F<A>`). `functional-java` bridges this gap using the **Lightweight Higher-Kinded Polymorphism** pattern, enabling truly polymorphic functional programming.
+
+```java
+// Formal Monad definition in Java
+public interface Monad<W> extends Applicative<W> {
+    <A, B> Higher<W, B> flatMap(Function<A, Higher<W, B>> fn, Higher<W, A> fa);
+}
+
+// Composition across ANY monad (Maybe, List, Task, etc.)
+public <W, A, B> Higher<W, B> sequence(Monad<W> m, List<Higher<W, A>> list) {
+    return list.foldl(m.pure(List.nil()), (acc, fa) -> 
+        m.liftA2((l, a) -> l.build(a), acc, fa));
+}
+```
 
 ---
 
 ## Core Triad Design
 
-The library is built on a powerful abstraction: the `Collection<T>` interface. To implement any complex functional behavior, a data structure only needs to implement three core methods:
+The library is built on the `Collection<T>` interface. To implement any complex functional behavior, a data structure only needs three core methods:
 
 1.  **`empty()`**: Returns an empty instance.
 2.  **`build(T)`**: Persistent addition of an element.
 3.  **`foldl(seed, fn)`**: The fundamental reduction engine.
 
-By implementing these three, every data structure automatically inherits the full functional suite: `map`, `flatMap`, `traverse`, `zipWith`, `span`, `chunk`, `groupBy`, and many more.
+By implementing these, types instantly gain `map`, `flatMap`, `traverse`, `chunk`, `groupBy`, and more.
 
 ---
 
 ## Zero-Cost Interop
 
-Interoperability is a first-class citizen. When you create a custom data structure by implementing the **Core Triad**, it instantly gains the ability to interoperate with every other data structure in the library.
-
-### 1. Implement your Triad (e.g., a Sliding Window)
-A `SlidingWindow` is a collection that only keeps the last `N` elements.
+Custom data structures gain interop for free:
 
 ```java
-public class SlidingWindow<T> implements Collection<T> {
-    private final List<T> items; 
-    private final int maxSize;
+// Convert custom Window to persistent Vector for O(1) access
+Vector<Double> vector = Vector.from(mySlidingWindow);
 
-    @Override public <R> Collection<R> empty() { return new SlidingWindow<>(maxSize, List.nil()); }
-
-    @Override public Collection<T> build(T val) {
-        List<T> next = (items.length() >= maxSize) ? items.drop(1).build(val) : items.build(val);
-        return new SlidingWindow<>(maxSize, next);
-    }
-
-    @Override public <R> R foldl(R seed, BiFunction<R, T, R> fn) { return items.foldl(seed, fn); }
-}
-```
-
-### 2. Interop "For Free"
-Convert, combine, and query across types seamlessly:
-
-```java
-SlidingWindow<Double> window = new SlidingWindow<>(3).build(10.0).build(20.0).build(30.0).build(40.0);
-
-// Interop: Convert to persistent Vector for O(1) access
-Vector<Double> vector = Vector.from(window);
-
-// Interop: Perform atomic batch operations
+// Perform atomic batch operations
 Maybe<List<Price>> prices = window.traverse(id -> priceDB.find(id));
-
-// Interop: Categorize window data into a HashMap
-HashMap<Boolean, Collection<Double>> segments = window.groupBy(val -> val > 25.0);
 ```
 
 ---
 
 ## Supported Data Structures
 
-### 📦 Sequential
-*   **`List`**: Purely functional linked list (Snoc-list style).
-*   **`Vector`**: Bitmapped Vector Trie for near O(1) random access and updates.
-*   **`Array`**: Functional wrapper for Java arrays.
-*   **`LazyList`**: Deferred evaluation for finite or infinite sequences.
+### 📦 Sequential & Effectful
+*   **`List`**, **`Vector`**, **`Array`**, **`LazyList`**, **`NonEmptyList`**.
+*   **`Task`**: Asynchronous computations with cancellation and timeout support.
+*   **`IO`**: Synchronous, deferred side-effect evaluation.
 
 ### 🔍 Associative & Sets
-*   **`Set`**: Self-balancing AVL Tree implementation.
-*   **`HashMap`**: High-performance Hash Array Mapped Trie (HAMT) with collision handling.
-*   **`Map`**: Binary tree-based associative mapping.
+*   **`Set`**, **`HashMap`** (HAMT), **`Map`**, **`PriorityQueue`**.
 
 ### 🎭 Functional Primitives
-*   **`Maybe`**: Safe optional values with monadic API.
-*   **`Either`**: Disjoint union type for expressive error handling.
-*   **`Tuple`**: Simple product types for grouping values.
-*   **`Validation`**: Success or error accumulation (Parallel Validation).
-*   **`Task`**: Purely functional abstraction for asynchronous, lazy computations.
+*   **`Maybe`**, **`Either`**, **`Validation`**, **`These`** (Inclusive OR).
+*   **`Identity`**, **`Const`**, **`Endo`**, **`Tuple`**.
 
-### 🌳 Structural
-*   **`RoseTree`**: Multi-way (N-ary) tree structure.
-*   **`Graph`**: Purely functional Directed Graph with BFS, DFS, and Topological Sort.
+### 🌳 Structural & Streams
+*   **`Stream`**: Effectful, lazy data streams (F-algebraic).
+*   **`RoseTree`**, **`Graph`** (with TopoSort, BFS, DFS).
 
-### 🏗 Parsing & Serialization
-*   **`Parser`**: Monadic state-based parser combinator.
-*   **`JsonValue`**: Purely functional JSON AST with built-in optics.
-*   **`Encoder` / `Decoder`**: Purely functional binary serialization framework.
+### 🏗 Parsing & Testing
+*   **`Parser`**: With line/column tracking and expression combinators.
+*   **`Gen`** / **`Property`**: Property-based testing and data generation.
 
 ---
 
 ## API Showcase
 
-### A. Robust Safety & Validation
+### A. Algebraic Effects & Composition
 
-*   **Atomic Batch Retrieval (`traverse`)**: Turn a list of IDs into a list of profiles, but only if **every** ID exists.
+*   **Dependency Injection (`Reader`)**:
     ```java
-    Maybe<List<Profile>> result = userIds.traverse(db::findMaybe);
+    Reader<Config, String> app = Reader.<Config>ask().map(Config::getEndpoint);
+    String url = app.run().apply(new Config("https://api.com"));
     ```
-*   **Validation Pipelines (`Either`)**: Chain operations that can fail without exceptions.
+*   **Safe Mutation (`State`)**:
     ```java
-    Either<String, Order> order = Either.right(cart)
-        .flatMapEither(this::checkStock)
-        .flatMapEither(this::applyDiscount);
+    State<Integer, String> increment = State.<Integer>get()
+        .flatMap(s -> State.modify(i -> i + 1).map(__ -> "Old: " + s));
     ```
-*   **Safe Combinations (`liftA2`)**: Combine two monadic values using a function.
+*   **Combined Effects (`ReaderTaskEither`)**: DI, Async, and Error handling in one.
     ```java
-    Maybe<Integer> sum = m1.liftA2(Integer::sum, m2);
-    ```
-*   **Parallel Validation (`Validation`)**: Unlike `Either`, `Validation` accumulates **every** error using a `Semigroup`.
-    ```java
-    Validation<String, User> result = v1.liftA2(User::new, v2, Monoid.STRING_CONCAT);
+    ReaderTaskEither<Env, Error, User> auth = ReaderTaskEither.<Env, Error>ask()
+        .flatMap(env -> db.findUser(env.token));
     ```
 
-### B. Data Analytics, Cleaning, & Batching
+### B. Resource-Safe Streaming
 
-*   **Categorization (`groupBy`)**: Group elements into a `HashMap` by a key.
+*   **Parallel Evaluation (`parEvalMap`)**:
     ```java
-    HashMap<String, Collection<User>> segments = users.groupBy(User::getInterest);
+    Stream<Task.µ, User> users = Stream.fromList(ids, Task.monad)
+        .parEvalMap(4, id -> db.fetchUserTask(id));
     ```
-*   **Algebraic Summary (`foldMap`)**: Map elements to a `Monoid` and aggregate in one pass.
+*   **Automatic Resource Management (`bracket`)**:
     ```java
-    Double total = orders.foldMap(Order::getAmount, Monoid.DOUBLE_SUM);
-    ```
-*   **Prefix Splitting (`span`)**: Split a collection at the first element that fails a condition.
-    ```java
-    Tuple<Collection<Task>, Collection<Task>> t = tasks.span(task -> task.isHighPriority());
-    ```
-*   **Fixed-Size Batching (`chunk`)**: Break data into batches for processing.
-    ```java
-    Collection<Collection<Item>> batches = items.chunk(100);
-    ```
-*   **Dynamic Data Generation (`unfold`)**: Build a collection iteratively from a seed.
-    ```java
-    Collection<Integer> countdown = Collection.unfold(10, i -> i > 0 ? Maybe.some(Tuple.of(i, i - 1)) : Maybe.nothing());
+    Stream<IO.µ, Byte> data = Stream.bracket(
+        IO.of(() -> openFile()), 
+        file -> Stream.fromFile(file), 
+        file -> IO.of(() -> file.close()), 
+        IO.monad);
     ```
 
-### C. Advanced Optics & Immutable Updates
+### C. Property-Based Testing (Lawful Validation)
 
-*   **Zero-Boilerplate Lenses (`RecordOptics`)**: Automatically generate Lenses for any Java Record.
+*   **Declarative Invariants**:
+    ```java
+    Property<Integer> p = Property.forAll(Gen.choose(1, 100), i -> i > 0);
+    p.assertTrue(100); // Run 100 random trials
+    ```
+*   **Automatic Counter-Example Shrinking**:
+    ```java
+    // Fails for i > 5. Shrinker will find exactly 6 as the minimal failure.
+    Property<Integer> p = Property.forAll(Gen.integer(), Shrink.integer(), i -> i <= 5);
+    ```
+
+### D. Advanced Optics & Updates
+
+*   **Zero-Boilerplate Lenses**:
     ```java
     Lens<User, String> nameL = RecordOptics.of(User.class, User::name);
     User updated = nameL.set("Bob", user);
     ```
-*   **Sealed Interface Prisms (`SealedOptics`)**: Automatically generate Prisms for Java 17+ Sealed Hierarchies.
-    ```java
-    Prism<Result, Success> successP = SealedOptics.prism(Result.class, Success.class);
-    ```
-*   **Optics with Defaults (`AffineTraversal`)**: Handle nested optionals and provide defaults in the optic.
-    ```java
-    Lens<User, String> cityL = userAddressP.compose(cityLens).withDefault("UNKNOWN");
-    ```
-*   **Indexed Optics (`at`)**: Target specific elements in a collection by position.
-    ```java
-    Collection<User> updated = Collection.at(2).compose(nameLens).set("Bob", userList);
-    ```
-*   **Isomorphisms (`Iso`)**: Lossless, two-way transformations between types (e.g., Record <-> Tuple).
-    ```java
-    Iso<Point, Tuple<Integer, Integer>> pointIso = Iso.of(p -> Tuple.of(p.x(), p.y()), t -> ...);
-    ```
 
-### D. Parsing, JSON, & Persistence
+### E. Parsing & JSON
 
-*   **Monadic Parser Combinators**: Build complex grammars by composing simple parsers.
+*   **Expression Parsing**:
     ```java
-    Parser<List<Character>> csv = Parser.letter().sepBy(Parser.character(','));
-    List<Character> result = csv.parse("a,b,c").orElse(List.nil());
+    Parser<Integer> sum = Parser.integer().chainl1(Parser.character('+').map(__ -> Integer::sum));
     ```
-*   **Streamlined JSON Navigation**: Deeply nested navigation and updates with zero boilerplate.
+*   **JSON Optics**:
     ```java
-    JsonValue updated = JsonValue.path("user", "profile", "address")
-        .compose(JsonValue.stringAt("city"))
-        .set("Paris", rootJson);
-    ```
-*   **Functional Path Validation**: Explicitly verify a hierarchical path before operating.
-    ```java
-    Validation<String, JsonValue> result = json.validatePath("users", 0, "name");
-    ```
-*   **Functional Binary Serialization**: High-performance binary encoding fluently composed.
-    ```java
-    Encoder<List<Integer>> enc = Codec.listEncoder(Codec.intEncoder());
-    enc.encode(dataOutput, List.of(1, 2, 3));
-    ```
-
-### E. Automated JSON Isomorphisms
-
-Bridge the gap between static Java Records and dynamic JSON with zero boilerplate.
-
-*   **Bidirectional Mapping**: Automatically convert arbitrary records to/from `JsonValue`.
-    ```java
-    // 1. Define your domain records
-    record User(String name, List<String> roles) {}
-    
-    // 2. Convert to JSON
-    JsonValue json = JsonValue.fromRecord(new User("Alice", List.of("ADMIN")));
-    
-    // 3. Convert back to Record
-    User user = json.toRecord(User.class);
-    ```
-
-### F. Deferred Execution (Lazy)
-
-*   **Lazy Generators (`Generator`)**: Infinite sequences with zero memory overhead.
-    ```java
-    LazyList<Integer> naturalNumbers = Generator.iterate(1, i -> i + 1);
-    ```
-*   **Memoization (`Lazy`)**: Ensure expensive computations run exactly once.
-    ```java
-    Lazy<String> data = Lazy.of(() -> fetchFromRemote());
+    JsonValue city = JsonValue.path("user", "address").compose(JsonValue.stringAt("city")).getMaybe(json);
     ```
 
 ---
 
-## Installation (Version 1.2.12)
+## Installation (Version 1.3.1)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.2.12</version>
+    <version>1.3.1</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.2.12'
+implementation 'io.github.sganesh-code:functional-java:1.3.1'
 ```
 
 ---
 
 ## Performance
 
-The library core iterative engine achieves up to **400x speedup** over traditional recursive implementations for large datasets.
+The library achieves up to **400x speedup** over traditional recursive implementations.
 
 **Benchmark Highlights (1,000 Elements):**
 *   **List Folding**: ~4.5μs
 *   **Vector Access**: ~0.003μs
 *   **Map Lookup**: ~0.004μs
-
-*Full details available in [BENCHMARK.md](./BENCHMARK.md).*
 
 ---
 
