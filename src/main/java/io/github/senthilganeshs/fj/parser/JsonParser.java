@@ -63,8 +63,10 @@ public final class JsonParser {
         if (!hasDigits) return Either.left(new ParseError(state.position(), state.line(), state.column(), "Expected number"));
         
         double val = Double.parseDouble(sb.toString());
-        return Either.right(Tuple.of((JsonValue) new JsonNumber(val), state.advance(sb.length())));
+        return Either.right(Tuple.of((JsonValue) new JsonNumber(val), state.advance(pos - state.position())));
     };
+
+    private static final Parser<JsonValue> jsonNumberLexeme = jsonNumber.lexeme();
 
     private static final Parser<String> jsonStringRaw = Parser.character('"')
         .then(state -> {
@@ -98,30 +100,35 @@ public final class JsonParser {
 
     private static final Parser<JsonValue> jsonString = jsonStringRaw.map(s -> (JsonValue) new JsonString(s)).lexeme();
 
-    private static final Parser<JsonValue> jsonArray = Parser.lazy(() -> 
-        jsonValue()
+    private static Parser<JsonValue> jsonArray() {
+        return jsonValue()
             .sepBy(Parser.character(',').lexeme())
             .between(Parser.character('[').lexeme(), Parser.character(']').lexeme())
-            .map(JsonArray::new)
-    );
+            .map(JsonArray::new);
+    }
 
-    private static final Parser<JsonValue> jsonObject = Parser.lazy(() -> 
-        jsonStringRaw.lexeme()
+    private static Parser<JsonValue> jsonObject() {
+        Parser<Tuple<String, JsonValue>> pair = jsonStringRaw.lexeme()
             .ignore(Parser.character(':').lexeme())
-            .and(jsonValue())
-            .sepBy(Parser.character(',').lexeme())
+            .and(jsonValue());
+
+        return pair.sepBy(Parser.character(',').lexeme())
             .between(Parser.character('{').lexeme(), Parser.character('}').lexeme())
             .map(pairs -> {
                 final HashMap<String, JsonValue>[] fields = new HashMap[]{HashMap.nil()};
-                pairs.forEach(pair -> {
-                    fields[0] = fields[0].put(pair.getA().orElse(""), pair.getB().orElse(null));
+                pairs.forEach(p -> {
+                    fields[0] = fields[0].put(p.getA().orElse(""), p.getB().orElse(null));
                 });
                 return new JsonObject(fields[0]);
-            })
-    );
+            });
+    }
 
     private static Parser<JsonValue> jsonValue() {
-        return jsonNull.or(jsonBoolean).or(jsonNumber).or(jsonString).or(jsonArray).or(jsonObject);
+        return Parser.lazy(() -> 
+            jsonNull.or(jsonBoolean).or(jsonNumberLexeme).or(jsonString)
+                .or(jsonArray())
+                .or(jsonObject())
+        );
     }
 
     public static Parser<JsonValue> parser() {

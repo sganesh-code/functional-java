@@ -59,6 +59,9 @@ public interface Parser<A> {
                 Either<ParseError, Tuple<A, State>> res = parse(currentState);
                 if (res.isLeft()) break;
                 Tuple<A, State> t = res.orElse(null);
+                
+                if (t.getB().orElse(null).position() <= currentState.position()) break;
+
                 results = results.build(t.getA().orElse(null));
                 currentState = t.getB().orElse(null);
             }
@@ -99,10 +102,6 @@ public interface Parser<A> {
         return left.then(this).ignore(right);
     }
 
-    /**
-     * Parses one or more occurrences of p, separated by op.
-     * Returns a value obtained by a left-associative application of all functions returned by op to the values returned by p.
-     */
     default Parser<A> chainl1(Parser<BiFunction<A, A, A>> op) {
         return this.flatMap(a -> {
             Parser<Function<A, A>> rest = op.and(this).map(t -> 
@@ -112,13 +111,9 @@ public interface Parser<A> {
         });
     }
 
-    /**
-     * Parses one or more occurrences of p, separated by op.
-     * Returns a value obtained by a right-associative application of all functions returned by op to the values returned by p.
-     */
     default Parser<A> chainr1(Parser<BiFunction<A, A, A>> op) {
         return this.flatMap(a -> 
-            op.and(this.chainr1(op)).map(t -> t.getA().orElse(null).apply(a, t.getB().orElse(null)))
+            op.and(lazy(() -> this.chainr1(op))).map(t -> t.getA().orElse(null).apply(a, t.getB().orElse(null)))
             .or(succeed(a))
         );
     }
@@ -141,7 +136,7 @@ public interface Parser<A> {
         return state -> state.current()
             .map(c -> pred.test(c) 
                 ? Either.<ParseError, Tuple<Character, State>>right(Tuple.of(c, state.advance(1)))
-                : Either.<ParseError, Tuple<Character, State>>left(new ParseError(state.position(), state.line(), state.column(), "Expected " + expected + " but found " + c)))
+                : Either.<ParseError, Tuple<Character, State>>left(new ParseError(state.position(), state.line(), state.column(), "Expected " + expected + " but found '" + c + "'")))
             .orElse(Either.left(new ParseError(state.position(), state.line(), state.column(), "Expected " + expected + " but reached EOF")));
     }
 
