@@ -122,14 +122,10 @@ R&gt;&nbsp;<a href="Parser.html" title="interface in io.github.senthilganeshs.fj
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Parser.html" title="interface in io.github.senthilganeshs.fj.parser">Parser</a><wbr>&lt;<a href="Parser.html" title="type parameter in Parser">A</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#chainl1(io.github.senthilganeshs.fj.parser.Parser)" class="member-name-link">chainl1</a><wbr>(<a href="Parser.html" title="interface in io.github.senthilganeshs.fj.parser">Parser</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="Parser.html" title="type parameter in Parser">A</a>,<wbr><a href="Parser.html" title="type parameter in Parser">A</a>,<wbr><a href="Parser.html" title="type parameter in Parser">A</a>&gt;&gt;&nbsp;op)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Parses one or more occurrences of p, separated by op.</div>
-</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Parser.html" title="interface in io.github.senthilganeshs.fj.parser">Parser</a><wbr>&lt;<a href="Parser.html" title="type parameter in Parser">A</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#chainr1(io.github.senthilganeshs.fj.parser.Parser)" class="member-name-link">chainr1</a><wbr>(<a href="Parser.html" title="interface in io.github.senthilganeshs.fj.parser">Parser</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="Parser.html" title="type parameter in Parser">A</a>,<wbr><a href="Parser.html" title="type parameter in Parser">A</a>,<wbr><a href="Parser.html" title="type parameter in Parser">A</a>&gt;&gt;&nbsp;op)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Parses one or more occurrences of p, separated by op.</div>
-</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="Parser.html" title="interface in io.github.senthilganeshs.fj.parser">Parser</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Character.html" title="class or interface in java.lang" class="external-link">Character</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#character(char)" class="member-name-link">character</a><wbr>(char&nbsp;c)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
@@ -325,16 +321,12 @@ R&gt;</span>&nbsp;<span class="return-type"><a href="Parser.html" title="interfa
 <section class="detail" id="chainl1(io.github.senthilganeshs.fj.parser.Parser)">
 <h3>chainl1</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Parser.html" title="interface in io.github.senthilganeshs.fj.parser">Parser</a>&lt;<a href="Parser.html" title="type parameter in Parser">A</a>&gt;</span>&nbsp;<span class="element-name">chainl1</span><wbr><span class="parameters">(<a href="Parser.html" title="interface in io.github.senthilganeshs.fj.parser">Parser</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="Parser.html" title="type parameter in Parser">A</a>,<wbr><a href="Parser.html" title="type parameter in Parser">A</a>,<wbr><a href="Parser.html" title="type parameter in Parser">A</a>&gt;&gt;&nbsp;op)</span></div>
-<div class="block">Parses one or more occurrences of p, separated by op.
- Returns a value obtained by a left-associative application of all functions returned by op to the values returned by p.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="chainr1(io.github.senthilganeshs.fj.parser.Parser)">
 <h3>chainr1</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Parser.html" title="interface in io.github.senthilganeshs.fj.parser">Parser</a>&lt;<a href="Parser.html" title="type parameter in Parser">A</a>&gt;</span>&nbsp;<span class="element-name">chainr1</span><wbr><span class="parameters">(<a href="Parser.html" title="interface in io.github.senthilganeshs.fj.parser">Parser</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="Parser.html" title="type parameter in Parser">A</a>,<wbr><a href="Parser.html" title="type parameter in Parser">A</a>,<wbr><a href="Parser.html" title="type parameter in Parser">A</a>&gt;&gt;&nbsp;op)</span></div>
-<div class="block">Parses one or more occurrences of p, separated by op.
- Returns a value obtained by a right-associative application of all functions returned by op to the values returned by p.</div>
 </section>
 </li>
 <li>
