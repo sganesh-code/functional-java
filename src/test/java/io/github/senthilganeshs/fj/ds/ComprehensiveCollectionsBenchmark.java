@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
-@State(Scope.Thread)
+@org.openjdk.jmh.annotations.State(Scope.Thread)
 @Fork(1)
 @Warmup(iterations = 2, time = 1)
 @Measurement(iterations = 3, time = 1)

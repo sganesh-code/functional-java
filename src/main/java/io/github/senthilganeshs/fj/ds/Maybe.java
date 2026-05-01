@@ -1,10 +1,28 @@
 package io.github.senthilganeshs.fj.ds;
 
+import io.github.senthilganeshs.fj.hkt.Higher;
 import io.github.senthilganeshs.fj.optic.Prism;
+import io.github.senthilganeshs.fj.typeclass.Monad;
+import io.github.senthilganeshs.fj.typeclass.Traversable;
+import io.github.senthilganeshs.fj.typeclass.Applicative;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 
-public interface Maybe<T> extends Collection<T> {
+public interface Maybe<T> extends Collection<T>, Higher<Maybe.µ, T> {
+
+    /**
+     * Witness type for Higher-Kinded Type encoding.
+     */
+    final class µ {}
+
+    /**
+     * Safely downcasts a Higher-Kinded Type to a Maybe.
+     */
+    @SuppressWarnings("unchecked")
+    static <T> Maybe<T> narrowK(Higher<µ, T> hka) {
+        return (Maybe<T>) hka;
+    }
 
     final static Maybe<Void> NOTHING = new Nothing<>();
 
@@ -94,6 +112,46 @@ public interface Maybe<T> extends Collection<T> {
         return Prism.of(m -> m, Maybe::some);
     }
     
+    // --- Typeclass Instances ---
+
+    Monad<µ> monad = new Monad<>() {
+        @Override
+        public <A> Higher<µ, A> pure(A a) { return Maybe.some(a); }
+
+        @Override
+        public <A, B> Higher<µ, B> flatMap(Function<A, Higher<µ, B>> fn, Higher<µ, A> fa) {
+            return Maybe.narrowK(fa).flatMapMaybe(a -> Maybe.narrowK(fn.apply(a)));
+        }
+
+        @Override
+        public <A, B> Higher<µ, B> map(Function<A, B> fn, Higher<µ, A> fa) {
+            return Maybe.narrowK(fa).map(fn);
+        }
+    };
+
+    Traversable<µ> traversable = new Traversable<>() {
+        @Override
+        public <G, A, B> Higher<G, Higher<µ, B>> traverse(Applicative<G> app, Function<A, Higher<G, B>> fn, Higher<µ, A> fa) {
+            Maybe<A> ma = Maybe.narrowK(fa);
+            return ma.either(
+                () -> app.pure(Maybe.nothing()),
+                a -> app.map(Maybe::some, fn.apply(a))
+            );
+        }
+
+        @Override
+        public <A, B> Higher<µ, B> map(Function<A, B> fn, Higher<µ, A> fa) {
+            return Maybe.narrowK(fa).map(fn);
+        }
+    };
+
+    /**
+     * Applies a function if Some, or a default supplier if Nothing.
+     */
+    default <R> R either(java.util.function.Supplier<R> onNothing, Function<T, R> onSome) {
+        return isSome() ? onSome.apply(orElse(null)) : onNothing.get();
+    }
+
     final static class Nothing<T> implements Maybe<T> {
 
         @Override

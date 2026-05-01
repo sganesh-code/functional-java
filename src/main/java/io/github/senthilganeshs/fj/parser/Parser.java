@@ -6,6 +6,7 @@ import io.github.senthilganeshs.fj.ds.Maybe;
 import io.github.senthilganeshs.fj.ds.Tuple;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.BiFunction;
 
 /**
  * A functional parser that transforms a State into an Either a ParseError or a successful value with a new State.
@@ -98,6 +99,30 @@ public interface Parser<A> {
         return left.then(this).ignore(right);
     }
 
+    /**
+     * Parses one or more occurrences of p, separated by op.
+     * Returns a value obtained by a left-associative application of all functions returned by op to the values returned by p.
+     */
+    default Parser<A> chainl1(Parser<BiFunction<A, A, A>> op) {
+        return this.flatMap(a -> {
+            Parser<Function<A, A>> rest = op.and(this).map(t -> 
+                acc -> t.getA().orElse(null).apply(acc, t.getB().orElse(null))
+            );
+            return rest.many().map(fs -> fs.foldl(a, (acc, f) -> f.apply(acc)));
+        });
+    }
+
+    /**
+     * Parses one or more occurrences of p, separated by op.
+     * Returns a value obtained by a right-associative application of all functions returned by op to the values returned by p.
+     */
+    default Parser<A> chainr1(Parser<BiFunction<A, A, A>> op) {
+        return this.flatMap(a -> 
+            op.and(this.chainr1(op)).map(t -> t.getA().orElse(null).apply(a, t.getB().orElse(null)))
+            .or(succeed(a))
+        );
+    }
+
     // --- Basic Parsers ---
 
     static <A> Parser<A> lazy(java.util.function.Supplier<Parser<A>> supplier) {
@@ -109,15 +134,15 @@ public interface Parser<A> {
     }
 
     static <A> Parser<A> fail(String message) {
-        return state -> Either.left(new ParseError(state.position(), message));
+        return state -> Either.left(new ParseError(state.position(), state.line(), state.column(), message));
     }
 
     static Parser<Character> satisfy(Predicate<Character> pred, String expected) {
         return state -> state.current()
             .map(c -> pred.test(c) 
                 ? Either.<ParseError, Tuple<Character, State>>right(Tuple.of(c, state.advance(1)))
-                : Either.<ParseError, Tuple<Character, State>>left(new ParseError(state.position(), "Expected " + expected + " but found " + c)))
-            .orElse(Either.left(new ParseError(state.position(), "Expected " + expected + " but reached EOF")));
+                : Either.<ParseError, Tuple<Character, State>>left(new ParseError(state.position(), state.line(), state.column(), "Expected " + expected + " but found " + c)))
+            .orElse(Either.left(new ParseError(state.position(), state.line(), state.column(), "Expected " + expected + " but reached EOF")));
     }
 
     static Parser<Character> character(char c) {
@@ -129,7 +154,7 @@ public interface Parser<A> {
             if (state.source().startsWith(s, state.position())) {
                 return Either.right(Tuple.of(s, state.advance(s.length())));
             }
-            return Either.left(new ParseError(state.position(), "Expected \"" + s + "\""));
+            return Either.left(new ParseError(state.position(), state.line(), state.column(), "Expected \"" + s + "\""));
         };
     }
 
@@ -148,11 +173,35 @@ public interface Parser<A> {
     static Parser<Void> eof() {
         return state -> state.isEOF() 
             ? Either.right(Tuple.of(null, state))
-            : Either.left(new ParseError(state.position(), "Expected EOF"));
+            : Either.left(new ParseError(state.position(), state.line(), state.column(), "Expected EOF"));
     }
 
     static <A> Parser<A> choice(List<Parser<A>> parsers) {
-        return state -> parsers.foldl(Either.<ParseError, Tuple<A, State>>left(new ParseError(state.position(), "No choice matched")),
+        return state -> parsers.foldl(Either.<ParseError, Tuple<A, State>>left(new ParseError(state.position(), state.line(), state.column(), "No choice matched")),
             (acc, p) -> acc.isRight() ? acc : p.parse(state));
+    }
+
+    // --- Lexer Helpers ---
+
+    static Parser<List<Character>> spaces() {
+        return whitespace().many();
+    }
+
+    default Parser<A> lexeme() {
+        return this.ignore(spaces());
+    }
+
+    static Parser<String> identifier() {
+        return letter().flatMap(first -> 
+            letter().or(digit()).many().map(rest -> 
+                first + rest.foldl("", (s, c) -> s + c)
+            )
+        ).lexeme();
+    }
+
+    static Parser<Integer> integer() {
+        return digit().many1().map(digits -> 
+            Integer.parseInt(digits.foldl("", (s, c) -> s + c))
+        ).lexeme();
     }
 }

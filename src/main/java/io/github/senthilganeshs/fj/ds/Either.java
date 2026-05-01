@@ -1,6 +1,11 @@
 package io.github.senthilganeshs.fj.ds;
 
+import io.github.senthilganeshs.fj.hkt.Higher;
 import io.github.senthilganeshs.fj.optic.Prism;
+import io.github.senthilganeshs.fj.typeclass.Monad;
+import io.github.senthilganeshs.fj.typeclass.Bifunctor;
+import io.github.senthilganeshs.fj.typeclass.Traversable;
+import io.github.senthilganeshs.fj.typeclass.Applicative;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -13,7 +18,20 @@ import java.util.function.Function;
  * @param <A> The type of the Left value (usually representing an error).
  * @param <B> The type of the Right value (usually representing a success).
  */
-public interface Either<A, B> extends Collection<B> {
+public interface Either<A, B> extends Collection<B>, Higher<Higher<Either.µ, A>, B> {
+
+    /**
+     * Witness type for Higher-Kinded Type encoding.
+     */
+    final class µ {}
+
+    /**
+     * Safely downcasts a Higher-Kinded Type to an Either.
+     */
+    @SuppressWarnings("unchecked")
+    static <A, B> Either<A, B> narrowK(Higher<Higher<µ, A>, B> hka) {
+        return (Either<A, B>) hka;
+    }
 
     @Override Either<A,B> build (final B value);
     
@@ -227,6 +245,50 @@ public interface Either<A, B> extends Collection<B> {
      */
     static <L, R> Prism<Either<L, R>, L> leftP() {
         return Prism.of(e -> e.isLeft() ? Maybe.some(e.fromLeft(null)) : Maybe.nothing(), Either::left);
+    }
+
+    // --- Typeclass Instances ---
+
+    static <L> Monad<Higher<Either.µ, L>> monad() {
+        return new Monad<>() {
+            @Override
+            public <A> Higher<Higher<µ, L>, A> pure(A a) { return Either.right(a); }
+
+            @Override
+            public <A, B> Higher<Higher<µ, L>, B> flatMap(Function<A, Higher<Higher<µ, L>, B>> fn, Higher<Higher<µ, L>, A> fa) {
+                return Either.narrowK(fa).flatMapEither(a -> Either.narrowK(fn.apply(a)));
+            }
+
+            @Override
+            public <A, B> Higher<Higher<µ, L>, B> map(Function<A, B> fn, Higher<Higher<µ, L>, A> fa) {
+                return Either.narrowK(fa).map(fn);
+            }
+        };
+    }
+
+    Bifunctor<µ> bifunctor = new Bifunctor<>() {
+        @Override
+        public <A, B, C, D> Higher<Higher<µ, C>, D> bimap(Function<A, C> fa, Function<B, D> fb, Higher<Higher<µ, A>, B> fab) {
+            return Either.narrowK(fab).bimap(fa, fb);
+        }
+    };
+
+    static <L> Traversable<Higher<µ, L>> traversable() {
+        return new Traversable<>() {
+            @Override
+            public <G, A, B> Higher<G, Higher<Higher<µ, L>, B>> traverse(Applicative<G> app, Function<A, Higher<G, B>> fn, Higher<Higher<µ, L>, A> fa) {
+                Either<L, A> ea = Either.narrowK(fa);
+                return ea.either(
+                    l -> app.pure(Either.left(l)),
+                    a -> app.map(Either::right, fn.apply(a))
+                );
+            }
+
+            @Override
+            public <A, B> Higher<Higher<µ, L>, B> map(Function<A, B> fn, Higher<Higher<µ, L>, A> fa) {
+                return Either.narrowK(fa).map(fn);
+            }
+        };
     }
 
     final static class Left <A, B> implements Either <A, B> {

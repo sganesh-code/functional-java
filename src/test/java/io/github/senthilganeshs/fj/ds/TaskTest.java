@@ -2,7 +2,9 @@ package io.github.senthilganeshs.fj.ds;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TaskTest {
 
@@ -40,6 +42,46 @@ public class TaskTest {
         Assert.assertEquals(doubled.length(), 5);
         Assert.assertEquals(counter.get(), 5);
         Assert.assertEquals(doubled.drop(0).headMaybe().orElse(0), Integer.valueOf(2));
+    }
+
+    @Test
+    public void testRetry() {
+        AtomicInteger attempts = new AtomicInteger(0);
+        Task<Integer> failingTask = Task.of(() -> {
+            if (attempts.incrementAndGet() < 3) throw new RuntimeException("Fail");
+            return 100;
+        });
+
+        Task<Integer> retrying = failingTask.retry(5);
+        Assert.assertEquals(retrying.run(), Integer.valueOf(100));
+        Assert.assertEquals(attempts.get(), 3);
+    }
+
+    @Test
+    public void testBracket() {
+        AtomicBoolean released = new AtomicBoolean(false);
+        Task<String> resource = Task.succeed("resource");
+        
+        Task<Integer> result = Task.bracket(
+            resource,
+            r -> Task.succeed(r.length()),
+            r -> Task.of(() -> { released.set(true); return null; })
+        );
+
+        Assert.assertEquals(result.run(), Integer.valueOf(8));
+        Assert.assertTrue(released.get());
+    }
+
+    @Test
+    public void testRace() {
+        Task<Integer> t1 = Task.of(() -> {
+            try { Thread.sleep(100); } catch (Exception e) {}
+            return 1;
+        });
+        Task<Integer> t2 = Task.of(() -> 2);
+        
+        Task<Integer> winner = Task.race(List.of(t1, t2));
+        Assert.assertEquals(winner.run(), Integer.valueOf(2));
     }
 
     @Test

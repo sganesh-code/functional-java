@@ -1,5 +1,9 @@
 package io.github.senthilganeshs.fj.ds;
 
+import io.github.senthilganeshs.fj.hkt.Higher;
+import io.github.senthilganeshs.fj.typeclass.Monad;
+import io.github.senthilganeshs.fj.typeclass.Traversable;
+import io.github.senthilganeshs.fj.typeclass.Applicative;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -13,7 +17,20 @@ import java.util.function.Predicate;
  * 
  * @param <T> The type of elements in the list.
  */
-public interface List<T> extends Collection<T> {
+public interface List<T> extends Collection<T>, Higher<List.µ, T> {
+
+    /**
+     * Witness type for Higher-Kinded Type encoding.
+     */
+    final class µ {}
+
+    /**
+     * Safely downcasts a Higher-Kinded Type to a List.
+     */
+    @SuppressWarnings("unchecked")
+    static <T> List<T> narrowK(Higher<µ, T> hka) {
+        return (List<T>) hka;
+    }
     
     @Override List<T> build(final T input);
 
@@ -144,10 +161,43 @@ public interface List<T> extends Collection<T> {
     public static List<Integer> range(int start, int end) {
         List<Integer> res = nil();
         for (int i = start; i < end; i++) {
-            res = (List<Integer>) res.build(i);
+            res = res.build(i);
         }
         return res;
     }
+
+    // --- Typeclass Instances ---
+
+    Monad<µ> monad = new Monad<>() {
+        @Override
+        public <A> Higher<µ, A> pure(A a) { return List.of(a); }
+
+        @Override
+        public <A, B> Higher<µ, B> flatMap(Function<A, Higher<µ, B>> fn, Higher<µ, A> fa) {
+            List<A> la = List.narrowK(fa);
+            return List.from(la.flatMap(a -> List.narrowK(fn.apply(a))));
+        }
+
+        @Override
+        public <A, B> Higher<µ, B> map(Function<A, B> fn, Higher<µ, A> fa) {
+            return List.narrowK(fa).map(fn);
+        }
+    };
+
+    Traversable<µ> traversable = new Traversable<>() {
+        @Override
+        public <G, A, B> Higher<G, Higher<µ, B>> traverse(Applicative<G> app, Function<A, Higher<G, B>> fn, Higher<µ, A> fa) {
+            List<A> la = List.narrowK(fa);
+            return la.foldl(app.pure(List.nil()), (acc, a) -> 
+                app.liftA2((list, b) -> List.narrowK(list).build(b), acc, fn.apply(a))
+            );
+        }
+
+        @Override
+        public <A, B> Higher<µ, B> map(Function<A, B> fn, Higher<µ, A> fa) {
+            return List.narrowK(fa).map(fn);
+        }
+    };
     
     final static class EmptyList<T> implements List<T> {
 
