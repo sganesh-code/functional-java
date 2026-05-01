@@ -1,5 +1,8 @@
 io.github.senthilganeshs.fj.codec
 io.github.senthilganeshs.fj.ds
+io.github.senthilganeshs.fj.hkt
 io.github.senthilganeshs.fj.optic
 io.github.senthilganeshs.fj.parser
+io.github.senthilganeshs.fj.stream
+io.github.senthilganeshs.fj.test
 io.github.senthilganeshs.fj.typeclass
