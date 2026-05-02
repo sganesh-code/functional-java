@@ -35,6 +35,13 @@ public interface Maybe<T> extends Collection<T>, Higher<Maybe.µ, T> {
         return new Some<>(value);
     }
 
+    /**
+     * Creates a Maybe from a potentially null value.
+     */
+    public static <R> Maybe<R> of(final R value) {
+        return value == null ? nothing() : some(value);
+    }
+
     default boolean isSome() {
         return this instanceof Some;
     }
@@ -68,7 +75,7 @@ public interface Maybe<T> extends Collection<T>, Higher<Maybe.µ, T> {
      * @return The value or supplier result.
      */
     default T orElseGet(java.util.function.Supplier<? extends T> supplier) {
-        return isSome() ? fromMaybe(null) : supplier.get();
+        return isSome() ? orElse(null) : supplier.get();
     }
 
     /**
@@ -80,14 +87,14 @@ public interface Maybe<T> extends Collection<T>, Higher<Maybe.µ, T> {
      * @throws X if no value is present.
      */
     default <X extends Throwable> T orElseThrow(java.util.function.Supplier<? extends X> exceptionSupplier) throws X {
-        if (isSome()) return fromMaybe(null);
+        if (isSome()) return orElse(null);
         throw exceptionSupplier.get();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     default <R> Maybe<R> map(java.util.function.Function<T, R> fn) {
-        return isSome() ? Maybe.some(fn.apply(orElse(null))) : Maybe.nothing();
+        return isSome() ? Maybe.of(fn.apply(orElse(null))) : Maybe.nothing();
     }
 
     @SuppressWarnings("unchecked")
@@ -116,7 +123,7 @@ public interface Maybe<T> extends Collection<T>, Higher<Maybe.µ, T> {
 
     Monad<µ> monad = new Monad<>() {
         @Override
-        public <A> Higher<µ, A> pure(A a) { return Maybe.some(a); }
+        public <A> Higher<µ, A> pure(A a) { return Maybe.of(a); }
 
         @Override
         public <A, B> Higher<µ, B> flatMap(Function<A, Higher<µ, B>> fn, Higher<µ, A> fa) {
@@ -135,7 +142,7 @@ public interface Maybe<T> extends Collection<T>, Higher<Maybe.µ, T> {
             Maybe<A> ma = Maybe.narrowK(fa);
             return ma.either(
                 () -> app.pure(Maybe.nothing()),
-                a -> app.map(Maybe::some, fn.apply(a))
+                a -> app.map(Maybe::of, fn.apply(a))
             );
         }
 
@@ -161,7 +168,7 @@ public interface Maybe<T> extends Collection<T>, Higher<Maybe.µ, T> {
 
         @Override
         public Maybe<T> build(T input) {
-            return Maybe.some(input);
+            return Maybe.of(input);
         }
 
         @Override
@@ -178,10 +185,7 @@ public interface Maybe<T> extends Collection<T>, Higher<Maybe.µ, T> {
         public boolean equals(final Object other) {
             if (other == null) return false;
             if (other == this) return true;
-            if (other instanceof Nothing) {
-                return true;
-            }
-            return false;
+            return other instanceof Nothing;
         }
         @Override
         public int hashCode() {
@@ -204,7 +208,7 @@ public interface Maybe<T> extends Collection<T>, Higher<Maybe.µ, T> {
 
         @Override
         public Maybe<T> build(T input) {
-            return new Some<>(input);
+            return Maybe.of(input);
         }
 
         @Override
@@ -224,13 +228,13 @@ public interface Maybe<T> extends Collection<T>, Higher<Maybe.µ, T> {
             if (other == this) return true;
             if (other instanceof Some) {
                 Some<T> sOther = (Some<T>)other;
-                return sOther.value.equals(value);
+                return java.util.Objects.equals(sOther.value, value);
             }
             return false;
         }
         @Override
         public int hashCode() {
-            return value.hashCode();
+            return java.util.Objects.hashCode(value);
         }
     }
  }
