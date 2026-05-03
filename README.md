@@ -274,20 +274,20 @@ Map<String, User> map = fjMap.toJavaMap();
 
 ---
 
-## 🚀 Installation (Version 1.3.6)
+## 🚀 Installation (Version 1.3.7)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.3.6</version>
+    <version>1.3.7</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.3.6'
+implementation 'io.github.sganesh-code:functional-java:1.3.7'
 ```
 
 ---
