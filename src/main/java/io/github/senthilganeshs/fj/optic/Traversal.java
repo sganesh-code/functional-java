@@ -1,18 +1,24 @@
 package io.github.senthilganeshs.fj.optic;
 
 import io.github.senthilganeshs.fj.ds.Collection;
-import io.github.senthilganeshs.fj.ds.List;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 /**
  * An optic that focuses on 0 to N elements within a collection.
  */
 public interface Traversal<S, A> {
     Collection<A> getAll(S source);
-    S modify(S source, Function<A, A> fn);
+    S modify(S source, UnaryOperator<A> fn);
 
     default S set(A value, S source) {
         return modify(source, __ -> value);
+    }
+
+    /**
+     * Performs an action for each element focused by this traversal.
+     */
+    default void forEach(S source, java.util.function.Consumer<A> action) {
+        getAll(source).forEach(action);
     }
 
     /**
@@ -23,7 +29,7 @@ public interface Traversal<S, A> {
             @Override public Collection<B> getAll(S s) {
                 return Traversal.this.getAll(s).map(other::get);
             }
-            @Override public S modify(S s, Function<B, B> fn) {
+            @Override public S modify(S s, UnaryOperator<B> fn) {
                 return Traversal.this.modify(s, a -> other.modify(a, fn));
             }
         };
@@ -37,7 +43,7 @@ public interface Traversal<S, A> {
             @Override public Collection<B> getAll(S s) {
                 return Traversal.this.getAll(s).mapMaybe(other::getMaybe);
             }
-            @Override public S modify(S s, Function<B, B> fn) {
+            @Override public S modify(S s, UnaryOperator<B> fn) {
                 return Traversal.this.modify(s, a -> other.modify(a, fn));
             }
         };
@@ -51,7 +57,7 @@ public interface Traversal<S, A> {
             @Override public Collection<B> getAll(S s) {
                 return Traversal.this.getAll(s).flatMap(other::getAll);
             }
-            @Override public S modify(S s, Function<B, B> fn) {
+            @Override public S modify(S s, UnaryOperator<B> fn) {
                 return Traversal.this.modify(s, a -> other.modify(a, fn));
             }
         };
@@ -81,11 +87,11 @@ public interface Traversal<S, A> {
     /**
      * Standard Traversal for any FJ Collection.
      */
-    static <T> Traversal<Collection<T>, T> fromCollection() {
-        return new Traversal<Collection<T>, T>() {
-            @Override public Collection<T> getAll(Collection<T> s) { return s; }
-            @Override public Collection<T> modify(Collection<T> s, Function<T, T> fn) {
-                return s.map(fn);
+    public static <W extends Collection<T>, T> Traversal<W, T> fromCollection() {
+        return new Traversal<W, T>() {
+            @Override public W getAll(W s) { return s; }
+            @Override public W modify(W s, UnaryOperator<T> fn) {
+                return (W) s.map(fn);
             }
         };
     }

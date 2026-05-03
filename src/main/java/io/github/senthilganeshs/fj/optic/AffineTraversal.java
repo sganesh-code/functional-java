@@ -4,6 +4,7 @@ import io.github.senthilganeshs.fj.ds.Collection;
 import io.github.senthilganeshs.fj.ds.List;
 import io.github.senthilganeshs.fj.ds.Maybe;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 /**
  * An optic that focuses on at most one element.
@@ -47,7 +48,7 @@ public interface AffineTraversal<S, A> {
             @Override public Collection<A> getAll(S s) {
                 return (Collection<A>) getMaybe(s).foldl((Collection<A>) List.<A>nil(), Collection::build);
             }
-            @Override public S modify(S s, Function<A, A> fn) {
+            @Override public S modify(S s, UnaryOperator<A> fn) {
                 return AffineTraversal.this.modify(s, fn);
             }
         };

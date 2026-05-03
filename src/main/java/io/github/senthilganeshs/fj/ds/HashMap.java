@@ -18,6 +18,15 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
 
     Maybe<V> get(K key);
 
+    /**
+     * Converts this persistent map to a standard mutable java.util.Map.
+     */
+    default java.util.Map<K, V> toJavaMap() {
+        java.util.Map<K, V> map = new java.util.HashMap<>();
+        this.forEach(e -> map.put(e.key(), e.value()));
+        return map;
+    }
+
     HashMap<K, V> put(K key, V value);
 
     HashMap<K, V> remove(K key);

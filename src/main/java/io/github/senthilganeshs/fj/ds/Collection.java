@@ -277,13 +277,27 @@ public interface Collection<T> {
      * @param action The consumer action.
      * @return This collection (for chaining).
      */
-    default Collection<T> forEach (final Consumer<T> action) {
+    default Collection<T> forEach (final java.util.function.Consumer<T> action) {
         return foldl(this,
             (__, t) -> {
                 action.accept(t);
                 return this;
             });
-    }    
+    }
+
+    /**
+     * Performs an action for each element in the collection, providing the index.
+     * 
+     * @param action The consumer action receiving (value, index).
+     * @return This collection (for chaining).
+     */
+    default Collection<T> forEach (final java.util.function.BiConsumer<T, Integer> action) {
+        foldl(0, (i, t) -> {
+            action.accept(t, i);
+            return i + 1;
+        });
+        return this;
+    }
 
     /**
      * Categorizes elements into a HashMap based on a key extraction function.

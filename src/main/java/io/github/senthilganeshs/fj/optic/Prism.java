@@ -4,6 +4,7 @@ import io.github.senthilganeshs.fj.ds.Collection;
 import io.github.senthilganeshs.fj.ds.List;
 import io.github.senthilganeshs.fj.ds.Maybe;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 /**
  * An optic that focuses on a case or a potentially missing field.
@@ -44,7 +45,7 @@ public interface Prism<S, A> extends AffineTraversal<S, A> {
             @Override public Collection<B> getAll(S s) {
                 return Prism.this.getMaybe(s).map(other::getAll).orElse(List.nil());
             }
-            @Override public S modify(S s, java.util.function.Function<B, B> fn) {
+            @Override public S modify(S s, UnaryOperator<B> fn) {
                 return Prism.this.modify(s, a -> other.modify(a, fn));
             }
         };
