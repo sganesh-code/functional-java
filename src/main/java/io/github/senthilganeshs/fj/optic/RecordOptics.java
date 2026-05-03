@@ -87,7 +87,7 @@ public final class RecordOptics {
                         Method accessor = comp.getAccessor();
                         accessor.setAccessible(true);
                         Object val = accessor.invoke(record);
-                        fields = fields.put(comp.getName(), toJson(val));
+                        fields = fields.put(comp.getName(), JsonValue.of(val));
                     } catch (Exception e) {
                         throw new RuntimeException("Failed to serialize record to JSON", e);
                     }
@@ -115,23 +115,6 @@ public final class RecordOptics {
                 }
             }
         );
-    }
-
-    @SuppressWarnings("unchecked")
-    private static JsonValue toJson(Object val) {
-        if (val == null) return new JsonNull();
-        if (val instanceof JsonValue jv) return jv;
-        if (val instanceof String s) return new JsonString(s);
-        if (val instanceof Number n) return new JsonNumber(n.doubleValue());
-        if (val instanceof Boolean b) return new JsonBoolean(b);
-        if (val instanceof Maybe<?> m) return m.map(RecordOptics::toJson).orElse(new JsonNull());
-        if (val instanceof List<?> l) {
-            return new JsonArray(List.from(l.map(RecordOptics::toJson)));
-        }
-        if (val.getClass().isRecord()) {
-            return ((Iso<Object, JsonValue>) jsonIso((Class<Object>) val.getClass())).get(val);
-        }
-        return new JsonNull();
     }
 
     @SuppressWarnings("unchecked")

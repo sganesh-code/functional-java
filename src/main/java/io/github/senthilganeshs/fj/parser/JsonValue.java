@@ -109,6 +109,31 @@ public sealed interface JsonValue {
         );
     }
 
+    /**
+     * Creates a JsonValue from a potentially null object.
+     * Handles primitives, fj collections (Maybe, List, Vector, HashMap), and Java Records.
+     */
+    @SuppressWarnings("unchecked")
+    static JsonValue of(Object val) {
+        if (val == null) return new JsonNull();
+        if (val instanceof JsonValue jv) return jv;
+        if (val instanceof String s) return new JsonString(s);
+        if (val instanceof Number n) return new JsonNumber(n.doubleValue());
+        if (val instanceof Boolean b) return new JsonBoolean(b);
+        if (val instanceof Maybe<?> m) return m.map(JsonValue::of).orElse(new JsonNull());
+        if (val instanceof List<?> l) return new JsonArray(List.from(l.map(JsonValue::of)));
+        if (val instanceof Collection<?> c) return new JsonArray(List.from(c.map(JsonValue::of)));
+        if (val instanceof HashMap<?, ?> m) {
+            HashMap<String, JsonValue> fields = m.foldl(HashMap.nil(), (acc, entry) ->
+                acc.put(String.valueOf(entry.key()), JsonValue.of(entry.value())));
+            return new JsonObject(fields);
+        }
+        if (val.getClass().isRecord()) {
+            return RecordOptics.jsonIso((Class<Object>) val.getClass()).get(val);
+        }
+        return new JsonString(val.toString());
+    }
+
     // --- Record Conversion ---
 
     default <R> R toRecord(Class<R> recordClass) {
