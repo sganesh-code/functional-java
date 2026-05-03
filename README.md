@@ -165,6 +165,16 @@ Lens<User, String> cityL = RecordOptics.of(User.class, User::address)
 User updated = cityL.set("New City", user);
 ```
 
+### Composed Traversals
+Use the `Optics` entry point to compose traversals over nested structures (e.g., `Maybe<List<A>>`).
+
+```java
+// Focus on every element in a nested List inside a Maybe
+Optics.<List<User>>maybe()
+    .compose(Optics.list())
+    .forEach(maybeUsers, user -> System.out.println(user.name()));
+```
+
 ---
 
 ## 📦 Serialization & Codecs
@@ -189,6 +199,18 @@ Decoder<User> userDecoder = in ->
 userEncoder.encode(output, user);
 ```
 
+### Declarative JSON Mapping
+`JsonCodec<A>` provides high-level mapping between domain objects and the `JsonValue` AST.
+
+```java
+// Convert primitives, FJ collections, and Records to JSON AST in one call
+JsonValue json = JsonValue.of(user);
+
+// Use a JsonCodec for bidirectional mapping
+JsonCodec<User> userCodec = JsonCodec.of(); 
+JsonValue root = userCodec.encode(user);
+```
+
 ---
 
 ## 🧪 Property-Based Testing
@@ -202,6 +224,16 @@ p.assertTrue(100);
 
 // Automatic Shrinking: If it fails for i=50, it will automatically 
 // try to find the smallest failing input (e.g., 1).
+```
+
+### Advanced Generators
+Compose complex data generators using weighted frequencies or random selections.
+
+```java
+Gen<Integer> weighted = Gen.frequency(List.of(
+    Tuple.of(90, Gen.pure(1)), // 90% chance of 1
+    Tuple.of(10, Gen.pure(2))  // 10% chance of 2
+));
 ```
 
 ---
@@ -220,20 +252,42 @@ List<String> javaList = vector.toJavaList();
 
 ---
 
-## 🚀 Installation (Version 1.3.1)
+## ⚡ Boilerplate Shortcuts
+
+Reduce Java verbosity with built-in iteration and interop helpers.
+
+### Indexed Iteration
+Avoid manual counters or `zipWithIndex`.
+
+```java
+// Side-effects with index (val, index)
+collection.forEach((val, i) -> System.out.println(i + ": " + val));
+```
+
+### Standard Java Interop
+Easily bridge with libraries expecting standard `java.util` structures.
+
+```java
+// Convert FJ HashMap to standard mutable Map
+Map<String, User> map = fjMap.toJavaMap();
+```
+
+---
+
+## 🚀 Installation (Version 1.3.6)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.3.1</version>
+    <version>1.3.6</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.3.1'
+implementation 'io.github.sganesh-code:functional-java:1.3.6'
 ```
 
 ---
