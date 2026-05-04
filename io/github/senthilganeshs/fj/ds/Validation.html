@@ -173,6 +173,18 @@ S&gt;&nbsp;<a href="Validation.html" title="interface in io.github.senthilganesh
 <div class="block">Safely returns the valid value or a default.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;E,<wbr>
+T&gt;&nbsp;<a href="Validation.html" title="interface in io.github.senthilganeshs.fj.ds">Validation</a><wbr>&lt;E,<wbr><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;T&gt;&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#sequence(io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.typeclass.Semigroup)" class="member-name-link">sequence</a><wbr>(<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Validation.html" title="interface in io.github.senthilganeshs.fj.ds">Validation</a>&lt;E,<wbr>T&gt;&gt;&nbsp;vs,
+ <a href="../typeclass/Semigroup.html" title="interface in io.github.senthilganeshs.fj.typeclass">Semigroup</a>&lt;E&gt;&nbsp;semigroup)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Transforms a collection of validations into a single validation that accumulates errors.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a><wbr>&lt;<a href="Validation.html" title="type parameter in Validation">E</a>,<wbr><a href="Validation.html" title="type parameter in Validation">T</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#toEither()" class="member-name-link">toEither</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Bridges this validation to an Either.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;E,<wbr>
 T&gt;&nbsp;<a href="Validation.html" title="interface in io.github.senthilganeshs.fj.ds">Validation</a><wbr>&lt;E,<wbr>T&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#valid(T)" class="member-name-link">valid</a><wbr>(T&nbsp;value)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
@@ -242,6 +254,22 @@ S&gt;</span>&nbsp;<span class="return-type"><a href="Validation.html" title="int
  <a href="../typeclass/Semigroup.html" title="interface in io.github.senthilganeshs.fj.typeclass">Semigroup</a>&lt;<a href="Validation.html" title="type parameter in Validation">E</a>&gt;&nbsp;semigroup)</span></div>
 <div class="block">Combines this validation with another. If both are invalid, their errors are combined
  using the provided Semigroup.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="sequence(io.github.senthilganeshs.fj.ds.Collection,io.github.senthilganeshs.fj.typeclass.Semigroup)">
+<h3>sequence</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;E,<wbr>
+T&gt;</span>&nbsp;<span class="return-type"><a href="Validation.html" title="interface in io.github.senthilganeshs.fj.ds">Validation</a>&lt;E,<wbr><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;T&gt;&gt;</span>&nbsp;<span class="element-name">sequence</span><wbr><span class="parameters">(<a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Validation.html" title="interface in io.github.senthilganeshs.fj.ds">Validation</a>&lt;E,<wbr>T&gt;&gt;&nbsp;vs,
+ <a href="../typeclass/Semigroup.html" title="interface in io.github.senthilganeshs.fj.typeclass">Semigroup</a>&lt;E&gt;&nbsp;semigroup)</span></div>
+<div class="block">Transforms a collection of validations into a single validation that accumulates errors.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="toEither()">
+<h3>toEither</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Either.html" title="interface in io.github.senthilganeshs.fj.ds">Either</a>&lt;<a href="Validation.html" title="type parameter in Validation">E</a>,<wbr><a href="Validation.html" title="type parameter in Validation">T</a>&gt;</span>&nbsp;<span class="element-name">toEither</span>()</div>
+<div class="block">Bridges this validation to an Either.</div>
 </section>
 </li>
 <li>
