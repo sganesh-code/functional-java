@@ -254,7 +254,23 @@ List<String> javaList = vector.toJavaList();
 
 ## ⚡ Boilerplate Shortcuts
 
-Reduce Java verbosity with built-in iteration and interop helpers.
+Reduce Java verbosity with built-in iteration, interop, and monoidal helpers.
+
+### Universal Flattening (`concatMap`)
+Safely flatten nested structures of different types (e.g., `Maybe<List<A>>`) into a single `List` without losing elements.
+
+```java
+// Returns a single flat List<Target>
+List<Target> targets = maybeList.concatMap(list -> list);
+```
+
+### Monoidal Aggregation
+Use `fold` with a `Monoid` instance for declarative accumulation.
+
+```java
+// Declaratively merge multiple lists or datasets
+List<String> combined = listOfLists.fold(List.monoid());
+```
 
 ### Indexed Iteration
 Avoid manual counters or `zipWithIndex`.
@@ -274,20 +290,20 @@ Map<String, User> map = fjMap.toJavaMap();
 
 ---
 
-## 🚀 Installation (Version 1.3.7)
+## 🚀 Installation (Version 1.3.9)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>1.3.7</version>
+    <version>1.3.9</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:1.3.7'
+implementation 'io.github.sganesh-code:functional-java:1.3.9'
 ```
 
 ---

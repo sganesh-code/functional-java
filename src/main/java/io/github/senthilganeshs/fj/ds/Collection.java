@@ -200,6 +200,14 @@ public interface Collection<T> {
     }
 
     /**
+     * Maps each element to a collection and flattens the result into a single List.
+     * This is the preferred way to flatten nested structures of different types (e.g. Maybe{@literal <}List{@literal <}A{@literal >}{@literal >}).
+     */
+    default <R> List<R> concatMap(Function<T, Collection<R>> fn) {
+        return foldl(List.nil(), (acc, t) -> List.from(acc.concat(fn.apply(t))));
+    }
+
+    /**
      * Maps each element to a collection and flattens the result into a single collection.
      * 
      * @param <R> The type of elements in the resulting collection.

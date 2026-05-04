@@ -222,13 +222,27 @@ public final class Task<A> implements Higher<Task.µ, A> {
 
     /**
      * Executes a list of tasks in parallel using the provided executor.
+     * Truly non-blocking: does not use .run() or .get() internally.
      */
     public static <A, B> Task<List<B>> boundedParTraverse(ExecutorService executor, List<A> items, Function<A, Task<B>> fn, boolean shutdownExecutor) {
-        return parTraverse(items, a -> Task.of(() -> fn.apply(a).run(), executor))
-            .flatMap(res -> {
-                if (shutdownExecutor) executor.shutdown();
-                return Task.succeed(res);
-            });
+        return new Task<>(token -> {
+            List<CompletableFuture<B>> futures = items.foldl(List.<CompletableFuture<B>>nil(), (acc, a) -> 
+                acc.build(CompletableFuture.supplyAsync(() -> fn.apply(a), executor)
+                    .thenCompose(t -> t.toFuture(token))));
+            
+            CompletableFuture<?>[] array = new CompletableFuture[futures.length()];
+            final int[] i = {0};
+            futures.forEach(f -> array[i[0]++] = f);
+
+            CompletableFuture<List<B>> result = CompletableFuture.allOf(array).thenApply(__ -> 
+                List.from(futures.map(CompletableFuture::join))
+            );
+
+            if (shutdownExecutor) {
+                result.whenComplete((__, ex) -> executor.shutdown());
+            }
+            return result;
+        });
     }
 
     /**

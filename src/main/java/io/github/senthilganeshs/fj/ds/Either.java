@@ -121,6 +121,13 @@ public interface Either<A, B> extends Collection<B>, Higher<Higher<Either.µ, A>
     }
 
     /**
+     * Extracts the Left value as a Maybe.
+     */
+    default Maybe<A> leftMaybe() {
+        return isLeft() ? Maybe.some(fromLeft(null)) : Maybe.nothing();
+    }
+
+    /**
      * Converts the Either into a Validation.
      */
     default Validation<A, B> toValidation() {

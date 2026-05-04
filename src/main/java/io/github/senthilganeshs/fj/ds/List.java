@@ -4,6 +4,7 @@ import io.github.senthilganeshs.fj.hkt.Higher;
 import io.github.senthilganeshs.fj.typeclass.Monad;
 import io.github.senthilganeshs.fj.typeclass.Traversable;
 import io.github.senthilganeshs.fj.typeclass.Applicative;
+import io.github.senthilganeshs.fj.typeclass.Monoid;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -147,8 +148,15 @@ public interface List<T> extends Collection<T>, Higher<List.µ, T> {
     static final List<Void> EMPTY = new EmptyList<>();
     
     @SuppressWarnings("unchecked")
-    public static<R> List<R> nil() {
+    static <R> List<R> nil() {
         return (List<R>) EMPTY;
+    }
+
+    /**
+     * Returns a Monoid instance for List concatenation.
+     */
+    static <T> Monoid<List<T>> monoid() {
+        return Monoid.of(nil(), (a, b) -> List.from(a.concat(b)));
     }
     
     public static <R> List<R> cons(final List<R> head, final R tail) {
