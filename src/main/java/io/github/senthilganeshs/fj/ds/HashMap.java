@@ -31,6 +31,10 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
 
     HashMap<K, V> remove(K key);
 
+    default <R> HashMap<K, R> mapKV(BiFunction<K, V, R> fn) {
+        return this.foldl(HashMap.<K, R>nil(), (acc, entry) -> acc.put(entry.key(), fn.apply(entry.key(), entry.value())));
+    }
+
     int size();
 
     default Collection<K> keys() {

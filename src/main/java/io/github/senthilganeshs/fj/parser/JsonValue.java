@@ -5,6 +5,7 @@ import io.github.senthilganeshs.fj.ds.HashMap;
 import io.github.senthilganeshs.fj.ds.List;
 import io.github.senthilganeshs.fj.ds.Maybe;
 import io.github.senthilganeshs.fj.ds.Validation;
+import io.github.senthilganeshs.fj.typeclass.Hashable;
 import io.github.senthilganeshs.fj.optic.AffineTraversal;
 import io.github.senthilganeshs.fj.optic.Prism;
 import io.github.senthilganeshs.fj.optic.RecordOptics;
@@ -13,6 +14,32 @@ import io.github.senthilganeshs.fj.optic.RecordOptics;
  * A purely functional JSON AST with built-in optics.
  */
 public sealed interface JsonValue {
+    // Helper to provide a canonical Hashable instance for all JsonValues
+    static Hashable<JsonValue> hasher() {
+        return new Hashable<>() {
+            @Override
+            public String hash(JsonValue jv) {
+                if (jv instanceof JsonObject o) {
+                    List<String> sortedKeys = List.from(o.fields().map(HashMap.Entry::key).sort(String::compareTo));
+                    StringBuilder sb = new StringBuilder("{");
+                    for (String key : sortedKeys) {
+                        if (sb.length() > 1) sb.append(",");
+                        sb.append(key).append(":").append(hash(o.fields().get(key).orElse(new JsonNull())));
+                    }
+                    return sb.append("}").toString();
+                } else if (jv instanceof JsonArray a) {
+                    StringBuilder sb = new StringBuilder("[");
+                    a.elements().forEach(val -> {
+                        if (sb.length() > 1) sb.append(",");
+                        sb.append(hash(val));
+                    });
+                    return sb.append("]").toString();
+                } else {
+                    return jv.serialize();
+                }
+            }
+        };
+    }
     record JsonObject(HashMap<String, JsonValue> fields) implements JsonValue {}
     record JsonArray(List<JsonValue> elements) implements JsonValue {}
     record JsonString(String value) implements JsonValue {}
@@ -110,6 +137,19 @@ public sealed interface JsonValue {
     }
 
     /**
+     * Converts a JsonValue back to a standard Java object (String, Double, Boolean, List, Map, or null).
+     */
+    static Object toObj(JsonValue jv) {
+        if (jv instanceof JsonString s) return s.value();
+        if (jv instanceof JsonNumber n) return n.value();
+        if (jv instanceof JsonBoolean b) return b.value();
+        if (jv instanceof JsonArray a) return a.elements().map(JsonValue::toObj);
+        if (jv instanceof JsonObject o) return o.fields().foldl(HashMap.nil(), (acc, entry) -> 
+            acc.put(entry.key(), toObj(entry.value())));
+        return null;
+    }
+
+    /**
      * Creates a JsonValue from a potentially null object.
      * Handles primitives, fj collections (Maybe, List, Vector, HashMap), and Java Records.
      */
@@ -121,13 +161,15 @@ public sealed interface JsonValue {
         if (val instanceof Number n) return new JsonNumber(n.doubleValue());
         if (val instanceof Boolean b) return new JsonBoolean(b);
         if (val instanceof Maybe<?> m) return m.map(JsonValue::of).orElse(new JsonNull());
-        if (val instanceof List<?> l) return new JsonArray(List.from(l.map(JsonValue::of)));
-        if (val instanceof Collection<?> c) return new JsonArray(List.from(c.map(JsonValue::of)));
+        
         if (val instanceof HashMap<?, ?> m) {
             HashMap<String, JsonValue> fields = m.foldl(HashMap.nil(), (acc, entry) ->
                 acc.put(String.valueOf(entry.key()), JsonValue.of(entry.value())));
             return new JsonObject(fields);
         }
+
+        if (val instanceof List<?> l) return new JsonArray(List.from(l.map(JsonValue::of)));
+        if (val instanceof Collection<?> c) return new JsonArray(List.from(c.map(JsonValue::of)));
         if (val.getClass().isRecord()) {
             return RecordOptics.jsonIso((Class<Object>) val.getClass()).get(val);
         }
