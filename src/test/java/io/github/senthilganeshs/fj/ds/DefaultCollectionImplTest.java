@@ -22,7 +22,7 @@ public class DefaultCollectionImplTest {
 
         @Override
         public Collection<T> build(T input) {
-            return new StubCollection<>(internal.build(input));
+            return new StubCollection<>(List.from(internal.build(input)));
         }
 
         @Override

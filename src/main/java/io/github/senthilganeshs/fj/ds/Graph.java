@@ -1,196 +1,195 @@
 package io.github.senthilganeshs.fj.ds;
 
+import io.github.senthilganeshs.fj.typeclass.Ord;
 import java.util.function.BiFunction;
 
 /**
- * A purely functional Graph interface using an Adjacency Map representation.
- * 
- * @param <V> The type of nodes in the graph.
+ * Functional Graph implementation using adjacency maps.
  */
-public interface Graph<V extends Comparable<V>> extends Collection<V> {
+public interface Graph<V extends Comparable<V>> {
 
-    Graph<V> addNode(V node);
+    static <V extends Comparable<V>> Graph<V> nil() {
+        return new AdjacencyGraph<V>(HashMap.<V, Set<V>>nil());
+    }
+
+    Graph<V> addVertex(V vertex);
+    
+    default Graph<V> addNode(V vertex) {
+        return addVertex(vertex);
+    }
+
     Graph<V> addEdge(V from, V to);
-    Set<V> nodes();
-    Set<V> successors(V node);
-
-    static <R extends Comparable<R>> Graph<R> nil() {
-        return new AdjacencyMapGraph<>(HashMap.<R, Set<R>>nil());
+    
+    Collection<V> neighbors(V vertex);
+    
+    default Collection<V> successors(V vertex) {
+        return neighbors(vertex);
     }
 
-    @SuppressWarnings("unchecked")
-    default List<V> bfs(V start) {
-        List<V> result = List.nil();
-        Set<V> visited = Set.emptyNatural();
+    Collection<V> vertices();
+    
+    default Collection<V> nodes() {
+        return vertices();
+    }
+
+    default int length() {
+        return vertices().length();
+    }
+
+    default int count() {
+        return length();
+    }
+
+    /**
+     * Breadth-First Search (BFS) traversal.
+     */
+    default Collection<V> bfs(V start) {
+        Collection<V> result = List.nil();
         Queue<V> queue = Queue.of(start);
+        Set<V> visited = Set.of(Ord.natural(), start);
 
-        while (true) {
-            Maybe<Tuple<V, Queue<V>>> dequeued = queue.dequeue();
-            Tuple<V, Queue<V>> t = dequeued.orElse(null);
-            if (t == null) break;
-
-            V current = t.getA().orElse(null);
-            queue = t.getB().orElse(Queue.nil());
-
-            if (visited.contains(current)) continue;
-
-            visited = visited.build(current);
+        while (!queue.isEmpty()) {
+            V current = queue.head().orElse(null);
+            queue = queue.tail().orElse(Queue.nil());
             result = result.build(current);
 
-            Set<V> neighbors = successors(current);
-            final Queue<V> currentQueue = queue;
-            queue = (Queue<V>) neighbors.foldl(currentQueue, (q, v) -> (Queue<V>) ((Queue<V>)q).build(v));
-        }
-        return result;
-    }
-
-    @SuppressWarnings("unchecked")
-    default List<V> dfs(V start) {
-        List<V> result = List.nil();
-        Set<V> visited = Set.emptyNatural();
-        Stack<V> stack = (Stack<V>) Stack.<V>emptyStack().build(start);
-
-        while (true) {
-            Maybe<V> top = stack.head();
-            V current = top.orElse(null);
-            if (current == null) break;
-
-            stack = stack.tail().orElse(Stack.emptyStack());
-
-            if (visited.contains(current)) continue;
-
-            visited = visited.build(current);
-            result = result.build(current);
-
-            Set<V> neighbors = successors(current);
-            final Stack<V> currentStack = stack;
-            stack = (Stack<V>) neighbors.foldl(currentStack, (s, v) -> (Stack<V>) ((Stack<V>)s).build(v));
+            Collection<V> neighbors = neighbors(current);
+            final Set<V>[] visitedRef = new Set[]{visited};
+            final Queue<V>[] queueRef = new Queue[]{queue};
+            neighbors.forEach(neighbor -> {
+                if (!visitedRef[0].contains(neighbor)) {
+                    visitedRef[0] = visitedRef[0].add(neighbor);
+                    queueRef[0] = (Queue<V>) queueRef[0].build(neighbor);
+                }
+            });
+            visited = visitedRef[0];
+            queue = queueRef[0];
         }
         return result;
     }
 
     /**
-     * Performs a topological sort on the graph.
-     * Returns Maybe.nothing() if the graph contains a cycle.
-     * 
-     * @return Some(list) of nodes in topological order, or Nothing if cycle found.
+     * Depth-First Search (DFS) traversal.
      */
-    @SuppressWarnings("unchecked")
-    default Maybe<List<V>> topologicalSort() {
-        HashMap<V, Integer> inDegree = nodes().foldl(HashMap.<V, Integer>nil(), (acc, n) -> {
-            HashMap<V, Integer> next = acc.put(n, acc.get(n).orElse(0));
-            return successors(n).foldl(next, (accInner, succ) -> 
-                accInner.put(succ, accInner.get(succ).orElse(0) + 1));
-        });
+    default Collection<V> dfs(V start) {
+        Collection<V> result = List.nil();
+        Stack<V> stack = Stack.of(start);
+        Set<V> visited = Set.of(Ord.natural(), start);
 
-        Queue<V> queue = nodes().foldl(Queue.<V>nil(), (q, n) -> 
-            inDegree.get(n).orElse(0) == 0 ? (Queue<V>) q.build(n) : q);
+        while (!stack.isEmpty()) {
+            V current = stack.head().orElse(null);
+            stack = stack.tail().orElse(Stack.emptyStack());
+            result = result.build(current);
 
-        List<V> result = List.nil();
-        int count = 0;
-        
-        HashMap<V, Integer> currentInDegree = inDegree;
-        Queue<V> currentQueue = queue;
-
-        while (true) {
-            Maybe<Tuple<V, Queue<V>>> dequeued = currentQueue.dequeue();
-            Tuple<V, Queue<V>> t = dequeued.orElse(null);
-            if (t == null) break;
-
-            V u = t.getA().orElse(null);
-            currentQueue = t.getB().orElse(Queue.nil());
-            result = result.build(u);
-            count++;
-
-            Set<V> neighbors = successors(u);
-            final HashMap<V, Integer> loopInDegree = currentInDegree;
-            final Queue<V> loopQueue = currentQueue;
-            
-            Tuple<HashMap<V, Integer>, Queue<V>> state = neighbors.foldl(Tuple.of(loopInDegree, loopQueue), (acc, v) -> {
-                HashMap<V, Integer> d = (HashMap<V, Integer>) acc.getA().orElse(null);
-                Queue<V> q = (Queue<V>) acc.getB().orElse(null);
-                int newDeg = d.get(v).orElse(0) - 1;
-                HashMap<V, Integer> nextD = d.put(v, newDeg);
-                Queue<V> nextQ = (newDeg == 0) ? (Queue<V>) q.build(v) : q;
-                return Tuple.of(nextD, nextQ);
+            Collection<V> neighbors = neighbors(current);
+            final Set<V>[] visitedRef = new Set[]{visited};
+            final Stack<V>[] stackRef = new Stack[]{stack};
+            neighbors.forEach(neighbor -> {
+                if (!visitedRef[0].contains(neighbor)) {
+                    visitedRef[0] = visitedRef[0].add(neighbor);
+                    stackRef[0] = (Stack<V>) stackRef[0].build(neighbor);
+                }
             });
-            
-            currentInDegree = state.getA().orElse(null);
-            currentQueue = state.getB().orElse(null);
+            visited = visitedRef[0];
+            stack = stackRef[0];
         }
-
-        return count == nodes().length() ? Maybe.some(result) : Maybe.nothing();
+        return result;
     }
 
-    final class AdjacencyMapGraph<V extends Comparable<V>> implements Graph<V> {
-        private final HashMap<V, Set<V>> adjacencyMap;
+    /**
+     * Performs a topological sort of the graph.
+     * Only applicable to Directed Acyclic Graphs (DAGs).
+     * 
+     * @return Some(Sorted vertices) if no cycles, Nothing otherwise.
+     */
+    default Maybe<Collection<V>> topologicalSort() {
+        final HashMap<V, Integer>[] inDegree = new HashMap[]{ (HashMap<V, Integer>) vertices().foldl(HashMap.<V, Integer>nil(), (acc, v) -> acc.put(v, 0)) };
+        vertices().forEach(u -> 
+            neighbors(u).forEach(v -> 
+                inDegree[0] = inDegree[0].put(v, inDegree[0].get(v).orElse(0) + 1)));
 
-        AdjacencyMapGraph(HashMap<V, Set<V>> adjacencyMap) {
-            this.adjacencyMap = adjacencyMap;
+        final Queue<V>[] queue = new Queue[]{ (Queue<V>) vertices().foldl(Queue.<V>nil(), (acc, v) -> 
+            inDegree[0].get(v).orElse(0) == 0 ? (Queue<V>) acc.build(v) : acc) };
+
+        Collection<V> result = List.nil();
+        final int[] count = {0};
+
+        while (!queue[0].isEmpty()) {
+            V u = queue[0].head().orElse(null);
+            queue[0] = queue[0].tail().orElse(Queue.nil());
+            result = result.build(u);
+            count[0]++;
+
+            final HashMap<V, Integer>[] inDegreeRef = inDegree;
+            neighbors(u).forEach(v -> {
+                int deg = inDegreeRef[0].get(v).orElse(0) - 1;
+                inDegreeRef[0] = inDegreeRef[0].put(v, deg);
+                if (deg == 0) {
+                    queue[0] = (Queue<V>) queue[0].build(v);
+                }
+            });
+        }
+
+        return count[0] == vertices().length() ? Maybe.some(result) : Maybe.nothing();
+    }
+
+    /**
+     * Dijkstra's algorithm for shortest paths from a source vertex.
+     * 
+     * @param source The starting vertex.
+     * @return A map of vertices to their shortest distance from source.
+     */
+    default HashMap<V, Integer> dijkstra(V source) {
+        final HashMap<V, Integer>[] distances = new HashMap[]{ (HashMap<V, Integer>) vertices().foldl(HashMap.<V, Integer>nil(), (acc, v) -> 
+            acc.put(v, v.equals(source) ? 0 : Integer.MAX_VALUE)) };
+        
+        PriorityQueue<V> pq = PriorityQueue.of(Ord.natural(), source);
+
+        while (!pq.isEmpty()) {
+            V u = pq.peek().orElse(null);
+            pq = pq.pop().orElse(PriorityQueue.<V>nilWithOrd(Ord.natural()));
+
+            int distU = distances[0].get(u).orElse(Integer.MAX_VALUE);
+            
+            final PriorityQueue<V>[] pqRef = new PriorityQueue[]{pq};
+            neighbors(u).forEach(v -> {
+                int newDist = distU + 1; // Assuming weight 1 for all edges
+                if (newDist < distances[0].get(v).orElse(Integer.MAX_VALUE)) {
+                    distances[0] = distances[0].put(v, newDist);
+                    pqRef[0] = (PriorityQueue<V>) pqRef[0].build(v);
+                }
+            });
+            pq = pqRef[0];
+        }
+        return distances[0];
+    }
+
+    final class AdjacencyGraph<V extends Comparable<V>> implements Graph<V> {
+        private final HashMap<V, Set<V>> adj;
+
+        AdjacencyGraph(HashMap<V, Set<V>> adj) {
+            this.adj = adj;
         }
 
         @Override
-        public Graph<V> addNode(V node) {
-            if (adjacencyMap.get(node).isSome()) return this;
-            return new AdjacencyMapGraph<>(adjacencyMap.put(node, Set.emptyNatural()));
+        public Graph<V> addVertex(V vertex) {
+            return new AdjacencyGraph<V>(adj.put(vertex, adj.get(vertex).orElse(Set.<V>empty(Ord.natural()))));
         }
 
         @Override
         public Graph<V> addEdge(V from, V to) {
-            Graph<V> g = addNode(from).addNode(to);
-            HashMap<V, Set<V>> map = ((AdjacencyMapGraph<V>) g).adjacencyMap;
-            Set<V> neighbors = map.get(from).orElse(Set.emptyNatural());
-            return new AdjacencyMapGraph<>(map.put(from, neighbors.build(to)));
+            Set<V> neighbors = adj.get(from).orElse(Set.<V>empty(Ord.natural())).add(to);
+            return new AdjacencyGraph<V>(adj.put(from, neighbors).put(to, adj.get(to).orElse(Set.<V>empty(Ord.natural()))));
         }
 
         @Override
-        public Set<V> nodes() {
-            return adjacencyMap.foldl(Set.<V>emptyNatural(), (acc, entry) -> acc.build(entry.key()));
+        public Collection<V> neighbors(V vertex) {
+            return adj.get(vertex).orElse(Set.<V>empty(Ord.natural()));
         }
 
         @Override
-        public Set<V> successors(V node) {
-            return adjacencyMap.get(node).orElse(Set.emptyNatural());
-        }
-
-        @Override
-        public <R> Collection<R> empty() {
-            return List.nil();
-        }
-
-        @Override
-        public Collection<V> build(V input) {
-            return addNode(input);
-        }
-
-        @Override
-        public <R> R foldl(R seed, BiFunction<R, V, R> fn) {
-            return nodes().foldl(seed, fn);
-        }
-
-        @Override
-        public String toString() {
-            return "Graph" + adjacencyMap.toString();
-        }
-
-        @Override
-        public int length() {
-            return nodes().length();
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public boolean equals(Object other) {
-            if (other == null) return false;
-            if (other == this) return true;
-            if (!(other instanceof Graph)) return false;
-            Graph<?> o = (Graph<?>) other;
-            return adjacencyMap.equals(((AdjacencyMapGraph<?>) o).adjacencyMap);
-        }
-
-        @Override
-        public int hashCode() {
-            return adjacencyMap.hashCode();
+        public Collection<V> vertices() {
+            return adj.map(HashMap.Entry::key);
         }
     }
 }

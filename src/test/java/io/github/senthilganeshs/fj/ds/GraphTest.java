@@ -42,7 +42,7 @@ public class GraphTest {
             .addEdge("B", "D")
             .addEdge("C", "D");
             
-        List<String> bfs = g.bfs("A");
+        List<String> bfs = List.from(g.bfs("A"));
         Assert.assertEquals(bfs.length(), 4);
         // BFS order should have A first, then B or C, then D
         Assert.assertEquals(bfs.find(i -> true).orElse(""), "A");
@@ -56,7 +56,7 @@ public class GraphTest {
             .addEdge("B", "D")
             .addEdge("C", "D");
             
-        List<String> dfs = g.dfs("A");
+        List<String> dfs = List.from(g.dfs("A"));
         Assert.assertEquals(dfs.length(), 4);
         Assert.assertEquals(dfs.find(i -> true).orElse(""), "A");
     }
@@ -68,14 +68,14 @@ public class GraphTest {
             .addEdge("A", "C")
             .addEdge("B", "D")
             .addEdge("C", "D");
-            
-        Maybe<List<String>> topo = g.topologicalSort();
+
+        Maybe<Collection<String>> topoCol = g.topologicalSort();
+        Maybe<List<String>> topo = topoCol.map(List::from);
         Assert.assertTrue(topo.isSome());
         List<String> sorted = topo.orElse(List.nil());
         Assert.assertEquals(sorted.length(), 4);
-        Assert.assertEquals(sorted.find(i -> true).orElse(""), "A");
+        Assert.assertEquals(sorted.head().orElse(""), "A");
     }
-
     @Test
     public void testGraphCyclic() {
         Graph<String> g = Graph.<String>nil()
@@ -112,7 +112,7 @@ public class GraphTest {
             .addEdge("D", "E")
             .addEdge("B", "E");
             
-        Maybe<List<String>> topo = g.topologicalSort();
+        Maybe<List<String>> topo = g.topologicalSort().map(List::from);
         Assert.assertTrue(topo.isSome());
         Assert.assertEquals(topo.orElse(List.nil()).length(), 5);
 

@@ -59,11 +59,11 @@ public class VectorTest {
         Vector<Integer> v = Vector.of(1, 2, 3, 4);
         
         // map (covariant)
-        Vector<Integer> doubled = v.map(i -> i * 2);
+        Vector<Integer> doubled = Vector.from(v.map(i -> i * 2));
         Assert.assertEquals(doubled.toString(), "[2,4,6,8]");
         
         // filter (covariant)
-        Vector<Integer> filtered = v.filter(i -> i % 2 == 0);
+        Vector<Integer> filtered = Vector.from(v.filter(i -> i % 2 == 0));
         Assert.assertEquals(filtered.toString(), "[2,4]");
         
         // takeWhile/dropWhile

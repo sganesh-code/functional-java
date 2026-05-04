@@ -4,35 +4,45 @@ import java.util.function.BiFunction;
 
 /**
  * A purely functional Queue (FIFO).
- * 
- * @param <T> The type of elements.
  */
 public interface Queue<T> extends Collection<T> {
 
-    Maybe<Tuple<T, Queue<T>>> dequeue();
-
     @SuppressWarnings("unchecked")
     static <R> Queue<R> from(Collection<R> c) {
+        if (c instanceof Queue) return (Queue<R>) c;
         return (Queue<R>) c.foldl(Queue.<R>nil(), (q, r) -> (Queue<R>) q.build(r));
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    default <R> Queue<R> map(java.util.function.Function<T, R> fn) {
-        return from(Collection.super.map(fn));
-    }
-
     static <R> Queue<R> nil() {
-        return new BankersQueue<>(Stack.emptyStack(), Stack.emptyStack());
+        return (Queue<R>) BankersQueue.nil();
     }
 
     @SafeVarargs
     static <R> Queue<R> of(R... values) {
         Queue<R> q = nil();
         if (values == null) return q;
-        for (R val : values) q = (Queue<R>) q.build(val);
+        for (R val : values) {
+            q = (Queue<R>) q.build(val);
+        }
         return q;
     }
+
+    Maybe<T> head();
+    Maybe<Queue<T>> tail();
+
+    @Override
+    default <R> Collection<R> empty() {
+        return nil();
+    }
+
+    @Override
+    default Collection<T> build(T input) {
+        return enqueue(input);
+    }
+
+    Queue<T> enqueue(T value);
+    Maybe<Tuple<T, Queue<T>>> dequeue();
 
     final class BankersQueue<T> implements Queue<T> {
         private final Stack<T> front;
@@ -43,27 +53,35 @@ public interface Queue<T> extends Collection<T> {
             this.back = back;
         }
 
-        @Override
-        public Maybe<Tuple<T, Queue<T>>> dequeue() {
-            return front.head().map(h -> Tuple.of(h, check(front.tail().orElse(Stack.emptyStack()), back)));
+        static <T> Queue<T> nil() {
+            return new BankersQueue<>(Stack.emptyStack(), Stack.emptyStack());
         }
 
         private Queue<T> check(Stack<T> f, Stack<T> b) {
-            if (f.length() == 0) {
-                // To move back to front, we must reverse LIFO back to get FIFO front
-                return new BankersQueue<>(b.reverse(), Stack.emptyStack());
+            if (f.isEmpty()) {
+                return new BankersQueue<>(Stack.from(b.reverse()), Stack.emptyStack());
             }
             return new BankersQueue<>(f, b);
         }
 
         @Override
-        public <R> Collection<R> empty() {
-            return Queue.nil();
+        public Queue<T> enqueue(T value) {
+            return check(front, (Stack<T>) back.build(value));
         }
 
         @Override
-        public Collection<T> build(T input) {
-            return check(front, (Stack<T>) back.build(input));
+        public Maybe<Tuple<T, Queue<T>>> dequeue() {
+            return front.head().map(h -> Tuple.of(h, check(front.tail().orElse(Stack.emptyStack()), back)));
+        }
+
+        @Override
+        public Maybe<T> head() {
+            return front.head();
+        }
+
+        @Override
+        public Maybe<Queue<T>> tail() {
+            return front.head().map(h -> check(front.tail().orElse(Stack.emptyStack()), back));
         }
 
         @Override
@@ -72,25 +90,23 @@ public interface Queue<T> extends Collection<T> {
             return back.reverse().foldl(res, fn);
         }
 
+        @Override public <R> Collection<R> empty() { return nil(); }
+
         @Override
         public String toString() {
-            return foldl("[", (r, t) -> r + (r.equals("[") ? "" : ",") + t) + "]";
+            return "Queue(" + front + ", " + back + ")";
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean equals(Object other) {
-            if (other == null) return false;
-            if (other == this) return true;
-            if (!(other instanceof Queue)) return false;
-            Queue<?> o = (Queue<?>) other;
-            if (o.length() != length()) return false;
-            return this.toString().equals(o.toString());
+            if (other instanceof Queue) {
+                Queue<?> q = (Queue<?>) other;
+                if (q.length() != length()) return false;
+                return this.toString().equals(q.toString());
+            }
+            return false;
         }
-
-        @Override
-        public int hashCode() {
-            return toString().hashCode();
-        }
+        
+        @Override public int hashCode() { return toString().hashCode(); }
     }
 }

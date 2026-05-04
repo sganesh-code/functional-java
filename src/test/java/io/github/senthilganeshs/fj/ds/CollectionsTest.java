@@ -106,7 +106,7 @@ public class CollectionsTest {
         Assert.assertTrue(g.successors("A").contains("C"));
         
         // BFS traversal
-        List<String> bfsOrder = g.bfs("A");
+        List<String> bfsOrder = List.from(g.bfs("A"));
         Assert.assertTrue(bfsOrder.any(v -> v.equals("A")));
         Assert.assertTrue(bfsOrder.any(v -> v.equals("B")));
         Assert.assertTrue(bfsOrder.any(v -> v.equals("C")));
@@ -114,16 +114,17 @@ public class CollectionsTest {
         Assert.assertEquals(bfsOrder.length(), 4);
         
         // DFS traversal
-        List<String> dfsOrder = g.dfs("A");
+        List<String> dfsOrder = List.from(g.dfs("A"));
         Assert.assertEquals(dfsOrder.length(), 4);
         
         // Topological Sort
-        Maybe<List<String>> topo = g.topologicalSort();
+        Maybe<List<String>> topo = g.topologicalSort().map(List::from);
         Assert.assertTrue(topo.isSome());
         // One valid order is A, B, C, D (or A, C, B, D)
         // Given our foldl/Set order, let's verify it starts with A and ends with D
         List<String> sorted = topo.orElse(List.nil());
-        String first = ((Maybe<String>) sorted.unzip().getA().flatMap(id -> (Maybe<String>)id)).orElse("");
+        Maybe<Collection<String>> headMaybe = (Maybe<Collection<String>>) (Maybe) sorted.zipWithIndex().unzip().getA();
+        String first = headMaybe.flatMap(c -> List.from(c).head()).orElse("");
         Assert.assertEquals(first, "A");
         
         // Cycle detection

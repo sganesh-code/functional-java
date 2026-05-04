@@ -1,399 +1,139 @@
 package io.github.senthilganeshs.fj.ds;
 
 import io.github.senthilganeshs.fj.hkt.Higher;
-import io.github.senthilganeshs.fj.optic.Prism;
 import io.github.senthilganeshs.fj.typeclass.Monad;
-import io.github.senthilganeshs.fj.typeclass.Bifunctor;
-import io.github.senthilganeshs.fj.typeclass.Traversable;
-import io.github.senthilganeshs.fj.typeclass.Applicative;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
- * Represents a value of one of two possible types (a disjoint union).
- * 
- * <p>An instance of Either is either an instance of {@link Left} or {@link Right}.
- * By convention, {@code Left} is used for failure and {@code Right} is used for success.</p>
- * 
- * @param <A> The type of the Left value (usually representing an error).
- * @param <B> The type of the Right value (usually representing a success).
+ * A data structure representing a value of one of two possible types.
  */
-public interface Either<A, B> extends Collection<B>, Higher<Higher<Either.µ, A>, B> {
+public interface Either<A, B> extends Collection<B> {
 
-    /**
-     * Witness type for Higher-Kinded Type encoding.
-     */
-    final class µ {}
-
-    /**
-     * Safely downcasts a Higher-Kinded Type to an Either.
-     */
     @SuppressWarnings("unchecked")
-    static <A, B> Either<A, B> narrowK(Higher<Higher<µ, A>, B> hka) {
-        return (Either<A, B>) hka;
+    static <A, B> Collection<B> rights(Collection<Either<A, B>> es) {
+        return es.mapMaybe(e -> e.isRight() ? Maybe.some(e.fromRight(null)) : Maybe.nothing());
     }
 
-    @Override Either<A,B> build (final B value);
-    
-    /**
-     * Applies either the left function or the right function to the contained value.
-     * 
-     * @param <R> The resulting type.
-     * @param fa Function to apply if this is Left.
-     * @param fb Function to apply if this is Right.
-     * @return The result of applying the appropriate function.
-     */
-    <R> R either (final Function<A, R> fa, final Function<B, R> fb);
-    
-    /**
-     * Creates a Left instance.
-     * 
-     * @param <P> Left type.
-     * @param <Q> Right type.
-     * @param value The value.
-     * @return A Left Either.
-     */
-    public static <P, Q> Either <P, Q> left (final P value) {
-        return new Left<>(value);
-    }
-
-    /**
-     * Creates a Right instance.
-     * 
-     * @param <P> Left type.
-     * @param <Q> Right type.
-     * @param value The value.
-     * @return A Right Either.
-     */
-    public static <P, Q> Either <P, Q> right (final Q value) {
-        return new Right<>(value);
-    }
-
-    /**
-     * Extracts all Left values from a collection of Eithers.
-     * 
-     * @param <A> Left type.
-     * @param <B> Right type.
-     * @param es Collection of Eithers.
-     * @return Collection of Left values.
-     */
     @SuppressWarnings("unchecked")
-    public static <A, B> Collection<A> lefts (final Collection<Either<A, B>> es) {
+    static <A, B> Collection<A> lefts(Collection<Either<A, B>> es) {
         return es.mapMaybe(e -> e.isLeft() ? Maybe.some(e.fromLeft(null)) : Maybe.nothing());
     }
 
-    /**
-     * Extracts all Right values from a collection of Eithers.
-     * 
-     * @param <A> Left type.
-     * @param <B> Right type.
-     * @param es Collection of Eithers.
-     * @return Collection of Right values.
-     */
-    @SuppressWarnings("unchecked")
-    public static <A, B> Collection<B> rights (final Collection<Either<A, B>> es) {
-        return es.mapMaybe(e -> e.isRight() ? Maybe.some(e.orElse(null)) : Maybe.nothing());
+    static <A, B> Either<A, B> left(final A value) {
+        return new Left<>(value);
     }
 
-    /**
-     * @deprecated Use {@link #orElse(Object)} instead.
-     */
-    @Deprecated
-    default B fromRight (final B def) {
-        return either (a -> def, b -> b);
+    static <A, B> Either<A, B> right(final B value) {
+        return new Right<>(value);
     }
 
-    /**
-     * Returns the Right value if present, otherwise returns the provided default.
-     * 
-     * @param def The fallback value.
-     * @return The Right value or def.
-     */
-    default B orElse (final B def) {
-        return fromRight(def);
+    default boolean isLeft() { return this instanceof Left; }
+    default boolean isRight() { return this instanceof Right; }
+
+    default A fromLeft(A def) {
+        return isLeft() ? ((Left<A, B>) this).value : def;
     }
 
-    /**
-     * Converts the Either into a Maybe.
-     */
-    default Maybe<B> toMaybe() {
-        return isRight() ? Maybe.some(orElse(null)) : Maybe.nothing();
+    default B fromRight(B def) {
+        return isRight() ? ((Right<A, B>) this).value : def;
     }
 
-    /**
-     * Extracts the Left value as a Maybe.
-     */
-    default Maybe<A> leftMaybe() {
-        return isLeft() ? Maybe.some(fromLeft(null)) : Maybe.nothing();
-    }
-
-    /**
-     * Converts the Either into a Validation.
-     */
-    default Validation<A, B> toValidation() {
-        return either(Validation::invalid, Validation::valid);
-    }
-
-    /**
-     * Returns the Right value if present, otherwise returns the result of the supplier.
-     * 
-     * @param supplier The supplier of the fallback value.
-     * @return The value or supplier result.
-     */
-    default B orElseGet(java.util.function.Supplier<? extends B> supplier) {
-        return isRight() ? fromRight(null) : supplier.get();
-    }
-
-    /**
-     * Returns the Right value if present, otherwise throws the exception from the supplier.
-     * 
-     * @param <X> Type of the exception.
-     * @param exceptionSupplier The supplier of the exception.
-     * @return The value.
-     * @throws X if no value is present.
-     */
-    default <X extends Throwable> B orElseThrow(java.util.function.Supplier<? extends X> exceptionSupplier) throws X {
-        if (isRight()) return fromRight(null);
-        throw exceptionSupplier.get();
-    }
-
-    default <X extends Throwable> B orElseThrow(java.util.function.Function<A, ? extends X> exceptionFunction) throws X {
-        if (isRight()) return fromRight(null);
-        throw exceptionFunction.apply(fromLeft(null));
-    }
-    
-    /**
-     * Safely extracts the Left value or returns a default.
-     * 
-     * @param def Default value.
-     * @return The Left value or def.
-     */
-    default A fromLeft (final A def) {
-        return either(a -> a, b -> def);
-    }
-
-    /**
-     * Returns true if this is a Left.
-     * 
-     * @return True if Left.
-     */
-    default boolean isLeft () {
-        return either (a -> true, b -> false);
-    }
-    
-    /**
-     * Returns true if this is a Right.
-     * 
-     * @return True if Right.
-     */
-    default boolean isRight() {
-        return either (a -> false, b -> true);
-    }
-    
-    @SuppressWarnings("unchecked")
     @Override
-    default <R> Either<A, R> map(Function<B, R> fn) {
-        return either(Either::left, b -> Either.right(fn.apply(b)));
+    default <R> Collection<R> empty() {
+        return (Collection<R>) left(null);
     }
 
-    @SuppressWarnings("unchecked")
-    default <C> Either<C, B> mapLeft(Function<A, C> fn) {
-        return either(a -> Either.left(fn.apply(a)), Either::right);
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
-    default Either<A, B> filter(java.util.function.Predicate<B> pred) {
-        return either(Either::left, b -> pred.test(b) ? Either.right(b) : (Either<A, B>) Either.left(b));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default <R> Collection<R> flatMap(Function<B, Collection<R>> fn) {
-        return either(Either::left, fn::apply);
-    }
-
-    @SuppressWarnings("unchecked")
-    default <C> Either<A, C> flatMapEither(Function<B, Either<A, C>> fn) {
-        return either(Either::left, fn::apply);
-    }
-
-    /**
-     * Transforms both sides of the Either.
-     * 
-     * @param <C> New Left type.
-     * @param <D> New Right type.
-     * @param fa Left transformation function.
-     * @param fb Right transformation function.
-     * @return A new Either with both values transformed.
-     */
-    default <C, D> Either<C, D> bimap (final Function<A, C> fa, final Function<B, D> fb) {
-        return either(a -> left(fa.apply(a)), b -> right(fb.apply(b)));
-    }
-
-    /**
-     * Flips the Left and Right sides.
-     * 
-     * @return An Either where Right is now Left and vice-versa.
-     */
-    default Either<B, A> swap () {
-        return either(Either::right, Either::left);
-    }
-
-    /**
-     * Returns a Prism that focuses on the Right (success) value.
-     */
-    static <L, R> Prism<Either<L, R>, R> rightP() {
-        return Prism.of(e -> e.isRight() ? Maybe.some(e.orElse(null)) : Maybe.nothing(), Either::right);
-    }
-
-    /**
-     * Returns a Prism that focuses on the Left (error) value.
-     */
-    static <L, R> Prism<Either<L, R>, L> leftP() {
-        return Prism.of(e -> e.isLeft() ? Maybe.some(e.fromLeft(null)) : Maybe.nothing(), Either::left);
+    default Collection<B> build(B input) {
+        return right(input);
     }
 
     // --- Typeclass Instances ---
 
-    static <L> Monad<Higher<Either.µ, L>> monad() {
-        return new Monad<>() {
-            @Override
-            public <A> Higher<Higher<µ, L>, A> pure(A a) { return Either.right(a); }
-
-            @Override
-            public <A, B> Higher<Higher<µ, L>, B> flatMap(Function<A, Higher<Higher<µ, L>, B>> fn, Higher<Higher<µ, L>, A> fa) {
-                return Either.narrowK(fa).flatMapEither(a -> Either.narrowK(fn.apply(a)));
-            }
-
-            @Override
-            public <A, B> Higher<Higher<µ, L>, B> map(Function<A, B> fn, Higher<Higher<µ, L>, A> fa) {
-                return Either.narrowK(fa).map(fn);
+    @SuppressWarnings("unchecked")
+    static <E> Monad<Collection.µ> monad() {
+        return new Monad<Collection.µ>() {
+            @Override public <A> Higher<Collection.µ, A> pure(A a) { return (Either<E, A>) right(a); }
+            @Override public <A, B> Higher<Collection.µ, B> flatMap(Function<A, Higher<Collection.µ, B>> fn, Higher<Collection.µ, A> fa) {
+                Either<E, A> src = (Either<E, A>) fa;
+                return src.isRight() ? fn.apply(src.fromRight(null)) : (Either<E, B>) src;
             }
         };
     }
 
-    Bifunctor<µ> bifunctor = new Bifunctor<>() {
-        @Override
-        public <A, B, C, D> Higher<Higher<µ, C>, D> bimap(Function<A, C> fa, Function<B, D> fb, Higher<Higher<µ, A>, B> fab) {
-            return Either.narrowK(fab).bimap(fa, fb);
-        }
-    };
-
-    static <L> Traversable<Higher<µ, L>> traversable() {
-        return new Traversable<>() {
-            @Override
-            public <G, A, B> Higher<G, Higher<Higher<µ, L>, B>> traverse(Applicative<G> app, Function<A, Higher<G, B>> fn, Higher<Higher<µ, L>, A> fa) {
-                Either<L, A> ea = Either.narrowK(fa);
-                return ea.either(
-                    l -> app.pure(Either.left(l)),
-                    a -> app.map(Either::right, fn.apply(a))
-                );
-            }
-
-            @Override
-            public <A, B> Higher<Higher<µ, L>, B> map(Function<A, B> fn, Higher<Higher<µ, L>, A> fa) {
-                return Either.narrowK(fa).map(fn);
-            }
-        };
+    @SuppressWarnings("unchecked")
+    default <R> Either<A, R> map(Function<B, R> fn) {
+        return (Either<A, R>) Collection.super.map(fn);
     }
 
-    final static class Left <A, B> implements Either <A, B> {
+    @SuppressWarnings("unchecked")
+    default <R> Either<A, R> flatMap(Function<B, Collection<R>> fn) {
+        return (Either<A, R>) Collection.super.flatMap(fn);
+    }
+
+    @SuppressWarnings("unchecked")
+    default <C> Either<A, C> flatMapEither(Function<B, Either<A, C>> fn) {
+        return isRight() ? fn.apply(fromRight(null)) : (Either<A, C>) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    default <C> Either<C, B> mapLeft(Function<A, C> fn) {
+        return isLeft() ? left(fn.apply(((Left<A, B>) this).value)) : (Either<C, B>) this;
+    }
+
+    default <R> R either(Function<A, R> onLeft, Function<B, R> onRight) {
+        return isLeft() ? onLeft.apply(((Left<A, B>) this).value) : onRight.apply(((Right<A, B>) this).value);
+    }
+
+    default Either<B, A> swap() {
+        return either(Either::right, Either::left);
+    }
+
+    @SuppressWarnings("unchecked")
+    default <C, D> Either<C, D> bimap(Function<A, C> fa, Function<B, D> fb) {
+        return isLeft() ? (Either<C, D>) left(fa.apply(((Left<A, B>) this).value)) : (Either<C, D>) right(fb.apply(((Right<A, B>) this).value));
+    }
+
+    static <A, B> io.github.senthilganeshs.fj.optic.Prism<Either<A, B>, B> rightP() {
+        return io.github.senthilganeshs.fj.optic.Prism.of(
+            e -> e.isRight() ? Maybe.some(e.fromRight(null)) : Maybe.nothing(),
+            Either::right
+        );
+    }
+
+    default Maybe<B> toMaybe() {
+        return isRight() ? Maybe.some(fromRight(null)) : Maybe.nothing();
+    }
+
+    default Validation<List<A>, B> toValidation() {
+        return isRight() ? Validation.valid(fromRight(null)) : Validation.invalid(List.of(fromLeft(null)));
+    }
+
+    final static class Left<A, B> implements Either<A, B> {
         private final A value;
-
-        Left (final A value) {
-            this.value = value;
+        Left(A value) { this.value = value; }
+        @Override public <R> R foldl(R seed, BiFunction<R, B, R> fn) { return seed; }
+        @Override public String toString() { return "Left(" + value + ")"; }
+        @Override public boolean equals(Object other) {
+            return other instanceof Left && java.util.Objects.equals(((Left<?, ?>) other).value, value);
         }
-        
-        @Override
-        public <R> Collection<R> empty() {
-            return Maybe.nothing();
-        }
-
-        @Override
-        public <R> R foldl(R seed, BiFunction<R, B, R> fn) {
-            return seed;
-        }
-
-        @Override
-        public Either<A, B> build(B value) {
-            return right(value);
-        }
-
-        @Override
-        public <R> R either(Function<A, R> fa, Function<B, R> fb) {
-            return fa.apply(value);
-        }
-        
-        @Override
-        public String toString() {
-            return "Left " + value;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public boolean equals(final Object other) {
-            if (other == null) return false;
-            if (other == this) return true;
-            if (other instanceof Left) {
-                Left<A, B> lOther = ((Left<A, B>) other);
-                return lOther.value.equals(value);
-            }
-            return false;
-        }
-        @Override
-        public int hashCode() {
-            return value.hashCode();
-        }
+        @Override public int hashCode() { return java.util.Objects.hashCode(value); }
+        @Override public <R> Collection<R> empty() { return (Collection<R>) left(null); }
+        @Override public Collection<B> build(B input) { return right(input); }
     }
-    
-    final static class Right<A, B> implements Either <A, B> {
 
+    final static class Right<A, B> implements Either<A, B> {
         private final B value;
-
-        Right (final B value) {
-            this.value = value;
+        Right(B value) { this.value = value; }
+        @Override public <R> R foldl(R seed, BiFunction<R, B, R> fn) { return fn.apply(seed, value); }
+        @Override public String toString() { return "Right(" + value + ")"; }
+        @Override public boolean equals(Object other) {
+            return other instanceof Right && java.util.Objects.equals(((Right<?, ?>) other).value, value);
         }
-        
-        @Override
-        public <R> Collection<R> empty() {
-            return Maybe.nothing();
-        }
-
-        @Override
-        public <R> R foldl(R seed, BiFunction<R, B, R> fn) {
-            return fn.apply(seed, value);
-        }
-
-        @Override
-        public Either<A, B> build(B value) {
-            return right(value);
-        }
-
-        @Override
-        public <R> R either(Function<A, R> fa, Function<B, R> fb) {
-            return fb.apply(value);
-        }
-        
-        @Override
-        public String toString() {
-            return "Right " + value;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public boolean equals(final Object other) {
-            if (other == null) return false;
-            if (other == this) return true;
-            if (other instanceof Right) {
-                Right<A, B> rOther = ((Right<A,B>) other);
-                return rOther.value.equals(value);
-            }
-            return false;
-        }
-        @Override
-        public int hashCode() {
-            return value.hashCode();
-        }
+        @Override public int hashCode() { return java.util.Objects.hashCode(value); }
+        @Override public <R> Collection<R> empty() { return (Collection<R>) left(null); }
+        @Override public Collection<B> build(B input) { return right(input); }
     }
 }

@@ -1,53 +1,19 @@
 package io.github.senthilganeshs.fj.ds;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import io.github.senthilganeshs.fj.hkt.Higher;
+import io.github.senthilganeshs.fj.typeclass.Functor;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Persistent Vector implementation using a Bitmapped Vector Trie.
- * 
- * @param <T> The type of elements.
  */
 public interface Vector<T> extends Collection<T> {
 
-    Maybe<T> at(int index);
-
-    Vector<T> update(int index, T value);
-
     @SuppressWarnings("unchecked")
     static <R> Vector<R> from(Collection<R> c) {
+        if (c instanceof Vector) return (Vector<R>) c;
         return (Vector<R>) c.foldl(Vector.<R>nil(), (v, r) -> (Vector<R>) v.build(r));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default <R> Vector<R> map(java.util.function.Function<T, R> fn) {
-        return from(Collection.super.map(fn));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default <R> Vector<R> mapMaybe(java.util.function.Function<T, Maybe<R>> fn) {
-        return from(Collection.super.mapMaybe(fn));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default Vector<T> filter(java.util.function.Predicate<T> pred) {
-        return from(Collection.super.filter(pred));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default Vector<T> take(int n) {
-        return from(Collection.super.take(n));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default Vector<T> drop(int n) {
-        return from(Collection.super.drop(n));
     }
 
     static <R> Vector<R> nil() {
@@ -62,6 +28,32 @@ public interface Vector<T> extends Collection<T> {
             v = (Vector<R>) v.build(val);
         }
         return v;
+    }
+
+    Maybe<T> at(int index);
+
+    Vector<T> update(int index, T value);
+
+    @Override
+    default <R> Collection<R> empty() {
+        return nil();
+    }
+
+    // --- Performance Overrides ---
+
+    @Override
+    default Functor<µ> functor() {
+        return new Functor<µ>() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public <A, B> Higher<µ, B> map(Function<A, B> fn, Higher<µ, A> fa) {
+                Collection<A> col = Collection.narrowK(fa);
+                if (col instanceof VectorImpl) {
+                    return (Higher<µ, B>) ((VectorImpl<A>) col).mapVector(fn);
+                }
+                return (Higher<µ, B>) col.foldl(col.empty(), (acc, t) -> acc.build(fn.apply(t)));
+            }
+        };
     }
 
     final class VectorImpl<T> implements Vector<T> {
@@ -121,11 +113,6 @@ public interface Vector<T> extends Collection<T> {
                 newNode.array[subIndex] = doUpdate(level - BITS, (Node) node.array[subIndex], index, value);
             }
             return newNode;
-        }
-
-        @Override
-        public <R> Collection<R> empty() {
-            return Vector.nil();
         }
 
         @Override
@@ -190,6 +177,15 @@ public interface Vector<T> extends Collection<T> {
             return res;
         }
 
+        @SuppressWarnings("unchecked")
+        public <R> Vector<R> mapVector(Function<T, R> fn) {
+            Vector<R> res = Vector.nil();
+            for (int i = 0; i < size; i++) {
+                res = (Vector<R>) res.build(fn.apply(at(i).orElse(null)));
+            }
+            return res;
+        }
+
         @Override
         public String toString() {
             return foldl("[", (r, t) -> r + (r.equals("[") ? "" : ",") + t) + "]";
@@ -197,8 +193,6 @@ public interface Vector<T> extends Collection<T> {
 
         @Override
         public boolean equals(final Object other) {
-            if (other == null) return false;
-            if (other == this) return true;
             if (other instanceof Vector) {
                 Vector<?> v = (Vector<?>) other;
                 if (v.length() != size) return false;

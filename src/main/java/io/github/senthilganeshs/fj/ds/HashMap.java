@@ -33,6 +33,14 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
 
     int size();
 
+    default Collection<K> keys() {
+        return map(Entry::key);
+    }
+
+    default Collection<V> values() {
+        return map(Entry::value);
+    }
+
     default io.github.senthilganeshs.fj.optic.AffineTraversal<HashMap<K, V>, V> at(K key) {
         return io.github.senthilganeshs.fj.optic.AffineTraversal.of(
             m -> m.get(key),
@@ -199,8 +207,8 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
         @Override
         public <K, V> Node put(int shift, int hash, K key, V value) {
             if (this.hash == hash) {
-                List<Entry<?, ?>> filtered = entries.filter(e -> !e.key().equals(key));
-                return new CollisionNode(hash, filtered.build(new Entry<>(key, value)));
+                List<Entry<?, ?>> filtered = List.from(entries.filter(e -> !e.key().equals(key)));
+                return new CollisionNode(hash, List.from(filtered.build(new Entry<>(key, value))));
             }
             return IndexedNode.fromNode(shift, this).put(shift, hash, key, value);
         }
@@ -208,10 +216,10 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
         @Override
         public <K, V> Node remove(int shift, int hash, K key) {
             if (this.hash != hash) return this;
-            List<Entry<?, ?>> filtered = entries.filter(e -> !e.key().equals(key));
-            if (filtered.length() == 0) return null;
+            List<Entry<?, ?>> filtered = List.from(entries.filter(e -> !e.key().equals(key)));
+            if (filtered.isEmpty()) return null;
             if (filtered.length() == 1) {
-                Entry<?, ?> e = filtered.foldl(null, (acc, entry) -> entry);
+                Entry<?, ?> e = filtered.head().orElse(null);
                 return new LeafNode(hash, e.key(), e.value());
             }
             return new CollisionNode(hash, filtered);

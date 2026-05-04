@@ -74,9 +74,9 @@ public class CollectionDefaultsTest {
         Maybe<Integer> m1 = Maybe.some(1);
         Maybe<Integer> m2 = Maybe.some(2);
         Maybe<Integer> m3 = Maybe.some(3);
-        
-        Collection<Integer> lifted = m1.liftA3((Integer a) -> (Integer b) -> (Integer c) -> a + b + c, m2, m3);
-        Assert.assertEquals(((Maybe<Integer>)lifted).orElse(0), Integer.valueOf(6));
+
+        Collection<Integer> lifted = m1.liftA3((a, b, c) -> a + b + c, m2, m3);
+        Assert.assertEquals(lifted.head().orElse(-1), Integer.valueOf(6));
     }
 
     @Test
@@ -85,9 +85,9 @@ public class CollectionDefaultsTest {
         Maybe<Integer> m2 = Maybe.some(2);
         Maybe<Integer> m3 = Maybe.some(3);
         Maybe<Integer> m4 = Maybe.some(4);
-        
-        Collection<Integer> lifted = m1.liftA4((Integer a) -> (Integer b) -> (Integer c) -> (Integer d) -> a + b + c + d, m2, m3, m4);
-        Assert.assertEquals(((Maybe<Integer>)lifted).orElse(0), Integer.valueOf(10));
+
+        Collection<Integer> lifted = m1.liftA4((a, b, c, d) -> a + b + c + d, m2, m3, m4);
+        Assert.assertEquals(lifted.head().orElse(-1), Integer.valueOf(10));
     }
 
     @Test
@@ -100,8 +100,8 @@ public class CollectionDefaultsTest {
     public void testIntercalate() {
         List<List<String>> lists = List.of(List.of("a", "b"), List.of("c", "d"));
         List<String> sep = List.of("-");
-        Collection<Collection<String>> result = sep.intercalate((Collection<Collection<String>>) (Collection<?>) lists);
-        // Result is [[a,b], [-], [c,d]]
+        Collection<String> result = sep.intercalate(lists);
+        // Result is [a,b,-,c,d]
         Assert.assertTrue(result.toString().contains("-"));
     }
 

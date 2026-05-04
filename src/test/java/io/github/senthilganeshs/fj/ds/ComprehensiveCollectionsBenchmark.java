@@ -40,7 +40,7 @@ public class ComprehensiveCollectionsBenchmark {
         }
         
         // FJ
-        fjList = List.of(testData);
+        fjList = List.from(testData);
         fjVector = Vector.of(testData.toArray(new Integer[0]));
         fjHashMap = HashMap.nil();
         for (int i = 0; i < size; i++) {
@@ -66,7 +66,7 @@ public class ComprehensiveCollectionsBenchmark {
     @Benchmark
     public List<Integer> fj_buildList() {
         List<Integer> list = List.nil();
-        for (Integer i : testData) list = list.build(i);
+        for (Integer i : testData) list = (List<Integer>) list.build(i);
         return list;
     }
 

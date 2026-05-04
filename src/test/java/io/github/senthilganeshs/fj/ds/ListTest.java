@@ -32,11 +32,10 @@ public class ListTest {
     @Test
     public void testListUnzipReal() {
         List<Integer> l = List.of(1, 2, 3);
-        Tuple<Maybe<Integer>, List<Integer>> unzipped = l.unzip();
+        Tuple<Collection<Integer>, Collection<Integer>> unzipped = l.unzip();
         
-        // head is 1, tail is [2, 3]
-        Assert.assertEquals(unzipped.getA().orElse(Maybe.nothing()).orElse(-1), Integer.valueOf(1));
-        Assert.assertEquals(unzipped.getB().orElse(List.nil()).toString(), "[2,3]");
+        Assert.assertEquals(unzipped.getA().map(List::from).flatMap(l2 -> l2.head()).orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(List.from(unzipped.getB().orElse(List.nil())).toString(), "[2,3]");
     }
 
     @Test
@@ -72,7 +71,7 @@ public class ListTest {
 
     @Test
     public void testListStaticHelpers() {
-        List<Integer> l = List.of(java.util.Arrays.asList(1, 2, 3));
+        List<Integer> l = List.from(java.util.Arrays.asList(1, 2, 3));
         Assert.assertEquals(l.length(), 3);
         
         Collection<Integer> q = List.newQueue(new Integer[]{1, 2});

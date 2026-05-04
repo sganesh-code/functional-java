@@ -37,7 +37,7 @@ public class GraphIllustration {
 
         // 3. Find all tasks affected by a change in "Compile" (BFS)
         System.out.println("\n--- 2. Impact Analysis (BFS) ---");
-        List<String> affectedTasks = buildGraph.bfs("Compile");
+        List<String> affectedTasks = List.from(buildGraph.bfs("Compile"));
         System.out.println("Tasks affected if 'Compile' changes: " + affectedTasks.mkString(", "));
 
         // 4. Check successors of a specific task

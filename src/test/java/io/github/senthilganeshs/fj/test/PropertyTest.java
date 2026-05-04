@@ -46,6 +46,6 @@ public class PropertyTest {
             public List<Integer> combine(List<Integer> a, List<Integer> b) { return List.from(a.concat(b)); }
         };
 
-        MonoidLaws.check(listMonoid, Gen.list(Gen.integer(), 10), 50);
+        MonoidLaws.check(listMonoid, (Gen<List<Integer>>) (Gen) Gen.list(Gen.integer(), 10), 50);
     }
 }

@@ -1,138 +1,128 @@
 package io.github.senthilganeshs.fj.ds;
 
 import io.github.senthilganeshs.fj.typeclass.Ord;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.function.BiFunction;
 
 /**
- * A purely functional Priority Queue implemented as a Leftist Heap.
- * Supports O(1) findMin and O(log n) merge, insert, and deleteMin.
- * 
- * @param <T> The type of elements in the priority queue.
+ * A purely functional Priority Queue implementation using a Skew Leftist Heap.
  */
 public interface PriorityQueue<T> extends Collection<T> {
 
-    Maybe<T> findMin();
-
-    Maybe<PriorityQueue<T>> deleteMin();
-
-    PriorityQueue<T> merge(PriorityQueue<T> other);
-
+    @SuppressWarnings("unchecked")
     static <R extends Comparable<R>> PriorityQueue<R> nil() {
-        return empty(Ord.<R>natural());
+        return nilWithOrd(Ord.<R>natural());
     }
 
-    static <R> PriorityQueue<R> empty(Ord<R> ord) {
-        return new LeftistHeap<>(ord, null, null, null);
+    @SuppressWarnings("unchecked")
+    static <R> PriorityQueue<R> nilWithOrd(Ord<R> ord) {
+        return new LeftistHeap<>(ord, 0, null, null, null);
     }
 
     @SafeVarargs
     static <R extends Comparable<R>> PriorityQueue<R> of(R... values) {
-        return of(Ord.<R>natural(), values);
+        return of(Ord.natural(), values);
     }
 
     @SafeVarargs
     static <R> PriorityQueue<R> of(Ord<R> ord, R... values) {
-        PriorityQueue<R> pq = empty(ord);
+        PriorityQueue<R> pq = nilWithOrd(ord);
+        if (values == null) return pq;
         for (R val : values) {
             pq = (PriorityQueue<R>) pq.build(val);
         }
         return pq;
     }
 
+    default Maybe<T> findMin() {
+        return peek();
+    }
+
+    default Maybe<PriorityQueue<T>> deleteMin() {
+        return pop();
+    }
+
+    Maybe<T> peek();
+    Maybe<PriorityQueue<T>> pop();
+
+    @Override
+    default <R> Collection<R> empty() {
+        return (Collection<R>) (PriorityQueue<R>) new LeftistHeap<>(null, 0, null, null, null);
+    }
+
+    @Override
+    default Collection<T> build(T input) {
+        return insert(input);
+    }
+
+    PriorityQueue<T> insert(T value);
+    PriorityQueue<T> merge(PriorityQueue<T> other);
+
     final class LeftistHeap<T> implements PriorityQueue<T> {
         private final Ord<T> ord;
-        private final T value;
-        private final LeftistHeap<T> left;
-        private final LeftistHeap<T> right;
         private final int rank;
+        private final T value;
+        private final PriorityQueue<T> left;
+        private final PriorityQueue<T> right;
 
-        LeftistHeap(Ord<T> ord, T value, LeftistHeap<T> left, LeftistHeap<T> right) {
+        LeftistHeap(Ord<T> ord, int rank, T value, PriorityQueue<T> left, PriorityQueue<T> right) {
             this.ord = ord;
+            this.rank = rank;
             this.value = value;
             this.left = left;
             this.right = right;
-            this.rank = (right == null) ? 0 : right.rank + 1;
         }
 
-        @Override
-        public Maybe<T> findMin() {
-            return value == null ? Maybe.nothing() : Maybe.some(value);
+        private static <T> int rank(PriorityQueue<T> pq) {
+            return (pq instanceof LeftistHeap && ((LeftistHeap<T>) pq).value != null) 
+                ? ((LeftistHeap<T>) pq).rank : 0;
         }
 
-        @Override
-        public Maybe<PriorityQueue<T>> deleteMin() {
-            return value == null ? Maybe.nothing() : Maybe.some(left.merge(right));
+        private static <T> PriorityQueue<T> make(Ord<T> ord, T v, PriorityQueue<T> a, PriorityQueue<T> b) {
+            if (rank(a) >= rank(b)) return new LeftistHeap<>(ord, rank(b) + 1, v, a, b);
+            return new LeftistHeap<>(ord, rank(a) + 1, v, b, a);
         }
 
         @Override
         public PriorityQueue<T> merge(PriorityQueue<T> other) {
-            if (this.value == null) return other;
-            LeftistHeap<T> o = (LeftistHeap<T>) other;
-            if (o.value == null) return this;
+            return merge(this, other);
+        }
 
-            if (ord.compare(this.value, o.value) > 0) {
-                return o.merge(this);
+        private PriorityQueue<T> merge(PriorityQueue<T> h1, PriorityQueue<T> h2) {            if (h1.isEmpty()) return h2;
+            if (h2.isEmpty()) return h1;
+
+            LeftistHeap<T> l1 = (LeftistHeap<T>) h1;
+            LeftistHeap<T> l2 = (LeftistHeap<T>) h2;
+
+            if (ord.compare(l1.value, l2.value) <= 0) {
+                return make(ord, l1.value, l1.left, merge(l1.right, l2));
             }
-
-            return makeHeap(this.value, this.left, (LeftistHeap<T>) this.right.merge(o));
-        }
-
-        private LeftistHeap<T> makeHeap(T v, LeftistHeap<T> l, LeftistHeap<T> r) {
-            if (l.rank < r.rank) return new LeftistHeap<>(ord, v, r, l);
-            return new LeftistHeap<>(ord, v, l, r);
+            return make(ord, l2.value, l2.left, merge(l1, l2.right));
         }
 
         @Override
-        public <R> Collection<R> empty() {
-            return List.nil();
+        public PriorityQueue<T> insert(T value) {
+            return merge(this, new LeftistHeap<>(ord, 1, value, nilWithOrd(ord), nilWithOrd(ord)));
         }
 
         @Override
-        public Collection<T> build(T input) {
-            return merge(new LeftistHeap<>(ord, input, emptyHeap(ord), emptyHeap(ord)));
+        public Maybe<T> peek() {
+            return Maybe.of(value);
         }
-        
-        private LeftistHeap<T> emptyHeap(Ord<T> ord) {
-            return new LeftistHeap<>(ord, null, null, null);
+
+        @Override
+        public Maybe<PriorityQueue<T>> pop() {
+            return isEmpty() ? Maybe.nothing() : Maybe.some(merge(left, right));
         }
 
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-            R acc = seed;
-            Deque<LeftistHeap<T>> stack = new ArrayDeque<>();
-            stack.push(this);
-            while (!stack.isEmpty()) {
-                LeftistHeap<T> curr = stack.pop();
-                if (curr.value != null) {
-                    acc = fn.apply(acc, curr.value);
-                    if (curr.right != null) stack.push(curr.right);
-                    if (curr.left != null) stack.push(curr.left);
-                }
-            }
-            return acc;
+            if (isEmpty()) return seed;
+            R res = fn.apply(seed, value);
+            res = left.foldl(res, fn);
+            return right.foldl(res, fn);
         }
 
         @Override
-        public String toString() {
-            if (value == null) return "[]";
-            return foldl("[", (r, t) -> r + (r.equals("[") ? "" : ",") + t) + "]";
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (other == null) return false;
-            if (other == this) return true;
-            if (!(other instanceof PriorityQueue)) return false;
-            PriorityQueue<?> o = (PriorityQueue<?>) other;
-            if (this.length() != o.length()) return false;
-            return this.toString().equals(o.toString()); 
-        }
-
-        @Override
-        public int hashCode() {
-            return toString().hashCode();
-        }
+        public boolean isEmpty() { return value == null; }
     }
 }

@@ -3,54 +3,42 @@ package io.github.senthilganeshs.fj.ds;
 import java.util.function.UnaryOperator;
 
 /**
- * Utility for generating infinite or sequential functional collections.
+ * Utility for generating potentially infinite sequences of values.
  */
-public final class Generator {
-    private Generator() {}
+public interface Generator {
 
     /**
-     * Generates an infinite LazyList by repeatedly applying a function to a seed.
+     * Generates an infinite sequence by repeatedly applying a function to a seed value.
      */
-    public static <T> LazyList<T> iterate(T seed, UnaryOperator<T> f) {
+    static <T> LazyList<T> iterate(T seed, UnaryOperator<T> f) {
         return LazyList.iterate(seed, f);
     }
 
     /**
-     * Generates an infinite LazyList repeating the same value.
+     * Generates an infinite sequence by repeating a single value.
      */
-    public static <T> LazyList<T> repeat(T value) {
+    static <T> LazyList<T> repeat(T value) {
         return LazyList.cons(value, () -> repeat(value));
     }
 
     /**
-     * Generates a sequential range of integers.
+     * Generates a sequence of integers from start to end (exclusive).
      */
-    public static LazyList<Integer> range(int start, int end) {
-        if (start > end) return LazyList.nil();
+    static LazyList<Integer> range(int start, int end) {
+        if (start >= end) return LazyList.nil();
         return LazyList.cons(start, () -> range(start + 1, end));
     }
 
     /**
-     * Generates an infinite sequence by cycling through a collection.
+     * Generates an infinite sequence by cycling through the elements of a collection.
      */
-    public static <T> LazyList<T> cycle(Collection<T> c) {
-        if (c.length() == 0) return LazyList.nil();
-        LazyList<T> list = LazyList.from(c);
-        return list.concat(LazyList.of()).foldr(LazyList.nil(), (t, __) -> {
-             // This is handled better by a direct lazy cycle
-             return null;
-        });
+    static <T> LazyList<T> cycle(Collection<T> c) {
+        if (c.isEmpty()) return LazyList.nil();
+        List<T> list = List.from(c);
+        return cycleHelper(list, 0);
     }
 
-    /**
-     * Infinite cycle implementation.
-     */
-    public static <T> LazyList<T> cycle(java.util.List<T> items) {
-        if (items.isEmpty()) return LazyList.nil();
-        return cycleHelper(items, 0);
-    }
-
-    private static <T> LazyList<T> cycleHelper(java.util.List<T> items, int index) {
-        return LazyList.cons(items.get(index % items.size()), () -> cycleHelper(items, index + 1));
+    private static <T> LazyList<T> cycleHelper(List<T> items, int index) {
+        return LazyList.cons(items.atIndex(index % items.length()).orElse(null), () -> cycleHelper(items, index + 1));
     }
 }

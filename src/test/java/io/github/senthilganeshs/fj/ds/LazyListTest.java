@@ -14,7 +14,7 @@ public class LazyListTest {
         LazyList<Integer> l = LazyList.of(1, 2, 3);
         Assert.assertEquals(l.toString(), "[1,2,3]");
         Assert.assertEquals(l.head().orElse(-1), Integer.valueOf(1));
-        Assert.assertEquals(l.tail().head().orElse(-1), Integer.valueOf(2));
+        Assert.assertEquals(((LazyList<Integer>) l.tail().orElse(LazyList.nil())).head().orElse(-1), Integer.valueOf(2));
         Assert.assertEquals(l.length(), 3);
     }
 
@@ -27,14 +27,13 @@ public class LazyListTest {
         });
         
         // At this point, only the head is evaluated (seed), but UnaryOperator hasn't run yet
-        // Wait, iterate(seed, fn) evaluates seed as head immediately.
         Assert.assertEquals(counter.get(), 0);
         
-        LazyList<Integer> t1 = l.tail();
+        LazyList<Integer> t1 = (LazyList<Integer>) l.tail().orElse(LazyList.nil());
         Assert.assertEquals(counter.get(), 1);
         Assert.assertEquals(t1.head().orElse(-1), Integer.valueOf(2));
         
-        LazyList<Integer> t2 = t1.tail();
+        LazyList<Integer> t2 = (LazyList<Integer>) t1.tail().orElse(LazyList.nil());
         Assert.assertEquals(counter.get(), 2);
         Assert.assertEquals(t2.head().orElse(-1), Integer.valueOf(3));
     }
@@ -87,9 +86,9 @@ public class LazyListTest {
 
     @Test
     public void testLazyListUnzip() {
-        LazyList<Integer> l = LazyList.of(1, 2, 3);
-        Tuple<Maybe<Integer>, List<Integer>> unzipped = l.unzip();
-        Assert.assertEquals(unzipped.getA().orElse(Maybe.nothing()).orElse(-1), Integer.valueOf(1));
-        Assert.assertEquals(unzipped.getB().orElse(List.nil()).length(), 2);
+        LazyList<Tuple<Integer, Integer>> l = LazyList.of(Tuple.of(1, 2), Tuple.of(3, 4));
+        Tuple<Collection<Integer>, Collection<Integer>> unzipped = l.unzip();
+        Assert.assertEquals(unzipped.getA().map(List::from).flatMap(l2 -> l2.head()).orElse(-1), Integer.valueOf(1));
+        Assert.assertEquals(unzipped.getB().flatMap(List::from).length(), 2);
     }
 }

@@ -29,17 +29,17 @@ public record TaskEither<E, A>(Task<Either<E, A>> task) implements Higher<Higher
     }
 
     public <B> TaskEither<E, B> map(Function<A, B> fn) {
-        return new TaskEither<>(task.map(e -> e.map(fn)));
+        return new TaskEither<>(task.map(e -> (Either<E, B>) e.map(fn)));
     }
 
     public <B> TaskEither<B, A> mapLeft(Function<E, B> fn) {
-        return new TaskEither<>(task.map(e -> e.mapLeft(fn)));
+        return new TaskEither<>(task.map(e -> (Either<B, A>) e.mapLeft(fn)));
     }
 
     public <B> TaskEither<E, B> flatMap(Function<A, TaskEither<E, B>> fn) {
         return new TaskEither<>(task.flatMap(either -> 
             either.either(
-                e -> Task.succeed(Either.left(e)),
+                e -> Task.succeed((Either<E, B>) Either.left(e)),
                 a -> fn.apply(a).task()
             )
         ));

@@ -1,44 +1,28 @@
 package io.github.senthilganeshs.fj.ds;
 
 import io.github.senthilganeshs.fj.hkt.Higher;
-import io.github.senthilganeshs.fj.optic.Prism;
 import io.github.senthilganeshs.fj.typeclass.Monad;
-import io.github.senthilganeshs.fj.typeclass.Traversable;
 import io.github.senthilganeshs.fj.typeclass.Applicative;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-
-public interface Maybe<T> extends Collection<T>, Higher<Maybe.µ, T> {
-
-    /**
-     * Witness type for Higher-Kinded Type encoding.
-     */
-    final class µ {}
-
-    /**
-     * Safely downcasts a Higher-Kinded Type to a Maybe.
-     */
-    @SuppressWarnings("unchecked")
-    static <T> Maybe<T> narrowK(Higher<µ, T> hka) {
-        return (Maybe<T>) hka;
-    }
+/**
+ * A data structure representing an optional value.
+ */
+public interface Maybe<T> extends Collection<T> {
 
     final static Maybe<Void> NOTHING = new Nothing<>();
 
     @SuppressWarnings("unchecked")
-    public static <R> Maybe<R> nothing () {
+    static <R> Maybe<R> nothing() {
         return (Maybe<R>) NOTHING;
     }
 
-    public static <R> Maybe<R> some (final R value) {
+    static <R> Maybe<R> some(final R value) {
         return new Some<>(value);
     }
 
-    /**
-     * Creates a Maybe from a potentially null value.
-     */
-    public static <R> Maybe<R> of(final R value) {
+    static <R> Maybe<R> of(final R value) {
         return value == null ? nothing() : some(value);
     }
 
@@ -50,191 +34,77 @@ public interface Maybe<T> extends Collection<T>, Higher<Maybe.µ, T> {
         return this instanceof Nothing;
     }
 
-    /**
-     * @deprecated Use {@link #orElse(Object)} instead.
-     */
-    @Deprecated
-    default T fromMaybe(T def) {
+    default T orElse(T def) {
         return foldl(def, (__, t) -> t);
     }
 
-    /**
-     * Returns the contained value if present, otherwise returns the provided default.
-     * 
-     * @param def The fallback value.
-     * @return The value or def.
-     */
-    default T orElse(T def) {
-        return fromMaybe(def);
-    }
-
-    /**
-     * Returns the contained value if present, otherwise returns the result of the supplier.
-     * 
-     * @param supplier The supplier of the fallback value.
-     * @return The value or supplier result.
-     */
-    default T orElseGet(java.util.function.Supplier<? extends T> supplier) {
-        return isSome() ? orElse(null) : supplier.get();
-    }
-
-    /**
-     * Returns the contained value if present, otherwise throws the exception from the supplier.
-     * 
-     * @param <X> Type of the exception.
-     * @param exceptionSupplier The supplier of the exception.
-     * @return The value.
-     * @throws X if no value is present.
-     */
-    default <X extends Throwable> T orElseThrow(java.util.function.Supplier<? extends X> exceptionSupplier) throws X {
-        if (isSome()) return orElse(null);
-        throw exceptionSupplier.get();
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
-    default <R> Maybe<R> map(java.util.function.Function<T, R> fn) {
-        return isSome() ? Maybe.of(fn.apply(orElse(null))) : Maybe.nothing();
+    default <R> Collection<R> empty() {
+        return nothing();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    default Maybe<T> filter(java.util.function.Predicate<T> pred) {
-        return (isSome() && pred.test(orElse(null))) ? this : Maybe.nothing();
+    default Collection<T> build(T input) {
+        return some(input);
     }
 
-    @SuppressWarnings("unchecked")
-    default <R> Maybe<R> flatMapMaybe(java.util.function.Function<T, Maybe<R>> fn) {
-        return isSome() ? fn.apply(orElse(null)) : Maybe.nothing();
-    }
-
-    default <R> Maybe<R> safeCast(Class<R> clazz) {
-        return filter(clazz::isInstance).map(clazz::cast);
-    }
-
-    /**
-     * Returns a Prism that focuses on the value inside a Some.
-     */
-    static <T> Prism<Maybe<T>, T> someP() {
-        return Prism.of(m -> m, Maybe::some);
-    }
-    
     // --- Typeclass Instances ---
 
-    Monad<µ> monad = new Monad<>() {
-        @Override
-        public <A> Higher<µ, A> pure(A a) { return Maybe.of(a); }
-
-        @Override
-        public <A, B> Higher<µ, B> flatMap(Function<A, Higher<µ, B>> fn, Higher<µ, A> fa) {
-            return Maybe.narrowK(fa).flatMapMaybe(a -> Maybe.narrowK(fn.apply(a)));
-        }
-
-        @Override
-        public <A, B> Higher<µ, B> map(Function<A, B> fn, Higher<µ, A> fa) {
-            return Maybe.narrowK(fa).map(fn);
+    static final Monad<Collection.µ> monad = new Monad<Collection.µ>() {
+        @Override public <A> Higher<Collection.µ, A> pure(A a) { return some(a); }
+        @Override public <A, B> Higher<Collection.µ, B> flatMap(Function<A, Higher<Collection.µ, B>> fn, Higher<Collection.µ, A> fa) {
+            // Use TRIAD directly here to avoid infinite recursion with ergonomic handles
+            Maybe<A> src = (Maybe<A>) fa;
+            return src.foldl(nothing(), (acc, a) -> (Maybe<B>) fn.apply(a));
         }
     };
 
-    Traversable<µ> traversable = new Traversable<>() {
-        @Override
-        public <G, A, B> Higher<G, Higher<µ, B>> traverse(Applicative<G> app, Function<A, Higher<G, B>> fn, Higher<µ, A> fa) {
-            Maybe<A> ma = Maybe.narrowK(fa);
-            return ma.either(
-                () -> app.pure(Maybe.nothing()),
-                a -> app.map(Maybe::of, fn.apply(a))
-            );
-        }
+    static <T> io.github.senthilganeshs.fj.optic.Prism<Maybe<T>, T> someP() {
+        return io.github.senthilganeshs.fj.optic.Prism.of(
+            m -> m.isSome() ? Maybe.some(m.orElse(null)) : Maybe.nothing(),
+            Maybe::some
+        );
+    }
 
-        @Override
-        public <A, B> Higher<µ, B> map(Function<A, B> fn, Higher<µ, A> fa) {
-            return Maybe.narrowK(fa).map(fn);
-        }
-    };
+    @SuppressWarnings("unchecked")
+    default <R> Maybe<R> flatMapMaybe(Function<T, Maybe<R>> fn) {
+        return isSome() ? fn.apply(orElse(null)) : nothing();
+    }
 
-    /**
-     * Applies a function if Some, or a default supplier if Nothing.
-     */
-    default <R> R either(java.util.function.Supplier<R> onNothing, Function<T, R> onSome) {
-        return isSome() ? onSome.apply(orElse(null)) : onNothing.get();
+    @SuppressWarnings("unchecked")
+    default <R> Maybe<R> map(Function<T, R> fn) {
+        return (Maybe<R>) Collection.super.map(fn);
+    }
+
+    @SuppressWarnings("unchecked")
+    default <R> Maybe<R> flatMap(Function<T, Collection<R>> fn) {
+        return (Maybe<R>) Collection.super.flatMap(fn);
+    }
+
+    default T fromMaybe(T def) {
+        return orElse(def);
     }
 
     final static class Nothing<T> implements Maybe<T> {
-
-        @Override
-        public <R> Maybe<R> empty() {
-            return Maybe.nothing();
-        }
-
-        @Override
-        public Maybe<T> build(T input) {
-            return Maybe.of(input);
-        }
-
-        @Override
-        public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-            return seed;
-        }
-
-        @Override
-        public String toString() {
-            return "Nothing";
-        }
-        
-        @Override
-        public boolean equals(final Object other) {
-            if (other == null) return false;
-            if (other == this) return true;
-            return other instanceof Nothing;
-        }
-        @Override
-        public int hashCode() {
-            return 0;
-        }
+        @Override public <R> R foldl(R seed, BiFunction<R, T, R> fn) { return seed; }
+        @Override public String toString() { return "Nothing"; }
+        @Override public boolean equals(Object other) { return other instanceof Nothing; }
+        @Override public int hashCode() { return 0; }
+        // Implement build/empty explicitly to avoid pickiness about default methods
+        @Override public <R> Collection<R> empty() { return nothing(); }
+        @Override public Collection<T> build(T input) { return some(input); }
     }
-    
+
     final static class Some<T> implements Maybe<T> {
-
-        private T value;
-
-        Some (final T value) {
-            this.value = value;
+        private final T value;
+        Some(T value) { this.value = value; }
+        @Override public <R> R foldl(R seed, BiFunction<R, T, R> fn) { return fn.apply(seed, value); }
+        @Override public String toString() { return "Some(" + value + ")"; }
+        @Override public boolean equals(Object other) {
+            return (other instanceof Some) && java.util.Objects.equals(((Some<?>) other).value, value);
         }
-
-        @Override
-        public <R> Maybe<R> empty() {
-            return Maybe.nothing();
-        }
-
-        @Override
-        public Maybe<T> build(T input) {
-            return Maybe.of(input);
-        }
-
-        @Override
-        public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-            return fn.apply(seed, value);
-        }
-
-        @Override
-        public String toString() {
-            return "Some (" + value + ")";
-        }
-        
-        @SuppressWarnings("unchecked")
-        @Override
-        public boolean equals(final Object other) {
-            if (other == null) return false;
-            if (other == this) return true;
-            if (other instanceof Some) {
-                Some<T> sOther = (Some<T>)other;
-                return java.util.Objects.equals(sOther.value, value);
-            }
-            return false;
-        }
-        @Override
-        public int hashCode() {
-            return java.util.Objects.hashCode(value);
-        }
+        @Override public int hashCode() { return java.util.Objects.hashCode(value); }
+        @Override public <R> Collection<R> empty() { return nothing(); }
+        @Override public Collection<T> build(T input) { return some(input); }
     }
- }
+}

@@ -15,6 +15,10 @@ public interface Set<T> extends Collection<T> {
 
     @Override Set<T> build(final T value);
 
+    default Set<T> add(final T value) {
+        return build(value);
+    }
+
     boolean contains(final T value);
 
     /**

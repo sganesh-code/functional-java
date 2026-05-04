@@ -43,8 +43,8 @@ public final class Optics {
      */
     public static <K, V> Traversal<HashMap<K, V>, V> mapValues() {
         return new Traversal<HashMap<K, V>, V>() {
-            @Override public Collection<V> getAll(HashMap<K, V> s) {
-                return List.from(s.foldl(List.<V>nil(), (acc, e) -> acc.build(e.value())));
+            @Override public List<V> getAll(HashMap<K, V> s) {
+                return List.from(s.foldl(List.<V>nil(), (acc, e) -> (List<V>) acc.build(e.value())));
             }
             @Override public HashMap<K, V> modify(HashMap<K, V> s, UnaryOperator<V> fn) {
                 return s.foldl(HashMap.<K, V>nil(), (acc, e) -> acc.put(e.key(), fn.apply(e.value())));

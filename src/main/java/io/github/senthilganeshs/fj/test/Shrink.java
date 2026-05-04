@@ -22,18 +22,18 @@ public interface Shrink<A> extends Function<A, List<A>> {
                 temp = temp / 2;
                 final int finalTemp = temp;
                 if (finalTemp != 0 && !res.find(i -> i == finalTemp).isSome()) {
-                    res = res.build(finalTemp);
+                    res = (List<Integer>) res.build(finalTemp);
                 }
             }
             
             // Also try values close to n
             if (n > 0) {
-                res = res.build(n - 1);
+                res = (List<Integer>) res.build(n - 1);
             } else {
-                res = res.build(n + 1);
+                res = (List<Integer>) res.build(n + 1);
             }
             
-            return List.from(res.reverse().filter(i -> i != n));
+            return (List<Integer>) res.reverse().filter(i -> i != n);
         };
     }
 

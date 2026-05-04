@@ -27,7 +27,7 @@ public interface JsonCodec<A> {
     default <B> JsonCodec<B> bimap(Function<B, A> f, Function<A, B> g) {
         return new JsonCodec<>() {
             @Override public JsonValue encode(B value) { return JsonCodec.this.encode(f.apply(value)); }
-            @Override public Either<String, B> decode(JsonValue json) { return JsonCodec.this.decode(json).map(g); }
+            @Override public Either<String, B> decode(JsonValue json) { return (Either<String, B>) JsonCodec.this.decode(json).map(g); }
         };
     }
 

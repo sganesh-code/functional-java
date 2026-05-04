@@ -4,29 +4,18 @@ import java.util.function.BiFunction;
 
 /**
  * A purely functional Double-Ended Queue (Deque).
- * Supports O(1) amortized access/removal from both ends.
- * 
- * @param <T> The type of elements in the deque.
  */
 public interface Deque<T> extends Collection<T> {
 
-    Deque<T> pushFront(T value);
-    Deque<T> pushBack(T value);
-    Maybe<Tuple<T, Deque<T>>> popFront();
-    Maybe<Tuple<T, Deque<T>>> popBack();
-
     @SuppressWarnings("unchecked")
     static <R> Deque<R> from(Collection<R> c) {
+        if (c instanceof Deque) return (Deque<R>) c;
         return (Deque<R>) c.foldl(Deque.<R>nil(), (d, r) -> (Deque<R>) d.build(r));
     }
 
-    @Override
-    default <R> Deque<R> map(java.util.function.Function<T, R> fn) {
-        return from(Collection.super.map(fn));
-    }
-
+    @SuppressWarnings("unchecked")
     static <R> Deque<R> nil() {
-        return new BankersDeque<>(Stack.emptyStack(), Stack.emptyStack());
+        return (Deque<R>) BankersDeque.nil();
     }
 
     @SafeVarargs
@@ -34,9 +23,24 @@ public interface Deque<T> extends Collection<T> {
         Deque<R> d = nil();
         if (values == null) return d;
         for (R val : values) {
-            d = d.pushBack(val);
+            d = (Deque<R>) d.build(val);
         }
         return d;
+    }
+
+    Deque<T> pushFront(T value);
+    Deque<T> pushBack(T value);
+    Maybe<Tuple<T, Deque<T>>> popFront();
+    Maybe<Tuple<T, Deque<T>>> popBack();
+
+    @Override
+    default <R> Collection<R> empty() {
+        return nil();
+    }
+
+    @Override
+    default Collection<T> build(T input) {
+        return pushBack(input);
     }
 
     final class BankersDeque<T> implements Deque<T> {
@@ -48,78 +52,69 @@ public interface Deque<T> extends Collection<T> {
             this.back = back;
         }
 
-        @Override
-        public Deque<T> pushFront(T value) {
-            return check((Stack<T>) front.build(value), back);
-        }
-
-        @Override
-        public Deque<T> pushBack(T value) {
-            return check(front, (Stack<T>) back.build(value));
-        }
-
-        @Override
-        public Maybe<Tuple<T, Deque<T>>> popFront() {
-            return front.head().map(h -> Tuple.of(h, check(front.tail().orElse(Stack.emptyStack()), back)));
-        }
-
-        @Override
-        public Maybe<Tuple<T, Deque<T>>> popBack() {
-            return back.head().map(h -> Tuple.of(h, check(front, back.tail().orElse(Stack.emptyStack()))));
+        static <T> Deque<T> nil() {
+            return new BankersDeque<>(Stack.emptyStack(), Stack.emptyStack());
         }
 
         private Deque<T> check(Stack<T> f, Stack<T> b) {
-            int fLen = f.length();
-            int bLen = b.length();
-            if (fLen == 0 && bLen > 0) {
-                int mid = bLen / 2;
-                Stack<T> newF = b.drop(mid).reverse();
-                Stack<T> newB = b.take(mid);
+            if (f.isEmpty() && !b.isEmpty()) {
+                int mid = b.length() / 2;
+                Stack<T> newF = (Stack<T>) b.drop(mid).reverse();
+                Stack<T> newB = (Stack<T>) b.take(mid);
                 return new BankersDeque<>(newF, newB);
-            } else if (bLen == 0 && fLen > 0) {
-                int mid = fLen / 2;
-                Stack<T> newB = f.drop(mid).reverse();
-                Stack<T> newF = f.take(mid);
+            }
+            if (b.isEmpty() && !f.isEmpty()) {
+                int mid = f.length() / 2;
+                Stack<T> newB = (Stack<T>) f.drop(mid).reverse();
+                Stack<T> newF = (Stack<T>) f.take(mid);
                 return new BankersDeque<>(newF, newB);
             }
             return new BankersDeque<>(f, b);
         }
 
         @Override
-        public <R> Collection<R> empty() {
-            return Deque.nil();
+        public Deque<T> pushFront(T value) {
+            return check(front.push(value), back);
         }
 
         @Override
-        public Collection<T> build(T input) {
-            return pushBack(input);
+        public Deque<T> pushBack(T value) {
+            return check(front, back.push(value));
+        }
+
+        @Override
+        public Maybe<Tuple<T, Deque<T>>> popFront() {
+            return front.pop().map(t -> Tuple.of(t.getA().orElse(null), check(t.getB().orElse(null), back)));
+        }
+
+        @Override
+        public Maybe<Tuple<T, Deque<T>>> popBack() {
+            return back.pop().map(t -> Tuple.of(t.getA().orElse(null), check(front, t.getB().orElse(null))));
         }
 
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-            R frontRes = front.foldl(seed, fn);
-            return back.reverse().foldl(frontRes, fn);
+            R res = front.foldl(seed, fn);
+            return back.reverse().foldl(res, fn);
         }
+
+        @Override public <R> Collection<R> empty() { return nil(); }
 
         @Override
         public String toString() {
-            return foldl("[", (r, t) -> r + (r.equals("[") ? "" : ",") + t) + "]";
+            return "Deque(" + front + ", " + back + ")";
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean equals(Object other) {
-            if (other == null) return false;
-            if (other == this) return true;
-            if (!(other instanceof Deque)) return false;
-            Deque<?> o = (Deque<?>) other;
-            if (this.length() != o.length()) return false;
-            return this.toString().equals(o.toString());
+            if (other instanceof Deque) {
+                Deque<?> d = (Deque<?>) other;
+                if (d.length() != length()) return false;
+                return this.toString().equals(d.toString());
+            }
+            return false;
         }
 
-        @Override
-        public int hashCode() {
-            return toString().hashCode();
-        }
+        @Override public int hashCode() { return toString().hashCode(); }
     }
 }

@@ -62,10 +62,10 @@ public interface Parser<A> {
                 
                 if (t.getB().orElse(null).position() <= currentState.position()) break;
 
-                results = results.build(t.getA().orElse(null));
+                results = (List<A>) results.build(t.getA().orElse(null));
                 currentState = t.getB().orElse(null);
             }
-            return Either.right(Tuple.of(results, currentState));
+            return Either.<ParseError, Tuple<List<A>, State>>right(Tuple.of(results, currentState));
         };
     }
 

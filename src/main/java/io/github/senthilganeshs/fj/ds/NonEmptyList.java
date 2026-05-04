@@ -26,13 +26,13 @@ public record NonEmptyList<A>(A head, List<A> tail) implements Higher<NonEmptyLi
     }
 
     public <B> NonEmptyList<B> map(Function<A, B> fn) {
-        return new NonEmptyList<>(fn.apply(head), tail.map(fn));
+        return new NonEmptyList<>(fn.apply(head), (List<B>) tail.map(fn));
     }
 
     public <B> NonEmptyList<B> flatMap(Function<A, NonEmptyList<B>> fn) {
         NonEmptyList<B> h = fn.apply(head);
-        List<B> rest = List.from(tail.flatMap(a -> fn.apply(a).toList()));
-        return new NonEmptyList<>(h.head, List.from(h.tail.concat(rest)));
+        List<B> rest = List.from(tail.flatMap(a -> (Collection<B>) fn.apply(a).toList()));
+        return new NonEmptyList<>(h.head, (List<B>) h.tail.concat(rest));
     }
 
     public static final Monad<µ> monad = new Monad<>() {

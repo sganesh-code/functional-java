@@ -1,5 +1,6 @@
 package io.github.senthilganeshs.fj.test;
 
+import io.github.senthilganeshs.fj.ds.Collection;
 import io.github.senthilganeshs.fj.ds.List;
 import io.github.senthilganeshs.fj.ds.Maybe;
 import io.github.senthilganeshs.fj.ds.Tuple;
@@ -119,11 +120,11 @@ public record Gen<A>(Function<Random, A> sample) implements Higher<Gen.µ, A> {
         });
     }
 
-    public static <A> Gen<List<A>> list(Gen<A> gen, int maxLength) {
+    public static <A> Gen<Collection<A>> list(Gen<A> gen, int maxLength) {
         return new Gen<>(r -> {
             if (maxLength <= 0) return List.nil();
             int len = r.nextInt(maxLength);
-            List<A> res = List.nil();
+            Collection<A> res = List.nil();
             for (int i = 0; i < len; i++) {
                 res = res.build(gen.sample().apply(r));
             }

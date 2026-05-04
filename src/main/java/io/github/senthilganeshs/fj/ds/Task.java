@@ -199,11 +199,11 @@ public final class Task<A> implements Higher<Task.µ, A> {
     public static <A, B> Task<List<B>> parTraverse(List<A> items, Function<A, Task<B>> fn) {
         return new Task<>(token -> {
             // 1. Initiate all tasks concurrently using foldl for Snoc-list order.
-            List<CompletableFuture<B>> futures = items.foldl(List.<CompletableFuture<B>>nil(), (acc, a) -> 
-                acc.build(fn.apply(a).toFuture(token)));
+            List<CompletableFuture<B>> futures = (List<CompletableFuture<B>>) items.foldl(List.<CompletableFuture<B>>nil(), (acc, a) -> 
+                (List<CompletableFuture<B>>) acc.build(fn.apply(a).toFuture(token)));
             
             // 2. Conver to array for allOf
-            CompletableFuture<?>[] array = new CompletableFuture[futures.length()];
+            CompletableFuture<?>[] array = new CompletableFuture<?>[futures.length()];
             final int[] i = {0};
             futures.forEach(f -> array[i[0]++] = f);
 
@@ -226,11 +226,11 @@ public final class Task<A> implements Higher<Task.µ, A> {
      */
     public static <A, B> Task<List<B>> boundedParTraverse(ExecutorService executor, List<A> items, Function<A, Task<B>> fn, boolean shutdownExecutor) {
         return new Task<>(token -> {
-            List<CompletableFuture<B>> futures = items.foldl(List.<CompletableFuture<B>>nil(), (acc, a) -> 
-                acc.build(CompletableFuture.supplyAsync(() -> fn.apply(a), executor)
+            List<CompletableFuture<B>> futures = (List<CompletableFuture<B>>) items.foldl(List.<CompletableFuture<B>>nil(), (acc, a) -> 
+                (List<CompletableFuture<B>>) acc.build(CompletableFuture.supplyAsync(() -> fn.apply(a), executor)
                     .thenCompose(t -> t.toFuture(token))));
             
-            CompletableFuture<?>[] array = new CompletableFuture[futures.length()];
+            CompletableFuture<?>[] array = new CompletableFuture<?>[futures.length()];
             final int[] i = {0};
             futures.forEach(f -> array[i[0]++] = f);
 
