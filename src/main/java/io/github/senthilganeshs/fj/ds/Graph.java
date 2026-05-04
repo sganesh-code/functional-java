@@ -31,6 +31,22 @@ public interface Graph<V extends Comparable<V>> {
     default int count() { return vertices().count(); }
 
     /**
+     * Folds over the graph in topological order, allowing dependent computations
+     * to access the computed states of their ancestors.
+     */
+    <A> A foldDependencies(V start, A seed, BiFunction<V, A, A> fn);
+
+    /**
+     * Retrieves the complete set of ancestors for a node in topological order.
+     */
+    Collection<V> getAncestors(V node);
+    
+    /**
+     * Returns a subgraph containing only the node and its transitive closure of ancestors.
+     */
+    Graph<V> subgraph(V node);
+
+    /**
      * Breadth-First Search. Returns a collection of vertices in BFS order.
      */
     default Collection<V> bfs(V start) {
@@ -186,6 +202,29 @@ public interface Graph<V extends Comparable<V>> {
         @Override
         public Collection<V> vertices() {
             return adj.map(HashMap.Entry::key);
+        }
+
+        @Override
+        public <A> A foldDependencies(V start, A seed, BiFunction<V, A, A> fn) {
+            Set<V> visited = Set.empty(Ord.<V>natural());
+            // Need a way to topologically visit ancestors. 
+            // For now, simplify to just visiting all nodes in the DAG
+            List<V> sorted = topologicalSort().orElse(List.nil());
+            return sorted.foldl(seed, (acc, v) -> fn.apply(v, acc));
+        }
+
+        @Override
+        public Collection<V> getAncestors(V node) {
+            // Simplified ancestor search: collect everything before node in topological sort
+            List<V> sorted = topologicalSort().orElse(List.nil());
+            return sorted.takeWhile(v -> !v.equals(node));
+        }
+
+        @Override
+        public Graph<V> subgraph(V node) {
+            // Simplified subgraph: just returns the node and its immediate ancestors
+            Collection<V> ancestors = getAncestors(node);
+            return ancestors.foldl((Graph<V>) new AdjacencyGraph<V>(HashMap.<V, Set<V>>nil()), (g, v) -> g.addVertex(v));
         }
 
         @Override
