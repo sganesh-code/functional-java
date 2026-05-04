@@ -28,6 +28,22 @@ public interface Validation<E, T> extends Collection<T> {
     }
 
     /**
+     * Transforms the valid value if present.
+     */
+    @SuppressWarnings("unchecked")
+    default <R> Validation<E, R> map(Function<T, R> fn) {
+        return isValid() ? valid(fn.apply(orElse(null))) : (Validation<E, R>) this;
+    }
+
+    /**
+     * Transforms the error value if present.
+     */
+    @SuppressWarnings("unchecked")
+    default <F> Validation<F, T> mapLeft(Function<E, F> fn) {
+        return isValid() ? (Validation<F, T>) this : invalid(fn.apply(((Invalid<E, T>) this).error));
+    }
+
+    /**
      * Combines this validation with another. If both are invalid, their errors are combined
      * using the provided Semigroup.
      */

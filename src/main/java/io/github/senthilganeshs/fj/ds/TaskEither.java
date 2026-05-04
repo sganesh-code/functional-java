@@ -49,6 +49,17 @@ public record TaskEither<E, A>(Task<Either<E, A>> task) implements Higher<Higher
         return new TaskEither<>(task.timeout(timeout, unit));
     }
 
+    /**
+     * Executes the task asynchronously and provides the result to a callback.
+     */
+    public void runAsync(java.util.function.Consumer<Either<Throwable, Either<E, A>>> callback) {
+        task.runAsync(callback);
+    }
+
+    public void runAsync(Maybe<CancellationToken> token, java.util.function.Consumer<Either<Throwable, Either<E, A>>> callback) {
+        task.runAsync(token, callback);
+    }
+
     public Either<E, A> run() {
         return task.run();
     }

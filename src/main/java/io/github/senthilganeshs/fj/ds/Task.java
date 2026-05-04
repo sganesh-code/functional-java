@@ -44,6 +44,21 @@ public final class Task<A> implements Higher<Task.µ, A> {
         }, executor));
     }
 
+    /**
+     * Creates a Task from a callback-based asynchronous API.
+     */
+    public static <A> Task<A> async(java.util.function.Consumer<java.util.function.Consumer<A>> callback) {
+        return new Task<>(token -> {
+            CompletableFuture<A> future = new CompletableFuture<>();
+            try {
+                callback.accept(future::complete);
+            } catch (Exception e) {
+                future.completeExceptionally(e);
+            }
+            return future;
+        });
+    }
+
     public static <A> Task<A> succeed(A value) {
         return new Task<>(token -> CompletableFuture.completedFuture(value));
     }
@@ -81,6 +96,7 @@ public final class Task<A> implements Higher<Task.µ, A> {
 
     /**
      * Executes the task and blocks until the result is available.
+     * Note: Avoid calling this from a managed thread pool to prevent starvation deadlocks.
      */
     public A run() {
         return run(Maybe.nothing());
@@ -92,6 +108,25 @@ public final class Task<A> implements Higher<Task.µ, A> {
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Executes the task asynchronously and provides the result to a callback.
+     * This is the preferred non-blocking execution method.
+     */
+    public void runAsync(java.util.function.Consumer<Either<Throwable, A>> callback) {
+        runAsync(Maybe.nothing(), callback);
+    }
+
+    public void runAsync(Maybe<CancellationToken> token, java.util.function.Consumer<Either<Throwable, A>> callback) {
+        toFuture(token).handle((val, ex) -> {
+            if (ex != null) {
+                callback.accept(Either.left(ex));
+            } else {
+                callback.accept(Either.right(val));
+            }
+            return null;
+        });
     }
 
     /**
@@ -159,20 +194,21 @@ public final class Task<A> implements Higher<Task.µ, A> {
 
     /**
      * Executes a list of tasks in parallel and collects the results into a single list.
+     * Guaranteed to initiate all tasks concurrently before waiting for results.
      */
     public static <A, B> Task<List<B>> parTraverse(List<A> items, Function<A, Task<B>> fn) {
         return new Task<>(token -> {
-            List<CompletableFuture<B>> futures = List.from(items.map(a -> fn.apply(a).toFuture(token)));
+            // 1. Initiate all tasks concurrently using foldl for Snoc-list order.
+            List<CompletableFuture<B>> futures = items.foldl(List.<CompletableFuture<B>>nil(), (acc, a) -> 
+                acc.build(fn.apply(a).toFuture(token)));
             
-            CompletableFuture<Void> allOf = CompletableFuture.allOf(
-                futures.foldl(new java.util.ArrayList<CompletableFuture<?>>(), (acc, f) -> {
-                    acc.add(f);
-                    return acc;
-                }).toArray(new CompletableFuture[0])
-            );
+            // 2. Conver to array for allOf
+            CompletableFuture<?>[] array = new CompletableFuture[futures.length()];
+            final int[] i = {0};
+            futures.forEach(f -> array[i[0]++] = f);
 
-            return allOf.thenApply(__ -> 
-                List.from(futures.map(f -> f.join()))
+            return CompletableFuture.allOf(array).thenApply(__ -> 
+                List.from(futures.map(CompletableFuture::join))
             );
         });
     }
@@ -181,10 +217,16 @@ public final class Task<A> implements Higher<Task.µ, A> {
      * Bounded parallel traverse to limit concurrency.
      */
     public static <A, B> Task<List<B>> boundedParTraverse(int limit, List<A> items, Function<A, Task<B>> fn) {
-        ExecutorService executor = Executors.newFixedThreadPool(limit);
+        return boundedParTraverse(Executors.newFixedThreadPool(limit), items, fn, true);
+    }
+
+    /**
+     * Executes a list of tasks in parallel using the provided executor.
+     */
+    public static <A, B> Task<List<B>> boundedParTraverse(ExecutorService executor, List<A> items, Function<A, Task<B>> fn, boolean shutdownExecutor) {
         return parTraverse(items, a -> Task.of(() -> fn.apply(a).run(), executor))
             .flatMap(res -> {
-                executor.shutdown();
+                if (shutdownExecutor) executor.shutdown();
                 return Task.succeed(res);
             });
     }
