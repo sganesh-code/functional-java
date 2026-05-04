@@ -12,6 +12,13 @@ import java.util.function.Predicate;
 public interface Either<A, B> extends Collection<B> {
 
     @SuppressWarnings("unchecked")
+    static <A, B> Either<A, Collection<B>> sequence(Collection<Either<A, B>> es) {
+        return es.foldl(Either.right(es.empty()), (acc, e) -> 
+            acc.flatMapEither(rs -> e.map(r -> (Collection<B>) rs.build(r)))
+        );
+    }
+
+    @SuppressWarnings("unchecked")
     static <A, B> Collection<B> rights(Collection<Either<A, B>> es) {
         return es.mapMaybe(e -> e.isRight() ? Maybe.some(e.fromRight(null)) : Maybe.nothing());
     }

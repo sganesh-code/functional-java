@@ -60,6 +60,24 @@ public interface Validation<E, T> extends Collection<T> {
         return !this.isValid() ? (Validation<E, S>) this : (Validation<E, S>) other;
     }
 
+    /**
+     * Transforms a collection of validations into a single validation that accumulates errors.
+     */
+    @SuppressWarnings("unchecked")
+    static <E, T> Validation<E, Collection<T>> sequence(Collection<Validation<E, T>> vs, Semigroup<E> semigroup) {
+        return vs.foldl(valid(vs.empty()), (acc, v) -> 
+            acc.liftA2(Collection::build, v, semigroup)
+        );
+    }
+
+    /**
+     * Bridges this validation to an Either.
+     */
+    @SuppressWarnings("unchecked")
+    default Either<E, T> toEither() {
+        return isValid() ? Either.right(orElse(null)) : Either.left(((Invalid<E, T>) this).error);
+    }
+
     static <E, T> Validation<E, T> valid(T value) {
         return new Valid<>(value);
     }
