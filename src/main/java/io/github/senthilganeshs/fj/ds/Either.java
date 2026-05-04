@@ -4,7 +4,7 @@ import io.github.senthilganeshs.fj.hkt.Higher;
 import io.github.senthilganeshs.fj.typeclass.Monad;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.Predicate;
 
 /**
  * A data structure representing a value of one of two possible types.
@@ -40,6 +40,15 @@ public interface Either<A, B> extends Collection<B> {
         return isRight() ? ((Right<A, B>) this).value : def;
     }
 
+    default B orElse(B def) {
+        return fromRight(def);
+    }
+
+    default <E extends Exception> B orElseThrow(java.util.function.Supplier<E> s) throws E {
+        if (isRight()) return fromRight(null);
+        throw s.get();
+    }
+
     @Override
     default <R> Collection<R> empty() {
         return (Collection<R>) left(null);
@@ -65,12 +74,15 @@ public interface Either<A, B> extends Collection<B> {
 
     @SuppressWarnings("unchecked")
     default <R> Either<A, R> map(Function<B, R> fn) {
-        return (Either<A, R>) Collection.super.map(fn);
+        return isRight() ? right(fn.apply(fromRight(null))) : (Either<A, R>) this;
     }
 
     @SuppressWarnings("unchecked")
     default <R> Either<A, R> flatMap(Function<B, Collection<R>> fn) {
-        return (Either<A, R>) Collection.super.flatMap(fn);
+        if (isLeft()) return (Either<A, R>) this;
+        Collection<R> res = fn.apply(fromRight(null));
+        if (res instanceof Either) return (Either<A, R>) res;
+        return (Either<A, R>) res.foldl(empty(), (acc, r) -> acc.build(r));
     }
 
     @SuppressWarnings("unchecked")
@@ -105,6 +117,15 @@ public interface Either<A, B> extends Collection<B> {
 
     default Maybe<B> toMaybe() {
         return isRight() ? Maybe.some(fromRight(null)) : Maybe.nothing();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    default Collection<B> filter(Predicate<B> pred) {
+        if (isLeft()) return this;
+        B val = fromRight(null);
+        if (pred.test(val)) return this;
+        return (Collection<B>) left(val);
     }
 
     default Validation<List<A>, B> toValidation() {

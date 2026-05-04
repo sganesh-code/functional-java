@@ -25,6 +25,12 @@ public interface RoseTree<T> extends Collection<T> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    default <R> RoseTree<R> map(Function<T, R> fn) {
+        return RoseTree.of(fn.apply(value()), (List<RoseTree<R>>) (List) children().map(c -> c.map(fn)));
+    }
+
+    @Override
     default Collection<T> build(T input) {
         return new RoseTreeImpl<>(value(), List.<RoseTree<T>>from(children().build(RoseTree.of(input))));
     }
@@ -49,7 +55,7 @@ public interface RoseTree<T> extends Collection<T> {
 
         @Override
         public String toString() {
-            return "RoseTree(" + value + ", " + children + ")";
+            return "RoseTree(" + value + ", " + children.mkString("[", ", ", "]") + ")";
         }
 
         @Override

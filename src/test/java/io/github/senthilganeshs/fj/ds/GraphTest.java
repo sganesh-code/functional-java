@@ -69,7 +69,7 @@ public class GraphTest {
             .addEdge("B", "D")
             .addEdge("C", "D");
 
-        Maybe<Collection<String>> topoCol = g.topologicalSort();
+        Maybe<Collection<String>> topoCol = (Maybe<Collection<String>>) (Maybe) g.topologicalSort();
         Maybe<List<String>> topo = topoCol.map(List::from);
         Assert.assertTrue(topo.isSome());
         List<String> sorted = topo.orElse(List.nil());

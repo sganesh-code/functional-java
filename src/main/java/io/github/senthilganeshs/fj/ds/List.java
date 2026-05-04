@@ -64,6 +64,11 @@ public interface List<T> extends Collection<T> {
         return res;
     }
 
+    default Maybe<List<T>> tail() {
+        return isEmpty() ? Maybe.nothing() : Maybe.some(drop(1));
+    }
+
+    @SuppressWarnings("unchecked")
     static <R> List<R> cons(final List<R> head, final R tail) {
         return new LinkedList<>(head, tail);
     }
@@ -140,8 +145,8 @@ public interface List<T> extends Collection<T> {
     final static class EmptyList<T> implements List<T> {
         @Override public boolean isEmpty() { return true; }
         @Override public <R> R foldl(R seed, BiFunction<R, T, R> fn) { return seed; }
-        @Override public String toString() { return "[]"; }
-        @Override public boolean equals(Object other) { return other instanceof EmptyList; }
+        @Override public String toString() { return Collection.toString(this); }
+        @Override public boolean equals(Object other) { return other instanceof List && ((List<?>) other).isEmpty(); }
         @Override public int hashCode() { return 0; }
         @Override public <R> Collection<R> empty() { return nil(); }
         @Override public Collection<T> build(T input) { return cons(this, input); }
@@ -158,12 +163,21 @@ public interface List<T> extends Collection<T> {
 
         @Override public boolean isEmpty() { return false; }
         @Override public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-            return fn.apply(head.foldl(seed, fn), tail);
+            java.util.Deque<T> stack = new java.util.ArrayDeque<>();
+            List<T> curr = this;
+            while (!curr.isEmpty()) {
+                LinkedList<T> ll = (LinkedList<T>) curr;
+                stack.push(ll.tail);
+                curr = ll.head;
+            }
+            R res = seed;
+            while (!stack.isEmpty()) {
+                res = fn.apply(res, stack.pop());
+            }
+            return res;
         }
 
-        @Override public String toString() {
-            return foldl("[", (acc, t) -> acc + (acc.equals("[") ? "" : ",") + t) + "]";
-        }
+        @Override public String toString() { return Collection.toString(this); }
 
         @Override public boolean equals(Object other) {
             if (other instanceof List) {

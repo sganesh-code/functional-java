@@ -8,14 +8,8 @@ import java.util.function.BiFunction;
 public interface Queue<T> extends Collection<T> {
 
     @SuppressWarnings("unchecked")
-    static <R> Queue<R> from(Collection<R> c) {
-        if (c instanceof Queue) return (Queue<R>) c;
-        return (Queue<R>) c.foldl(Queue.<R>nil(), (q, r) -> (Queue<R>) q.build(r));
-    }
-
-    @SuppressWarnings("unchecked")
     static <R> Queue<R> nil() {
-        return (Queue<R>) BankersQueue.nil();
+        return (Queue<R>) BankersQueue.EMPTY;
     }
 
     @SafeVarargs
@@ -23,44 +17,38 @@ public interface Queue<T> extends Collection<T> {
         Queue<R> q = nil();
         if (values == null) return q;
         for (R val : values) {
-            q = (Queue<R>) q.build(val);
+            q = q.enqueue(val);
         }
         return q;
     }
 
-    Maybe<T> head();
-    Maybe<Queue<T>> tail();
-
-    @Override
-    default <R> Collection<R> empty() {
-        return nil();
+    @SuppressWarnings("unchecked")
+    static <R> Queue<R> from(Collection<R> c) {
+        if (c instanceof Queue) return (Queue<R>) c;
+        return (Queue<R>) c.foldl(Queue.<R>nil(), (q, r) -> q.enqueue(r));
     }
+
+    Queue<T> enqueue(T value);
+    Maybe<Tuple<T, Queue<T>>> dequeue();
 
     @Override
     default Collection<T> build(T input) {
         return enqueue(input);
     }
 
-    Queue<T> enqueue(T value);
-    Maybe<Tuple<T, Queue<T>>> dequeue();
-
     final class BankersQueue<T> implements Queue<T> {
         private final Stack<T> front;
         private final Stack<T> back;
+
+        static final BankersQueue<?> EMPTY = new BankersQueue<>(Stack.emptyStack(), Stack.emptyStack());
 
         BankersQueue(Stack<T> front, Stack<T> back) {
             this.front = front;
             this.back = back;
         }
 
-        static <T> Queue<T> nil() {
-            return new BankersQueue<>(Stack.emptyStack(), Stack.emptyStack());
-        }
-
-        private Queue<T> check(Stack<T> f, Stack<T> b) {
-            if (f.isEmpty()) {
-                return new BankersQueue<>(Stack.from(b.reverse()), Stack.emptyStack());
-            }
+        private static <T> Queue<T> check(Stack<T> f, Stack<T> b) {
+            if (f.isEmpty()) return new BankersQueue<>(Stack.from(b.reverse()), Stack.emptyStack());
             return new BankersQueue<>(f, b);
         }
 
@@ -71,30 +59,25 @@ public interface Queue<T> extends Collection<T> {
 
         @Override
         public Maybe<Tuple<T, Queue<T>>> dequeue() {
-            return front.head().map(h -> Tuple.of(h, check(front.tail().orElse(Stack.emptyStack()), back)));
-        }
-
-        @Override
-        public Maybe<T> head() {
-            return front.head();
-        }
-
-        @Override
-        public Maybe<Queue<T>> tail() {
-            return front.head().map(h -> check(front.tail().orElse(Stack.emptyStack()), back));
+            if (isEmpty()) return Maybe.nothing();
+            return Maybe.some(Tuple.of(front.head().orElse(null), check(front.tail().orElse(Stack.emptyStack()), back)));
         }
 
         @Override
         public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
+            // Stack.foldl is LIFO (newest to oldest). 
+            // In BankersQueue, front contains elements in order of removal (top is next out).
+            // So front.foldl visits elements in FIFO order.
+            // back contains newest elements in reverse entry order, but back.internal().foldl visits them in entry order.
             R res = front.foldl(seed, fn);
-            return back.reverse().foldl(res, fn);
+            return back.internal().foldl(res, fn);
         }
 
         @Override public <R> Collection<R> empty() { return nil(); }
 
         @Override
         public String toString() {
-            return "Queue(" + front + ", " + back + ")";
+            return Collection.toString(this);
         }
 
         @Override

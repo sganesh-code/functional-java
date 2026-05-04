@@ -4,15 +4,13 @@ import io.github.senthilganeshs.fj.ds.Either;
 import io.github.senthilganeshs.fj.ds.List;
 import io.github.senthilganeshs.fj.ds.Maybe;
 import io.github.senthilganeshs.fj.ds.Tuple;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.BiFunction;
 
 /**
- * A functional parser that transforms a State into an Either a ParseError or a successful value with a new State.
- * @param <A> The type of value produced by the parser.
+ * Foundation for purely functional parser combinators.
  */
-@FunctionalInterface
 public interface Parser<A> {
 
     Either<ParseError, Tuple<A, State>> parse(State state);
@@ -34,8 +32,7 @@ public interface Parser<A> {
     default Parser<A> or(Parser<A> other) {
         return state -> {
             Either<ParseError, Tuple<A, State>> res = parse(state);
-            if (res.isRight()) return res;
-            return other.parse(state);
+            return res.isRight() ? res : other.parse(state);
         };
     }
 
@@ -44,11 +41,11 @@ public interface Parser<A> {
     }
 
     default <B> Parser<A> ignore(Parser<B> other) {
-        return this.flatMap(a -> other.map(b -> a));
+        return this.flatMap(a -> other.map(__ -> a));
     }
 
     default <B> Parser<B> then(Parser<B> other) {
-        return this.flatMap(a -> other);
+        return this.flatMap(__ -> other);
     }
 
     default Parser<List<A>> many() {
@@ -58,19 +55,31 @@ public interface Parser<A> {
             while (true) {
                 Either<ParseError, Tuple<A, State>> res = parse(currentState);
                 if (res.isLeft()) break;
-                Tuple<A, State> t = res.orElse(null);
+                Tuple<A, State> t = res.fromRight(null);
                 
-                if (t.getB().orElse(null).position() <= currentState.position()) break;
+                State nextState = t.getB().orElse(null);
+                if (nextState.position() <= currentState.position()) break;
 
                 results = (List<A>) results.build(t.getA().orElse(null));
-                currentState = t.getB().orElse(null);
+                currentState = nextState;
             }
             return Either.<ParseError, Tuple<List<A>, State>>right(Tuple.of(results, currentState));
         };
     }
 
     default Parser<List<A>> many1() {
-        return this.flatMap(first -> many().map(rest -> List.from(List.of(first).concat(rest))));
+        return this.and(this.many()).map(t -> (List<A>) t.getB().orElse(List.nil()).build(t.getA().orElse(null)));
+    }
+
+    default Parser<Maybe<A>> optional() {
+        return state -> {
+            Either<ParseError, Tuple<A, State>> res = parse(state);
+            if (res.isRight()) {
+                Tuple<A, State> t = res.fromRight(null);
+                return Either.right(Tuple.of(Maybe.some(t.getA().orElse(null)), t.getB().orElse(null)));
+            }
+            return Either.right(Tuple.of(Maybe.nothing(), state));
+        };
     }
 
     default <B> Parser<List<A>> sepBy(Parser<B> sep) {
@@ -78,20 +87,9 @@ public interface Parser<A> {
     }
 
     default <B> Parser<List<A>> sepBy1(Parser<B> sep) {
-        return this.flatMap(first -> 
-            sep.then(this).many().map(rest -> List.from(List.of(first).concat(rest)))
+        return this.flatMap(a -> 
+            sep.then(this).many().map(as -> (List<A>) as.foldl(List.of(a), (acc, x) -> (List<A>) acc.build(x)))
         );
-    }
-
-    default Parser<Maybe<A>> optional() {
-        return state -> {
-            Either<ParseError, Tuple<A, State>> res = parse(state);
-            if (res.isRight()) {
-                Tuple<A, State> t = res.orElse(null);
-                return Either.right(Tuple.of(Maybe.some(t.getA().orElse(null)), t.getB().orElse(null)));
-            }
-            return Either.right(Tuple.of(Maybe.nothing(), state));
-        };
     }
 
     default Parser<A> peek() {
@@ -120,10 +118,6 @@ public interface Parser<A> {
 
     // --- Basic Parsers ---
 
-    static <A> Parser<A> lazy(java.util.function.Supplier<Parser<A>> supplier) {
-        return state -> supplier.get().parse(state);
-    }
-
     static <A> Parser<A> succeed(A value) {
         return state -> Either.right(Tuple.of(value, state));
     }
@@ -132,12 +126,20 @@ public interface Parser<A> {
         return state -> Either.left(new ParseError(state.position(), state.line(), state.column(), message));
     }
 
+    static <A> Parser<A> lazy(java.util.function.Supplier<Parser<A>> p) {
+        return state -> p.get().parse(state);
+    }
+
     static Parser<Character> satisfy(Predicate<Character> pred, String expected) {
-        return state -> state.current()
-            .map(c -> pred.test(c) 
-                ? Either.<ParseError, Tuple<Character, State>>right(Tuple.of(c, state.advance(1)))
-                : Either.<ParseError, Tuple<Character, State>>left(new ParseError(state.position(), state.line(), state.column(), "Expected " + expected + " but found '" + c + "'")))
-            .orElse(Either.left(new ParseError(state.position(), state.line(), state.column(), "Expected " + expected + " but reached EOF")));
+        return state -> {
+            if (state.position() < state.source().length()) {
+                char c = state.source().charAt(state.position());
+                if (pred.test(c)) {
+                    return Either.right(Tuple.of(c, state.advance(1)));
+                }
+            }
+            return Either.left(new ParseError(state.position(), state.line(), state.column(), "Expected " + expected));
+        };
     }
 
     static Parser<Character> character(char c) {
@@ -153,6 +155,23 @@ public interface Parser<A> {
         };
     }
 
+    static Parser<Void> eof() {
+        return state -> {
+            if (state.position() >= state.source().length()) {
+                return Either.right(Tuple.of(null, state));
+            }
+            return Either.left(new ParseError(state.position(), state.line(), state.column(), "Expected end of input"));
+        };
+    }
+
+    static <A> Parser<A> choice(List<Parser<A>> ps) {
+        return ps.foldl(Parser.<A>fail("No alternatives matched"), Parser::or);
+    }
+
+    static Parser<Character> any() {
+        return satisfy(__ -> true, "any character");
+    }
+
     static Parser<Character> digit() {
         return satisfy(Character::isDigit, "digit");
     }
@@ -165,19 +184,6 @@ public interface Parser<A> {
         return satisfy(Character::isWhitespace, "whitespace");
     }
 
-    static Parser<Void> eof() {
-        return state -> state.isEOF() 
-            ? Either.right(Tuple.of(null, state))
-            : Either.left(new ParseError(state.position(), state.line(), state.column(), "Expected EOF"));
-    }
-
-    static <A> Parser<A> choice(List<Parser<A>> parsers) {
-        return state -> parsers.foldl(Either.<ParseError, Tuple<A, State>>left(new ParseError(state.position(), state.line(), state.column(), "No choice matched")),
-            (acc, p) -> acc.isRight() ? acc : p.parse(state));
-    }
-
-    // --- Lexer Helpers ---
-
     static Parser<List<Character>> spaces() {
         return whitespace().many();
     }
@@ -187,10 +193,8 @@ public interface Parser<A> {
     }
 
     static Parser<String> identifier() {
-        return letter().flatMap(first -> 
-            letter().or(digit()).many().map(rest -> 
-                first + rest.foldl("", (s, c) -> s + c)
-            )
+        return letter().and(letter().or(digit()).many()).map(t -> 
+            t.getA().orElse(null).toString() + t.getB().orElse(List.nil()).foldl("", (s, c) -> s + c)
         ).lexeme();
     }
 

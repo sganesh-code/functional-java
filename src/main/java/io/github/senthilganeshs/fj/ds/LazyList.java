@@ -49,9 +49,14 @@ public interface LazyList<T> extends List<T> {
 
     @Override
     default <R> R foldl(R seed, BiFunction<R, T, R> fn) {
-        if (isEmpty()) return seed;
-        NonEmpty<T> ne = (NonEmpty<T>) this;
-        return ne.tailLazy().foldl(fn.apply(seed, ne.headVal()), fn);
+        R res = seed;
+        LazyList<T> curr = this;
+        while (!curr.isEmpty()) {
+            NonEmpty<T> ne = (NonEmpty<T>) curr;
+            res = fn.apply(res, ne.headVal());
+            curr = ne.tailLazy();
+        }
+        return res;
     }
 
     @Override
@@ -59,8 +64,14 @@ public interface LazyList<T> extends List<T> {
         return nil();
     }
 
+    @Override
     default Collection<T> build(T input) {
-        return List.from(this).build(input);
+        return concat(of(input));
+    }
+
+    @Override
+    default Maybe<T> head() {
+        return headMaybe();
     }
 
     @Override
@@ -68,16 +79,19 @@ public interface LazyList<T> extends List<T> {
         return isEmpty() ? Maybe.nothing() : Maybe.some(((NonEmpty<T>) this).headVal());
     }
 
+    @Override
     default Maybe<List<T>> tail() {
         return isEmpty() ? Maybe.nothing() : Maybe.some((List<T>) ((NonEmpty<T>) this).tailLazy());
     }
 
+    @Override
     default <R> LazyList<R> map(Function<T, R> fn) {
         if (isEmpty()) return nil();
         NonEmpty<T> ne = (NonEmpty<T>) this;
         return cons(fn.apply(ne.headVal()), () -> ne.tailLazy().map(fn));
     }
 
+    @Override
     default <R> LazyList<R> flatMap(Function<T, Collection<R>> fn) {
         if (isEmpty()) return nil();
         NonEmpty<T> ne = (NonEmpty<T>) this;
@@ -85,10 +99,56 @@ public interface LazyList<T> extends List<T> {
         return headList.concat(ne.tailLazy().flatMap(fn));
     }
 
+    @Override
+    default LazyList<T> filter(Predicate<T> pred) {
+        LazyList<T> curr = this;
+        while (!curr.isEmpty()) {
+            NonEmpty<T> ne = (NonEmpty<T>) curr;
+            if (pred.test(ne.headVal())) {
+                final LazyList<T> nextTail = ne.tailLazy();
+                return cons(ne.headVal(), () -> nextTail.filter(pred));
+            }
+            curr = ne.tailLazy();
+        }
+        return nil();
+    }
+
+    @Override
     default LazyList<T> concat(Collection<T> other) {
         if (isEmpty()) return from(other);
         NonEmpty<T> ne = (NonEmpty<T>) this;
         return cons(ne.headVal(), () -> ne.tailLazy().concat(other));
+    }
+
+    @Override
+    default LazyList<T> take(int n) {
+        if (n <= 0 || isEmpty()) return nil();
+        NonEmpty<T> ne = (NonEmpty<T>) this;
+        return cons(ne.headVal(), () -> ne.tailLazy().take(n - 1));
+    }
+
+    @Override
+    default LazyList<T> drop(int n) {
+        LazyList<T> curr = this;
+        while (n > 0 && !curr.isEmpty()) {
+            curr = ((NonEmpty<T>) curr).tailLazy();
+            n--;
+        }
+        return curr;
+    }
+
+    @Override
+    default LazyList<T> reverse() {
+        return from(List.super.reverse());
+    }
+
+    @Override
+    default <R> LazyList<R> mapMaybe(Function<T, Maybe<R>> fn) {
+        if (isEmpty()) return nil();
+        NonEmpty<T> ne = (NonEmpty<T>) this;
+        Maybe<R> res = fn.apply(ne.headVal());
+        if (res.isSome()) return cons(res.orElse(null), () -> ne.tailLazy().mapMaybe(fn));
+        return ne.tailLazy().mapMaybe(fn);
     }
 
     final class NonEmpty<T> implements LazyList<T> {
@@ -104,12 +164,34 @@ public interface LazyList<T> extends List<T> {
         public LazyList<T> tailLazy() { return tail.get(); }
         
         @Override
-        public String toString() { return "LazyList(" + head + ", ...)"; }
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[");
+            LazyList<T> curr = this;
+            int count = 0;
+            while (!curr.isEmpty() && count < 10) {
+                if (count > 0) sb.append(",");
+                sb.append(((NonEmpty<T>) curr).headVal());
+                curr = ((NonEmpty<T>) curr).tailLazy();
+                count++;
+            }
+            if (!curr.isEmpty()) sb.append(",...");
+            return sb.append("]").toString();
+        }
+
+        @Override public int length() {
+            int len = 0;
+            LazyList<T> curr = this;
+            while (!curr.isEmpty()) {
+                len++;
+                curr = ((NonEmpty<T>) curr).tailLazy();
+            }
+            return len;
+        }
     }
 
     final class Empty<T> implements LazyList<T> {
         static final Empty<?> INSTANCE = new Empty<>();
-        @Override
-        public String toString() { return "EmptyLazyList"; }
+        @Override public String toString() { return "[]"; }
+        @Override public int length() { return 0; }
     }
 }

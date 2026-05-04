@@ -5,13 +5,13 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * A typeclass for functors that support functional application and purity.
+ * A typeclass for functors that support functional application.
  * 
  * @param <W> The witness type of the applicative.
  */
 public interface Applicative<W> extends Functor<W> {
     /**
-     * Lifts a pure value into the applicative context.
+     * Lifts a value into the applicative context.
      */
     <A> Higher<W, A> pure(A a);
 

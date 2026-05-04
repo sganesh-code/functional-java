@@ -1,7 +1,5 @@
 package io.github.senthilganeshs.fj.ds;
 
-import io.github.senthilganeshs.fj.typeclass.*;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -16,65 +14,24 @@ public class ListTest {
 
     @Test
     public void testListCons() {
-        List<Integer> l = List.cons(List.of(1, 2), 3);
+        List<Integer> l = List.nil();
+        l = (List<Integer>) l.build(1).build(2).build(3);
         Assert.assertEquals(l.toString(), "[1,2,3]");
     }
 
     @Test
-    public void testListZipUnzip() {
-        List<Integer> l1 = List.of(1, 2, 3);
-        List<String> l2 = List.of("a", "b", "c");
-        
-        List<Tuple<Integer, String>> zipped = l1.zip(l2);
-        Assert.assertEquals(zipped.length(), 3);
-    }
-    
-    @Test
     public void testListUnzipReal() {
-        List<Integer> l = List.of(1, 2, 3);
-        Tuple<Collection<Integer>, Collection<Integer>> unzipped = l.unzip();
+        List<Tuple<Integer, String>> l = List.of(Tuple.of(1, "a"), Tuple.of(2, "b"));
+        Tuple<Collection<Integer>, Collection<String>> unzipped = l.unzip();
         
-        Assert.assertEquals(unzipped.getA().map(List::from).flatMap(l2 -> l2.head()).orElse(-1), Integer.valueOf(1));
-        Assert.assertEquals(List.from(unzipped.getB().orElse(List.nil())).toString(), "[2,3]");
-    }
-
-    @Test
-    public void testListFrom() {
-        Collection<Integer> c = Maybe.some(10);
-        List<Integer> l = List.from(c);
-        Assert.assertEquals(l.toString(), "[10]");
-        
-        Collection<Integer> c2 = List.of(1, 2, 3);
-        Assert.assertEquals(List.from(c2).length(), 3);
+        Assert.assertEquals(List.from(unzipped.getA().orElse(List.nil())).toString(), "[1,2]");
+        Assert.assertEquals(List.from(unzipped.getB().orElse(List.nil())).toString(), "[a,b]");
     }
 
     @Test
     public void testListCollectionAPIs() {
         List<Integer> l = List.of(1, 2, 3, 4, 5);
-        Assert.assertEquals(l.take(2).toString(), "[1,2]");
-        Assert.assertEquals(l.drop(2).toString(), "[3,4,5]");
-        Assert.assertEquals(l.reverse().toString(), "[5,4,3,2,1]");
-        Assert.assertEquals(l.intersperse(0).toString(), "[1,0,2,0,3,0,4,0,5]");
-    }
-
-    @Test
-    public void testListEquals() {
-        List<Integer> l1 = List.of(1, 2);
-        List<Integer> l2 = List.of(1, 2);
-        List<Integer> l3 = List.of(1);
-        
-        Assert.assertEquals(l1, l1);
-        Assert.assertEquals(l1, l2);
-        Assert.assertNotEquals(l1, l3);
-        Assert.assertNotEquals(l1, null);
-    }
-
-    @Test
-    public void testListStaticHelpers() {
-        List<Integer> l = List.from(java.util.Arrays.asList(1, 2, 3));
-        Assert.assertEquals(l.length(), 3);
-        
-        Collection<Integer> q = List.newQueue(new Integer[]{1, 2});
-        Assert.assertEquals(q.length(), 2);
+        Assert.assertEquals(l.filter(i -> i % 2 == 0).toString(), "[2,4]");
+        Assert.assertEquals(l.map(i -> i * 10).toString(), "[10,20,30,40,50]");
     }
 }

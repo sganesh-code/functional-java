@@ -46,7 +46,7 @@ public interface PriorityQueue<T> extends Collection<T> {
 
     @Override
     default <R> Collection<R> empty() {
-        return (Collection<R>) (PriorityQueue<R>) new LeftistHeap<>(null, 0, null, null, null);
+        return (Collection<R>) (PriorityQueue<R>) PriorityQueue.nil();
     }
 
     @Override
@@ -87,7 +87,8 @@ public interface PriorityQueue<T> extends Collection<T> {
             return merge(this, other);
         }
 
-        private PriorityQueue<T> merge(PriorityQueue<T> h1, PriorityQueue<T> h2) {            if (h1.isEmpty()) return h2;
+        private PriorityQueue<T> merge(PriorityQueue<T> h1, PriorityQueue<T> h2) {
+            if (h1.isEmpty()) return h2;
             if (h2.isEmpty()) return h1;
 
             LeftistHeap<T> l1 = (LeftistHeap<T>) h1;
@@ -124,5 +125,10 @@ public interface PriorityQueue<T> extends Collection<T> {
 
         @Override
         public boolean isEmpty() { return value == null; }
+
+        @Override
+        public String toString() {
+            return Collection.toString(this);
+        }
     }
 }

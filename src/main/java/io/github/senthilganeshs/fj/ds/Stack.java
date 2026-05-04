@@ -14,6 +14,11 @@ public interface Stack<T> extends Collection<T> {
     }
 
     @SuppressWarnings("unchecked")
+    static <R> Stack<R> nil() {
+        return emptyStack();
+    }
+
+    @SuppressWarnings("unchecked")
     static <R> Stack<R> emptyStack() {
         return new StackImpl<>(List.nil());
     }
@@ -35,6 +40,7 @@ public interface Stack<T> extends Collection<T> {
 
     Maybe<T> head();
     Maybe<Stack<T>> tail();
+    List<T> internal();
 
     @Override
     default <R> Collection<R> empty() {
@@ -48,14 +54,15 @@ public interface Stack<T> extends Collection<T> {
 
     @SuppressWarnings("unchecked")
     default Stack<T> push(T value) {
-        return (Stack<T>) new StackImpl<>(List.cons(List.from(this), value));
+        return (Stack<T>) new StackImpl<>(List.cons(internal(), value));
     }
 
     @SuppressWarnings("unchecked")
     default Maybe<Tuple<T, Stack<T>>> pop() {
         if (isEmpty()) return Maybe.nothing();
-        List<T> l = List.from(this);
-        return l.lastMaybe().map(t -> Tuple.of(t, (Stack<T>) new StackImpl<>(List.from(l.take(l.length() - 1)))));
+        Maybe<T> h = head();
+        Maybe<Stack<T>> t = tail();
+        return h.flatMapMaybe(hv -> t.map(tv -> Tuple.of(hv, tv)));
     }
 
     @SuppressWarnings("unchecked")
@@ -64,47 +71,58 @@ public interface Stack<T> extends Collection<T> {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     default <R> Stack<R> map(java.util.function.Function<T, R> fn) {
-        return (Stack<R>) Collection.super.map(fn);
+        return new StackImpl<>(internal().map(fn));
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     default <R> Stack<R> flatMap(java.util.function.Function<T, Collection<R>> fn) {
-        return (Stack<R>) Collection.super.flatMap(fn);
+        return new StackImpl<>(internal().flatMap(fn));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    default Stack<T> filter(java.util.function.Predicate<T> pred) {
+        return new StackImpl<>(internal().filter(pred));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    default Stack<T> take(int n) {
+        // Stack is LIFO, so take(n) takes from the TOP (end of Snoc-list)
+        return new StackImpl<>(internal().reverse().take(n).reverse());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    default Stack<T> drop(int n) {
+        return new StackImpl<>(internal().reverse().drop(n).reverse());
     }
 
     @SuppressWarnings("unchecked")
     default Stack<T> concat(Collection<T> other) {
-        return (Stack<T>) Collection.super.concat(other);
-    }
-
-    @SuppressWarnings("unchecked")
-    default Stack<T> take(int n) {
-        return (Stack<T>) Collection.super.take(n);
-    }
-
-    @SuppressWarnings("unchecked")
-    default Stack<T> drop(int n) {
-        return (Stack<T>) Collection.super.drop(n);
-    }
-
-    @SuppressWarnings("unchecked")
-    default Stack<T> filter(java.util.function.Predicate<T> pred) {
-        return (Stack<T>) Collection.super.filter(pred);
+        return new StackImpl<>(internal().concat(other));
     }
 
     @SuppressWarnings("unchecked")
     default <R> Stack<R> mapMaybe(java.util.function.Function<T, Maybe<R>> fn) {
-        return (Stack<R>) Collection.super.mapMaybe(fn);
+        return new StackImpl<>(internal().mapMaybe(fn));
     }
 
     record StackImpl<T>(List<T> internal) implements Stack<T> {
-        @Override public <R> R foldl(R seed, BiFunction<R, T, R> fn) { return internal.foldl(seed, fn); }
-        @Override public String toString() { return "Stack(" + internal + ")"; }
-        @Override public boolean equals(Object other) {
-            return other instanceof Stack && internal.equals(List.from((Stack<?>) other));
+        @Override public <R> R foldl(R seed, BiFunction<R, T, R> fn) { 
+            return internal.reverse().foldl(seed, fn); 
         }
-        @Override public int hashCode() { return internal.hashCode(); }
+        @Override public String toString() { return Collection.toString(this); }
+        @Override public boolean equals(Object other) {
+            if (other instanceof Stack) {
+                return this.toString().equals(other.toString());
+            }
+            return false;
+        }
+        @Override public int hashCode() { return toString().hashCode(); }
 
         @SuppressWarnings("unchecked")
         @Override public Maybe<T> head() { return internal.lastMaybe(); }
@@ -115,6 +133,7 @@ public interface Stack<T> extends Collection<T> {
             return Maybe.some((Stack<T>) new StackImpl<>(List.from(internal.take(internal.length() - 1))));
         }
 
+        @Override public List<T> internal() { return internal; }
         @Override public <R> Collection<R> empty() { return emptyStack(); }
     }
 }

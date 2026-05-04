@@ -15,6 +15,11 @@ public interface Monad<W> extends Applicative<W> {
     <A, B> Higher<W, B> flatMap(Function<A, Higher<W, B>> fn, Higher<W, A> fa);
 
     @Override
+    default <A, B> Higher<W, B> map(Function<A, B> fn, Higher<W, A> fa) {
+        return flatMap(a -> pure(fn.apply(a)), fa);
+    }
+
+    @Override
     default <A, B> Higher<W, B> ap(Higher<W, Function<A, B>> ff, Higher<W, A> fa) {
         return flatMap(f -> map(f, fa), ff);
     }

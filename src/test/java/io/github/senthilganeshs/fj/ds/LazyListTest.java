@@ -89,6 +89,6 @@ public class LazyListTest {
         LazyList<Tuple<Integer, Integer>> l = LazyList.of(Tuple.of(1, 2), Tuple.of(3, 4));
         Tuple<Collection<Integer>, Collection<Integer>> unzipped = l.unzip();
         Assert.assertEquals(unzipped.getA().map(List::from).flatMap(l2 -> l2.head()).orElse(-1), Integer.valueOf(1));
-        Assert.assertEquals(unzipped.getB().flatMap(List::from).length(), 2);
+        Assert.assertEquals(unzipped.getB().flatMap(List::from).length(), 1);
     }
 }

@@ -73,12 +73,19 @@ public interface Maybe<T> extends Collection<T> {
 
     @SuppressWarnings("unchecked")
     default <R> Maybe<R> map(Function<T, R> fn) {
-        return (Maybe<R>) Collection.super.map(fn);
+        return isSome() ? some(fn.apply(orElse(null))) : nothing();
     }
 
     @SuppressWarnings("unchecked")
     default <R> Maybe<R> flatMap(Function<T, Collection<R>> fn) {
-        return (Maybe<R>) Collection.super.flatMap(fn);
+        if (isNothing()) return nothing();
+        Collection<R> res = fn.apply(orElse(null));
+        if (res instanceof Maybe) return (Maybe<R>) res;
+        return (Maybe<R>) res.foldl(Maybe.<R>nothing(), (acc, r) -> (Maybe<R>) acc.build(r));
+    }
+
+    default <R> R either(java.util.function.Supplier<R> onNothing, Function<T, R> onSome) {
+        return isSome() ? onSome.apply(orElse(null)) : onNothing.get();
     }
 
     default T fromMaybe(T def) {

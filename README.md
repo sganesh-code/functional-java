@@ -16,8 +16,10 @@
 4. [Safe Narrowing & HKTs](#-safe-narrowing--hkts)
 5. [Optics & Transformation](#-optics--transformation)
 6. [Persistent Data Structures](#-persistent-data-structures)
-7. [Installation](#-installation)
-8. [License](#-license)
+7. [API Showcase](#-api-showcase-traditional-vs-functional)
+8. [Property-Based Testing](#-property-based-testing)
+9. [Installation](#-installation)
+10. [License](#-license)
 
 ---
 
@@ -101,6 +103,72 @@ All structures are **Persistent**. Updating a structure returns a new version wh
 | **`HashMap<K, V>`** | `HashMap.µ` | Persistent hash maps (HAMT). |
 | **`RoseTree<T>`** | `RoseTree.µ` | Multi-way trees for hierarchical data. |
 | **`Set<T>`** | `Set.µ` | Persistent ordered sets (AVL Tree). |
+
+---
+
+## 🎭 API Showcase: Traditional vs. Functional
+
+`functional-java` eliminates the defensive boilerplate and mutable state tracking common in traditional Java, resulting in code that is more expressive, thread-safe, and easier to reason about.
+
+### 🛡️ 1. Safe Optionality
+**Traditional:** Deeply nested `if-null` checks or `Optional.isPresent()`.
+```java
+// Traditional Java
+User user = getUser();
+String city = "Unknown";
+if (user != null && user.getAddress() != null) {
+    city = user.getAddress().getCity();
+}
+```
+**functional-java:** Declarative chaining that handles missing data implicitly.
+```java
+// Expressive and safe
+String city = Maybe.of(getUser())
+    .flatMap(u -> Maybe.of(u.getAddress()))
+    .map(Address::getCity)
+    .orElse("Unknown");
+```
+
+### 🔄 2. Data Transformation & Purity
+**Traditional:** Java Streams are useful but one-time use (lazy/terminal) and often require boilerplate collectors.
+```java
+// Traditional Streams (Mutable terminal)
+List<Integer> list = List.of(1, 2, 3);
+List<String> strings = list.stream()
+    .filter(i -> i > 1)
+    .map(i -> "ID-" + i)
+    .collect(Collectors.toList());
+```
+**functional-java:** Purely functional, persistent transformations that are always valid and reusable.
+```java
+// Persistent and direct
+List<String> strings = List.of(1, 2, 3)
+    .filter(i -> i > 1)
+    .map(i -> "ID-" + i); 
+// strings is a persistent List, no collector needed.
+```
+
+### 👓 3. Deep Immutable Updates
+**Traditional:** Manual "cloning" or builder patterns for deep updates in immutable records.
+```java
+// Manual deep update (Boilerplate heavy)
+User updated = new User(
+    user.getId(),
+    user.getName(),
+    new Address(
+        user.getAddress().getStreet(),
+        "New York", // updating city
+        user.getAddress().getZip()
+    )
+);
+```
+**functional-java:** **Optics** provide a surgical, boilerplate-free way to reach deep into structures.
+```java
+// Precise and maintainable
+User updated = User.addressL
+    .compose(Address.cityL)
+    .set("New York", user);
+```
 
 ---
 
