@@ -164,6 +164,19 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;V extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;V&gt;&gt;<br><a href="Graph.html" title="interface in io.github.senthilganeshs.fj.ds">Graph</a><wbr>&lt;V&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#empty()" class="member-name-link">empty</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;A&gt;&nbsp;A</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#foldDependencies(V,A,java.util.function.BiFunction)" class="member-name-link">foldDependencies</a><wbr>(<a href="Graph.html" title="type parameter in Graph">V</a>&nbsp;start,
+ A&nbsp;seed,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>,<wbr>A,<wbr>A&gt;&nbsp;fn)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Folds over the graph in topological order, allowing dependent computations
+ to access the computed states of their ancestors.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getAncestors(V)" class="member-name-link">getAncestors</a><wbr>(<a href="Graph.html" title="type parameter in Graph">V</a>&nbsp;node)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Retrieves the complete set of ancestors for a node in topological order.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#length()" class="member-name-link">length</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
@@ -176,17 +189,22 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#nodes()" class="member-name-link">nodes</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#successors(V)" class="member-name-link">successors</a><wbr>(<a href="Graph.html" title="type parameter in Graph">V</a>&nbsp;vertex)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a><wbr>&lt;<a href="List.html" title="interface in io.github.senthilganeshs.fj.ds">List</a>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#topologicalSort()" class="member-name-link">topologicalSort</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Graph.html" title="interface in io.github.senthilganeshs.fj.ds">Graph</a><wbr>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#subgraph(V)" class="member-name-link">subgraph</a><wbr>(<a href="Graph.html" title="type parameter in Graph">V</a>&nbsp;node)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Returns a subgraph containing only the node and its transitive closure of ancestors.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#successors(V)" class="member-name-link">successors</a><wbr>(<a href="Graph.html" title="type parameter in Graph">V</a>&nbsp;vertex)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Maybe.html" title="interface in io.github.senthilganeshs.fj.ds">Maybe</a><wbr>&lt;<a href="List.html" title="interface in io.github.senthilganeshs.fj.ds">List</a>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#topologicalSort()" class="member-name-link">topologicalSort</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Topological Sort using Kahn's algorithm.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#vertices()" class="member-name-link">vertices</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#vertices()" class="member-name-link">vertices</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -266,6 +284,30 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="count()">
 <h3>count</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">count</span>()</div>
+</section>
+</li>
+<li>
+<section class="detail" id="foldDependencies(V,A,java.util.function.BiFunction)">
+<h3 id="foldDependencies(java.lang.Comparable,java.lang.Object,java.util.function.BiFunction)">foldDependencies</h3>
+<div class="member-signature"><span class="type-parameters">&lt;A&gt;</span>&nbsp;<span class="return-type">A</span>&nbsp;<span class="element-name">foldDependencies</span><wbr><span class="parameters">(<a href="Graph.html" title="type parameter in Graph">V</a>&nbsp;start,
+ A&nbsp;seed,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>,<wbr>A,<wbr>A&gt;&nbsp;fn)</span></div>
+<div class="block">Folds over the graph in topological order, allowing dependent computations
+ to access the computed states of their ancestors.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getAncestors(V)">
+<h3 id="getAncestors(java.lang.Comparable)">getAncestors</h3>
+<div class="member-signature"><span class="return-type"><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;</span>&nbsp;<span class="element-name">getAncestors</span><wbr><span class="parameters">(<a href="Graph.html" title="type parameter in Graph">V</a>&nbsp;node)</span></div>
+<div class="block">Retrieves the complete set of ancestors for a node in topological order.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="subgraph(V)">
+<h3 id="subgraph(java.lang.Comparable)">subgraph</h3>
+<div class="member-signature"><span class="return-type"><a href="Graph.html" title="interface in io.github.senthilganeshs.fj.ds">Graph</a>&lt;<a href="Graph.html" title="type parameter in Graph">V</a>&gt;</span>&nbsp;<span class="element-name">subgraph</span><wbr><span class="parameters">(<a href="Graph.html" title="type parameter in Graph">V</a>&nbsp;node)</span></div>
+<div class="block">Returns a subgraph containing only the node and its transitive closure of ancestors.</div>
 </section>
 </li>
 <li>

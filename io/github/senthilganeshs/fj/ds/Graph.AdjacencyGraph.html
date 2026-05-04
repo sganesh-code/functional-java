@@ -133,18 +133,36 @@ implements <a href="Graph.html" title="interface in io.github.senthilganeshs.fj.
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;other)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;A&gt;&nbsp;A</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#foldDependencies(V,A,java.util.function.BiFunction)" class="member-name-link">foldDependencies</a><wbr>(<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&nbsp;start,
+ A&nbsp;seed,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>,<wbr>A,<wbr>A&gt;&nbsp;fn)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Folds over the graph in topological order, allowing dependent computations
+ to access the computed states of their ancestors.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getAncestors(V)" class="member-name-link">getAncestors</a><wbr>(<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&nbsp;node)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Retrieves the complete set of ancestors for a node in topological order.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#neighbors(V)" class="member-name-link">neighbors</a><wbr>(<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&nbsp;vertex)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#vertices()" class="member-name-link">vertices</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Graph.html" title="interface in io.github.senthilganeshs.fj.ds">Graph</a><wbr>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#subgraph(V)" class="member-name-link">subgraph</a><wbr>(<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&nbsp;node)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns a subgraph containing only the node and its transitive closure of ancestors.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#vertices()" class="member-name-link">vertices</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -203,6 +221,45 @@ implements <a href="Graph.html" title="interface in io.github.senthilganeshs.fj.
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="Graph.html#vertices()">vertices</a></code>&nbsp;in interface&nbsp;<code><a href="Graph.html" title="interface in io.github.senthilganeshs.fj.ds">Graph</a>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a> extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&gt;&gt;</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="foldDependencies(V,A,java.util.function.BiFunction)">
+<h3 id="foldDependencies(java.lang.Comparable,java.lang.Object,java.util.function.BiFunction)">foldDependencies</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;A&gt;</span>&nbsp;<span class="return-type">A</span>&nbsp;<span class="element-name">foldDependencies</span><wbr><span class="parameters">(<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&nbsp;start,
+ A&nbsp;seed,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>,<wbr>A,<wbr>A&gt;&nbsp;fn)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="Graph.html#foldDependencies(V,A,java.util.function.BiFunction)">Graph</a></code></span></div>
+<div class="block">Folds over the graph in topological order, allowing dependent computations
+ to access the computed states of their ancestors.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="Graph.html#foldDependencies(V,A,java.util.function.BiFunction)">foldDependencies</a></code>&nbsp;in interface&nbsp;<code><a href="Graph.html" title="interface in io.github.senthilganeshs.fj.ds">Graph</a>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a> extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&gt;&gt;</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getAncestors(V)">
+<h3 id="getAncestors(java.lang.Comparable)">getAncestors</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&gt;</span>&nbsp;<span class="element-name">getAncestors</span><wbr><span class="parameters">(<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&nbsp;node)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="Graph.html#getAncestors(V)">Graph</a></code></span></div>
+<div class="block">Retrieves the complete set of ancestors for a node in topological order.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="Graph.html#getAncestors(V)">getAncestors</a></code>&nbsp;in interface&nbsp;<code><a href="Graph.html" title="interface in io.github.senthilganeshs.fj.ds">Graph</a>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a> extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&gt;&gt;</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="subgraph(V)">
+<h3 id="subgraph(java.lang.Comparable)">subgraph</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Graph.html" title="interface in io.github.senthilganeshs.fj.ds">Graph</a>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&gt;</span>&nbsp;<span class="element-name">subgraph</span><wbr><span class="parameters">(<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&nbsp;node)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="Graph.html#subgraph(V)">Graph</a></code></span></div>
+<div class="block">Returns a subgraph containing only the node and its transitive closure of ancestors.</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="Graph.html#subgraph(V)">subgraph</a></code>&nbsp;in interface&nbsp;<code><a href="Graph.html" title="interface in io.github.senthilganeshs.fj.ds">Graph</a>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a> extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="Graph.AdjacencyGraph.html" title="type parameter in Graph.AdjacencyGraph">V</a>&gt;&gt;</code></dd>
 </dl>
 </section>
 </li>
