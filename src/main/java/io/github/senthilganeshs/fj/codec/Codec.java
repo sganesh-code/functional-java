@@ -15,14 +15,6 @@ import java.io.IOException;
 public final class Codec {
     private Codec() {}
 
-    public interface Encoder<A> {
-        Either<String, Void> encode(DataOutputStream out, A value);
-    }
-
-    public interface Decoder<A> {
-        Either<String, A> decode(DataInputStream in);
-    }
-
     public static <A> Either<String, A> leftT(String msg) {
         return Either.left(msg);
     }
@@ -42,8 +34,18 @@ public final class Codec {
         catch (IOException e) { return leftT(e.getMessage()); }
     };
 
+    public static final Encoder<Long> longEncoder = (out, l) -> {
+        try { out.writeLong(l); return Either.right(null); }
+        catch (IOException e) { return leftT(e.getMessage()); }
+    };
+
     public static final Encoder<Double> doubleEncoder = (out, d) -> {
         try { out.writeDouble(d); return Either.right(null); }
+        catch (IOException e) { return leftT(e.getMessage()); }
+    };
+
+    public static final Encoder<Float> floatEncoder = (out, f) -> {
+        try { out.writeFloat(f); return Either.right(null); }
         catch (IOException e) { return leftT(e.getMessage()); }
     };
 
@@ -54,7 +56,9 @@ public final class Codec {
 
     public static Encoder<String> stringEncoder() { return stringEncoder; }
     public static Encoder<Integer> intEncoder() { return intEncoder; }
+    public static Encoder<Long> longEncoder() { return longEncoder; }
     public static Encoder<Double> doubleEncoder() { return doubleEncoder; }
+    public static Encoder<Float> floatEncoder() { return floatEncoder; }
     public static Encoder<Boolean> booleanEncoder() { return booleanEncoder; }
 
     // --- Primitive Decoders ---
@@ -69,8 +73,18 @@ public final class Codec {
         catch (IOException e) { return leftT(e.getMessage()); }
     };
 
+    public static final Decoder<Long> longDecoder = in -> {
+        try { return Either.right(in.readLong()); }
+        catch (IOException e) { return leftT(e.getMessage()); }
+    };
+
     public static final Decoder<Double> doubleDecoder = in -> {
         try { return Either.right(in.readDouble()); }
+        catch (IOException e) { return leftT(e.getMessage()); }
+    };
+
+    public static final Decoder<Float> floatDecoder = in -> {
+        try { return Either.right(in.readFloat()); }
         catch (IOException e) { return leftT(e.getMessage()); }
     };
 
@@ -81,7 +95,9 @@ public final class Codec {
 
     public static Decoder<String> stringDecoder() { return stringDecoder; }
     public static Decoder<Integer> intDecoder() { return intDecoder; }
+    public static Decoder<Long> longDecoder() { return longDecoder; }
     public static Decoder<Double> doubleDecoder() { return doubleDecoder; }
+    public static Decoder<Float> floatDecoder() { return floatDecoder; }
     public static Decoder<Boolean> booleanDecoder() { return booleanDecoder; }
 
     // --- Combinators ---

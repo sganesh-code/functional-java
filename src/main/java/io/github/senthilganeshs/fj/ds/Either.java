@@ -29,6 +29,19 @@ public interface Either<A, B> extends Collection<B> {
         return new Right<>(value);
     }
 
+    /**
+     * Captures an exception thrown by a supplier and wraps it in an Either.left.
+     */
+    static <B> Either<Throwable, B> tryCatch(CheckedSupplier<B> s) {
+        try { return right(s.get()); }
+        catch (Throwable t) { return left(t); }
+    }
+
+    @FunctionalInterface
+    interface CheckedSupplier<T> {
+        T get() throws Throwable;
+    }
+
     default boolean isLeft() { return this instanceof Left; }
     default boolean isRight() { return this instanceof Right; }
 

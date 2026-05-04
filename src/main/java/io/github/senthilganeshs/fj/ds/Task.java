@@ -185,11 +185,19 @@ public final class Task<A> implements Higher<Task.µ, A> {
      * Resource-safe bracket operation.
      */
     public static <R, A> Task<A> bracket(Task<R> acquire, Function<R, Task<A>> use, Function<R, Task<Void>> release) {
-        return acquire.flatMap(resource -> 
-            use.apply(resource).flatMap(a -> 
-                release.apply(resource).map(__ -> a)
-            )
-        );
+        return acquire.flatMap(resource -> new Task<>(token -> {
+            CompletableFuture<A> result = new CompletableFuture<>();
+            use.apply(resource).toFuture(token).handle((val, ex) -> {
+                release.apply(resource).toFuture(token).handle((__, ex2) -> {
+                    if (ex != null) result.completeExceptionally(ex);
+                    else if (ex2 != null) result.completeExceptionally(ex2);
+                    else result.complete(val);
+                    return null;
+                });
+                return null;
+            });
+            return result;
+        }));
     }
 
     /**

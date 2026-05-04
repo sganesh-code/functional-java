@@ -16,7 +16,7 @@ public interface Parser<A> {
     Either<ParseError, Tuple<A, State>> parse(State state);
 
     default Either<ParseError, A> parse(String input) {
-        return parse(new State(input, 0)).map(t -> t.getA().orElse(null));
+        return parse(new State(input, 0, 1, 1)).map(t -> t.getA().orElse(null));
     }
 
     // --- Combinators ---
@@ -68,7 +68,9 @@ public interface Parser<A> {
     }
 
     default Parser<List<A>> many1() {
-        return this.and(this.many()).map(t -> (List<A>) t.getB().orElse(List.nil()).build(t.getA().orElse(null)));
+        return this.flatMap(first -> 
+            this.many().map(rest -> (List<A>) rest.reverse().build(first).reverse())
+        );
     }
 
     default Parser<Maybe<A>> optional() {
@@ -83,12 +85,12 @@ public interface Parser<A> {
     }
 
     default <B> Parser<List<A>> sepBy(Parser<B> sep) {
-        return sepBy1(sep).or(succeed(List.nil()));
+        return sepBy1(sep).or(Parser.succeed(List.nil()));
     }
 
     default <B> Parser<List<A>> sepBy1(Parser<B> sep) {
         return this.flatMap(a -> 
-            sep.then(this).many().map(as -> (List<A>) as.foldl(List.of(a), (acc, x) -> (List<A>) acc.build(x)))
+            sep.then(this).many().map(as -> (List<A>) as.reverse().build(a).reverse())
         );
     }
 
@@ -112,7 +114,7 @@ public interface Parser<A> {
     default Parser<A> chainr1(Parser<BiFunction<A, A, A>> op) {
         return this.flatMap(a -> 
             op.and(lazy(() -> this.chainr1(op))).map(t -> t.getA().orElse(null).apply(a, t.getB().orElse(null)))
-            .or(succeed(a))
+            .or(Parser.succeed(a))
         );
     }
 

@@ -200,7 +200,18 @@ public interface Collection<T> extends Higher<Collection.µ, T>, Iterable<T> {
         return res == null ? "" : res;
     }
 
-    default String mkString(String start, String sep, String end) { return start + mkString(sep) + end; }
+    default String mkString(String start, String sep, String end) {
+        return start + mkString(sep) + end;
+    }
+
+    default <R> R foldMap(Function<T, R> fn, Monoid<R> monoid) {
+        return foldl(monoid.empty(), (acc, t) -> monoid.combine(acc, fn.apply(t)));
+    }
+
+    default T fold(Monoid<T> monoid) {
+        return foldl(monoid.empty(), monoid::combine);
+    }
+
 
     @SuppressWarnings("unchecked")
     default Collection<Collection<T>> chunk(int size) {
@@ -261,7 +272,7 @@ public interface Collection<T> extends Higher<Collection.µ, T>, Iterable<T> {
     }
 
     @Override default void forEach(Consumer<? super T> action) { foldl(null, (__, t) -> { action.accept(t); return null; }); }
-    default void forEachIndexed(java.util.function.BiConsumer<T, Integer> action) { foldl(0, (idx, t) -> { action.accept(t, idx); return idx + 1; }); }
+    default void forEachIndexed(java.util.function.BiConsumer<? super T, Integer> action) { foldl(0, (idx, t) -> { action.accept(t, idx); return idx + 1; }); }
 
     default boolean any(Predicate<T> pred) { return (Boolean) foldl(false, (acc, t) -> acc || pred.test(t)); }
     default boolean all(Predicate<T> pred) { return (Boolean) foldl(true, (acc, t) -> acc && pred.test(t)); }
