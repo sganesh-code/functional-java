@@ -181,20 +181,20 @@ Property.forAll(Gen.integer(), i -> i + 0 == i).assertTrue(100);
 
 ---
 
-## 🚀 Installation (Version 2.0.0)
+## 🚀 Installation (Version 2.0.9)
 
 ### Maven
 ```xml
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.9</version>
 </dependency>
 ```
 
 #### Gradle
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:2.0.0'
+implementation 'io.github.sganesh-code:functional-java:2.0.9'
 ```
 
 ---

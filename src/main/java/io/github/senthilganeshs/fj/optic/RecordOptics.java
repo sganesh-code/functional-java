@@ -3,6 +3,7 @@ package io.github.senthilganeshs.fj.optic;
 import io.github.senthilganeshs.fj.ds.HashMap;
 import io.github.senthilganeshs.fj.ds.List;
 import io.github.senthilganeshs.fj.ds.Maybe;
+import io.github.senthilganeshs.fj.ds.TypeReference;
 import io.github.senthilganeshs.fj.parser.JsonValue;
 import io.github.senthilganeshs.fj.parser.JsonValue.*;
 import java.lang.invoke.SerializedLambda;
@@ -71,6 +72,17 @@ public final class RecordOptics {
     }
 
     /**
+     * Automatically creates a bidirectional Isomorphism between a Type and a JsonValue.
+     */
+    @SuppressWarnings("unchecked")
+    public static <R> Iso<R, JsonValue> jsonIso(TypeReference<R> typeRef) {
+        return Iso.of(
+            record -> toJson(record),
+            json -> (R) fromJson(json, typeRef.getRawType(), typeRef.getType())
+        );
+    }
+
+    /**
      * Automatically creates a bidirectional Isomorphism between a Record and a JsonValue.
      */
     public static <R> Iso<R, JsonValue> jsonIso(Class<R> recordClass) {
@@ -79,21 +91,7 @@ public final class RecordOptics {
         }
 
         return Iso.of(
-            record -> {
-                RecordComponent[] components = recordClass.getRecordComponents();
-                HashMap<String, JsonValue> fields = HashMap.nil();
-                for (RecordComponent comp : components) {
-                    try {
-                        Method accessor = comp.getAccessor();
-                        accessor.setAccessible(true);
-                        Object val = accessor.invoke(record);
-                        fields = fields.put(comp.getName(), JsonValue.of(val));
-                    } catch (Exception e) {
-                        throw new RuntimeException("Failed to serialize record to JSON", e);
-                    }
-                }
-                return new JsonObject(fields);
-            },
+            record -> toJson(record),
             json -> {
                 if (!(json instanceof JsonObject obj)) {
                     throw new RuntimeException("Expected JsonObject for record conversion, found: " + json.getClass().getSimpleName());
@@ -117,6 +115,47 @@ public final class RecordOptics {
         );
     }
 
+    /**
+     * General Object to JsonValue conversion.
+     * Respects FJ collections and Java Records recursively.
+     */
+    @SuppressWarnings("unchecked")
+    private static JsonValue toJson(Object record) {
+        if (record == null) return new JsonNull();
+        if (record instanceof JsonValue jv) return jv;
+        if (record instanceof String s) return new JsonString(s);
+        if (record instanceof Number n) return new JsonNumber(n.doubleValue());
+        if (record instanceof Boolean b) return new JsonBoolean(b);
+        if (record instanceof Maybe<?> m) return m.map(RecordOptics::toJson).orElse(new JsonNull());
+        
+        if (record instanceof HashMap<?, ?> m) {
+            HashMap<String, JsonValue> fields = m.foldl(HashMap.nil(), (acc, entry) ->
+                acc.put(String.valueOf(entry.key()), toJson(entry.value())));
+            return new JsonObject(fields);
+        }
+
+        if (record instanceof List<?> l) return new JsonArray(List.from(l.map(RecordOptics::toJson)));
+        
+        Class<?> clazz = record.getClass();
+        if (clazz.isRecord()) {
+            RecordComponent[] components = clazz.getRecordComponents();
+            HashMap<String, JsonValue> fields = HashMap.nil();
+            for (RecordComponent comp : components) {
+                try {
+                    Method accessor = comp.getAccessor();
+                    accessor.setAccessible(true);
+                    Object val = accessor.invoke(record);
+                    fields = fields.put(comp.getName(), toJson(val));
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to serialize record component " + comp.getName(), e);
+                }
+            }
+            return new JsonObject(fields);
+        }
+        
+        return new JsonString(record.toString());
+    }
+
     @SuppressWarnings("unchecked")
     private static Object fromJson(JsonValue json, Class<?> type, Type genericType) {
         if (type.isAssignableFrom(json.getClass())) return json;
@@ -124,6 +163,7 @@ public final class RecordOptics {
         if (json instanceof JsonNull) {
             if (type == Maybe.class) return Maybe.nothing();
             if (type == List.class) return List.nil();
+            if (type == HashMap.class) return HashMap.nil();
             return null;
         }
 
@@ -142,6 +182,13 @@ public final class RecordOptics {
             Type innerType = pt.getActualTypeArguments()[0];
             Class<?> innerClass = (Class<?>) (innerType instanceof ParameterizedType ? ((ParameterizedType)innerType).getRawType() : innerType);
             return List.from(arr.elements().map(jv -> fromJson(jv, innerClass, innerType)));
+        }
+
+        if (type == HashMap.class && json instanceof JsonObject obj && genericType instanceof ParameterizedType pt) {
+            Type valType = pt.getActualTypeArguments()[1];
+            Class<?> valClass = (Class<?>) (valType instanceof ParameterizedType ? ((ParameterizedType)valType).getRawType() : valType);
+            return obj.fields().foldl(HashMap.nil(), (acc, entry) -> 
+                acc.put(entry.key(), fromJson(entry.value(), valClass, valType)));
         }
 
         if (type.isRecord()) {
