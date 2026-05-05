@@ -1125,6 +1125,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the computed value.</div>
 </dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ref.html#get()" class="member-name-link">get()</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Ref.html" title="class in io.github.senthilganeshs.fj.ds">Ref</a></dt>
+<dd>
+<div class="block">Atomically reads the current value.</div>
+</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/State.html#get()" class="member-name-link">get()</a> - Static method in record class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/State.html" title="class in io.github.senthilganeshs.fj.ds">State</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/HashMap.CollisionNode.html#get(int,int,K)" class="member-name-link">get(int, int, K)</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/HashMap.CollisionNode.html" title="class in io.github.senthilganeshs.fj.ds">HashMap.CollisionNode</a></dt>
@@ -1837,6 +1841,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Collection.html#mkString(java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">mkString(String, String, String)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ref.html#modify(java.util.function.Function)" class="member-name-link">modify(Function&lt;A, Tuple&lt;A, B&gt;&gt;)</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Ref.html" title="class in io.github.senthilganeshs.fj.ds">Ref</a></dt>
+<dd>
+<div class="block">Atomically modifies the value and returns a computed side-result.</div>
+</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/State.html#modify(java.util.function.Function)" class="member-name-link">modify(Function&lt;S, S&gt;)</a> - Static method in record class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/State.html" title="class in io.github.senthilganeshs.fj.ds">State</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/optic/AffineTraversal.html#modify(S,java.util.function.Function)" class="member-name-link">modify(S, Function&lt;A, A&gt;)</a> - Method in interface io.github.senthilganeshs.fj.optic.<a href="io/github/senthilganeshs/fj/optic/AffineTraversal.html" title="interface in io.github.senthilganeshs.fj.optic">AffineTraversal</a></dt>
@@ -1995,6 +2003,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="io/github/senthilganeshs/fj/codec/JsonCodec.html#of()" class="member-name-link">of()</a> - Static method in interface io.github.senthilganeshs.fj.codec.<a href="io/github/senthilganeshs/fj/codec/JsonCodec.html" title="interface in io.github.senthilganeshs.fj.codec">JsonCodec</a></dt>
 <dd>
 <div class="block">Creates a simple JsonCodec for values that can be handled by JsonValue.of().</div>
+</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ref.html#of(A)" class="member-name-link">of(A)</a> - Static method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Ref.html" title="class in io.github.senthilganeshs.fj.ds">Ref</a></dt>
+<dd>
+<div class="block">Creates a new Ref with an initial value.</div>
 </dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/NonEmptyList.html#of(A,A...)" class="member-name-link">of(A, A...)</a> - Static method in record class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/NonEmptyList.html" title="class in io.github.senthilganeshs.fj.ds">NonEmptyList</a></dt>
 <dd>&nbsp;</dd>
@@ -2301,6 +2313,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Collection.html#reduce(java.util.function.BiFunction)" class="member-name-link">reduce(BiFunction&lt;T, T, T&gt;)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ref.html" class="type-name-link" title="class in io.github.senthilganeshs.fj.ds">Ref&lt;A&gt;</a> - Class in <a href="io/github/senthilganeshs/fj/ds/package-summary.html">io.github.senthilganeshs.fj.ds</a></dt>
+<dd>
+<div class="block">A functional reference cell that holds an immutable value and provides thread-safe, 
+ non-blocking updates using atomic Compare-And-Swap (CAS) operations.</div>
+</dd>
 <dt><a href="io/github/senthilganeshs/fj/parser/State.html#remaining()" class="member-name-link">remaining()</a> - Method in record class io.github.senthilganeshs.fj.parser.<a href="io/github/senthilganeshs/fj/parser/State.html" title="class in io.github.senthilganeshs.fj.parser">State</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Array.NonEmpty.html#remove(int)" class="member-name-link">remove(int)</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Array.NonEmpty.html" title="class in io.github.senthilganeshs.fj.ds">Array.NonEmpty</a></dt>
@@ -2475,6 +2492,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="io/github/senthilganeshs/fj/parser/JsonValue.html#serialize()" class="member-name-link">serialize()</a> - Method in interface io.github.senthilganeshs.fj.parser.<a href="io/github/senthilganeshs/fj/parser/JsonValue.html" title="interface in io.github.senthilganeshs.fj.parser">JsonValue</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ref.html#set(A)" class="member-name-link">set(A)</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Ref.html" title="class in io.github.senthilganeshs.fj.ds">Ref</a></dt>
+<dd>
+<div class="block">Atomically overwrites the current value.</div>
+</dd>
 <dt><a href="io/github/senthilganeshs/fj/optic/AffineTraversal.html#set(A,S)" class="member-name-link">set(A, S)</a> - Method in interface io.github.senthilganeshs.fj.optic.<a href="io/github/senthilganeshs/fj/optic/AffineTraversal.html" title="interface in io.github.senthilganeshs.fj.optic">AffineTraversal</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/optic/Lens.html#set(A,S)" class="member-name-link">set(A, S)</a> - Method in interface io.github.senthilganeshs.fj.optic.<a href="io/github/senthilganeshs/fj/optic/Lens.html" title="interface in io.github.senthilganeshs.fj.optic">Lens</a></dt>
@@ -2782,6 +2803,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a string representation of this record class.</div>
 </dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ref.html#toString()" class="member-name-link">toString()</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Ref.html" title="class in io.github.senthilganeshs.fj.ds">Ref</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/RoseTree.RoseTreeImpl.html#toString()" class="member-name-link">toString()</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/RoseTree.RoseTreeImpl.html" title="class in io.github.senthilganeshs.fj.ds">RoseTree.RoseTreeImpl</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Set.Empty.html#toString()" class="member-name-link">toString()</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Set.Empty.html" title="class in io.github.senthilganeshs.fj.ds">Set.Empty</a></dt>
@@ -2923,6 +2946,14 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Vector.VectorImpl.html#update(int,T)" class="member-name-link">update(int, T)</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Vector.VectorImpl.html" title="class in io.github.senthilganeshs.fj.ds">Vector.VectorImpl</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/Ref.html#update(java.util.function.Function)" class="member-name-link">update(Function&lt;A, A&gt;)</a> - Method in class io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Ref.html" title="class in io.github.senthilganeshs.fj.ds">Ref</a></dt>
+<dd>
+<div class="block">Atomically updates the value using a pure function and returns the NEW value.</div>
+</dd>
+<dt><a href="io/github/senthilganeshs/fj/ds/HashMap.html#update(K,java.util.function.Function)" class="member-name-link">update(K, Function&lt;V, V&gt;)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/HashMap.html" title="interface in io.github.senthilganeshs.fj.ds">HashMap</a></dt>
+<dd>
+<div class="block">Updates the value associated with the given key using the provided function.</div>
+</dd>
 <dt><a href="io/github/senthilganeshs/fj/ds/Collection.html#updateAtIndex(int,T)" class="member-name-link">updateAtIndex(int, T)</a> - Method in interface io.github.senthilganeshs.fj.ds.<a href="io/github/senthilganeshs/fj/ds/Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a></dt>
 <dd>&nbsp;</dd>
 </dl>

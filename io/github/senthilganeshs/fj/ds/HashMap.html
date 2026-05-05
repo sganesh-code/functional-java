@@ -201,9 +201,15 @@ V&gt;&nbsp;<a href="HashMap.html" title="interface in io.github.senthilganeshs.f
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Converts this persistent map to a standard mutable java.util.Map.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;<a href="HashMap.html" title="type parameter in HashMap">V</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#values()" class="member-name-link">values</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="HashMap.html" title="interface in io.github.senthilganeshs.fj.ds">HashMap</a><wbr>&lt;<a href="HashMap.html" title="type parameter in HashMap">K</a>,<wbr><a href="HashMap.html" title="type parameter in HashMap">V</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#update(K,java.util.function.Function)" class="member-name-link">update</a><wbr>(<a href="HashMap.html" title="type parameter in HashMap">K</a>&nbsp;key,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="HashMap.html" title="type parameter in HashMap">V</a>,<wbr><a href="HashMap.html" title="type parameter in HashMap">V</a>&gt;&nbsp;fn)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Updates the value associated with the given key using the provided function.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Collection.html" title="interface in io.github.senthilganeshs.fj.ds">Collection</a><wbr>&lt;<a href="HashMap.html" title="type parameter in HashMap">V</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#values()" class="member-name-link">values</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -298,6 +304,15 @@ V&gt;&nbsp;<a href="HashMap.html" title="interface in io.github.senthilganeshs.f
 <section class="detail" id="remove(K)">
 <h3 id="remove(java.lang.Object)">remove</h3>
 <div class="member-signature"><span class="return-type"><a href="HashMap.html" title="interface in io.github.senthilganeshs.fj.ds">HashMap</a>&lt;<a href="HashMap.html" title="type parameter in HashMap">K</a>,<wbr><a href="HashMap.html" title="type parameter in HashMap">V</a>&gt;</span>&nbsp;<span class="element-name">remove</span><wbr><span class="parameters">(<a href="HashMap.html" title="type parameter in HashMap">K</a>&nbsp;key)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="update(K,java.util.function.Function)">
+<h3 id="update(java.lang.Object,java.util.function.Function)">update</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="HashMap.html" title="interface in io.github.senthilganeshs.fj.ds">HashMap</a>&lt;<a href="HashMap.html" title="type parameter in HashMap">K</a>,<wbr><a href="HashMap.html" title="type parameter in HashMap">V</a>&gt;</span>&nbsp;<span class="element-name">update</span><wbr><span class="parameters">(<a href="HashMap.html" title="type parameter in HashMap">K</a>&nbsp;key,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="HashMap.html" title="type parameter in HashMap">V</a>,<wbr><a href="HashMap.html" title="type parameter in HashMap">V</a>&gt;&nbsp;fn)</span></div>
+<div class="block">Updates the value associated with the given key using the provided function.
+ If the key is not present, the map remains unchanged.</div>
 </section>
 </li>
 <li>
