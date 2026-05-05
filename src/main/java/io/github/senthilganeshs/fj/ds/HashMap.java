@@ -1,6 +1,7 @@
 package io.github.senthilganeshs.fj.ds;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * A persistent Hash Array Mapped Trie (HAMT) implementation.
@@ -30,6 +31,14 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
     HashMap<K, V> put(K key, V value);
 
     HashMap<K, V> remove(K key);
+
+    /**
+     * Updates the value associated with the given key using the provided function.
+     * If the key is not present, the map remains unchanged.
+     */
+    default HashMap<K, V> update(K key, Function<V, V> fn) {
+        return get(key).map(v -> put(key, fn.apply(v))).orElse(this);
+    }
 
     default <R> HashMap<K, R> mapKV(BiFunction<K, V, R> fn) {
         return this.foldl(HashMap.<K, R>nil(), (acc, entry) -> acc.put(entry.key(), fn.apply(entry.key(), entry.value())));
