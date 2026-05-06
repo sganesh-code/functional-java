@@ -261,4 +261,14 @@ public final class Task<A> implements Higher<Task.µ, A> {
         List<Task<A>> list = (tasks instanceof List) ? (List<Task<A>>) tasks : List.from(tasks);
         return parTraverse(list, Function.identity()).map(l -> (Collection<A>) l);
     }
+
+    /**
+     * Converts a collection of tasks into a task of a collection, executing them sequentially.
+     * Useful when tasks have dependencies or should not run concurrently.
+     */
+    public static <A> Task<List<A>> sequenceSequential(List<Task<A>> tasks) {
+        return tasks.foldl(Task.succeed(List.<A>nil()), (accTask, task) -> 
+            accTask.flatMap(list -> task.map(a -> List.from(list.build(a))))
+        );
+    }
 }
