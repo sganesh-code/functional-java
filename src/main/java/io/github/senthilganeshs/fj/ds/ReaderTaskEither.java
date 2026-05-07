@@ -25,6 +25,10 @@ public record ReaderTaskEither<R, E, A>(Reader<R, TaskEither<E, A>> reader) impl
         return new ReaderTaskEither<>(Reader.pure(TaskEither.left(e)));
     }
 
+    public static <R, E, A> ReaderTaskEither<R, E, A> lift(TaskEither<E, A> task) {
+        return new ReaderTaskEither<>(Reader.pure(task));
+    }
+
     public static <R, E> ReaderTaskEither<R, E, R> ask() {
         return new ReaderTaskEither<>(new Reader<>(r -> TaskEither.right(r)));
     }
@@ -35,8 +39,12 @@ public record ReaderTaskEither<R, E, A>(Reader<R, TaskEither<E, A>> reader) impl
 
     public <B> ReaderTaskEither<R, E, B> flatMap(Function<A, ReaderTaskEither<R, E, B>> fn) {
         return new ReaderTaskEither<>(new Reader<>(r -> 
-            reader.run().apply(r).flatMap(a -> fn.apply(a).reader().run().apply(r))
+            reader.run(r).flatMap(a -> fn.apply(a).reader().run(r))
         ));
+    }
+
+    public TaskEither<E, A> run(R env) {
+        return reader.run(env);
     }
 
     public static <R, E> Monad<Higher<Higher<µ, R>, E>> monad() {

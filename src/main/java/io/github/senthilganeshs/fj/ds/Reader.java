@@ -23,6 +23,10 @@ public record Reader<R, A>(Function<R, A> run) implements Higher<Higher<Reader.Â
         return new Reader<>(Function.identity());
     }
 
+    public A run(R env) {
+        return run.apply(env);
+    }
+
     public <B> Reader<R, B> map(Function<A, B> fn) {
         return new Reader<>(r -> fn.apply(run.apply(r)));
     }
