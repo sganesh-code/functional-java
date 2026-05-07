@@ -30,6 +30,14 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
 
     HashMap<K, V> put(K key, V value);
 
+    default <R> HashMap<K, R> mapValues(Function<V, R> fn) {
+        return this.foldl(HashMap.<K, R>nil(), (acc, entry) -> acc.put(entry.key(), fn.apply(entry.value())));
+    }
+
+    default <R> HashMap<K, R> mapKV(BiFunction<K, V, R> fn) {
+        return this.foldl(HashMap.<K, R>nil(), (acc, entry) -> acc.put(entry.key(), fn.apply(entry.key(), entry.value())));
+    }
+
     HashMap<K, V> remove(K key);
 
     /**
@@ -38,10 +46,6 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
      */
     default HashMap<K, V> update(K key, Function<V, V> fn) {
         return get(key).map(v -> put(key, fn.apply(v))).orElse(this);
-    }
-
-    default <R> HashMap<K, R> mapKV(BiFunction<K, V, R> fn) {
-        return this.foldl(HashMap.<K, R>nil(), (acc, entry) -> acc.put(entry.key(), fn.apply(entry.key(), entry.value())));
     }
 
     int size();

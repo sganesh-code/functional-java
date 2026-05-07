@@ -38,6 +38,10 @@ public interface Maybe<T> extends Collection<T> {
         return foldl(def, (__, t) -> t);
     }
 
+    default T orElseThrow() {
+        return isSome() ? orElse(null) : java.util.Optional.<T>empty().orElseThrow();
+    }
+
     @Override
     default <R> Collection<R> empty() {
         return nothing();

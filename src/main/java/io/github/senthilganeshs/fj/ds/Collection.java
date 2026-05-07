@@ -22,6 +22,12 @@ public interface Collection<T> extends Higher<Collection.µ, T>, Iterable<T> {
     Collection<T> build(T input);
     <R> R foldl(R seed, BiFunction<R, T, R> fn);
 
+    default java.util.List<T> toJavaList() {
+        java.util.List<T> list = new java.util.ArrayList<>();
+        this.forEach(list::add);
+        return list;
+    }
+
     default int length() { return foldl(0, (acc, __) -> acc + 1); }
     default int count() { return length(); }
 
