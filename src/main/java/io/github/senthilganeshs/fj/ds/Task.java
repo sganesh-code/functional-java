@@ -102,6 +102,14 @@ public final class Task<A> implements Higher<Task.µ, A> {
         return run(Maybe.nothing());
     }
 
+    public A runSync() {
+        return run();
+    }
+
+    public void runSync(java.util.function.Consumer<A> callback) {
+        callback.accept(run());
+    }
+
     public A run(Maybe<CancellationToken> token) {
         try {
             return toFuture(token).get();
@@ -168,6 +176,14 @@ public final class Task<A> implements Higher<Task.µ, A> {
             }
             return null;
         });
+    }
+
+    /**
+     * Handles both result and exception, producing a new value.
+     * Useful for recovery (e.g. timeout fallbacks).
+     */
+    public <B> Task<B> handle(BiFunction<A, Throwable, B> fn) {
+        return new Task<>(token -> toFuture(token).handle((val, ex) -> fn.apply(val, ex)));
     }
 
     /**
