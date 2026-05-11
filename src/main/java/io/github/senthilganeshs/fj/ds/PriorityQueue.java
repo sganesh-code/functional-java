@@ -58,6 +58,7 @@ public interface PriorityQueue<T> extends Collection<T> {
     PriorityQueue<T> merge(PriorityQueue<T> other);
 
     final class LeftistHeap<T> implements PriorityQueue<T> {
+        private static final long serialVersionUID = 1L;
         private final Ord<T> ord;
         private final int rank;
         private final T value;

@@ -175,6 +175,7 @@ public interface Graph<V extends Comparable<V>> {
     }
 
     class AdjacencyGraph<V extends Comparable<V>> implements Graph<V> {
+        private static final long serialVersionUID = 1L;
         private final HashMap<V, Set<V>> adj;
 
         AdjacencyGraph(HashMap<V, Set<V>> adj) {

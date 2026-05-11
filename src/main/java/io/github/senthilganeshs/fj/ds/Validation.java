@@ -87,6 +87,7 @@ public interface Validation<E, T> extends Collection<T> {
     }
 
     final static class Valid<E, T> implements Validation<E, T> {
+        private static final long serialVersionUID = 1L;
         private final T value;
 
         Valid(T value) { this.value = value; }
@@ -104,6 +105,7 @@ public interface Validation<E, T> extends Collection<T> {
     }
 
     final static class Invalid<E, T> implements Validation<E, T> {
+        private static final long serialVersionUID = 1L;
         private final E error;
 
         Invalid(E error) { this.error = error; }

@@ -39,6 +39,7 @@ public interface Deque<T> extends Collection<T> {
     }
 
     final class BankersDeque<T> implements Deque<T> {
+        private static final long serialVersionUID = 1L;
         private final Stack<T> f;
         private final Stack<T> b;
 

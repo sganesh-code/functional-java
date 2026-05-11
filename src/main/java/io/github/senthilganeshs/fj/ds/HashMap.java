@@ -71,6 +71,7 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
     }
 
     final class HAMT<K, V> implements HashMap<K, V> {
+        private static final long serialVersionUID = 1L;
         static final HashMap<?, ?> EMPTY = new HAMT<>(null, 0);
 
         private final Node root;
@@ -159,6 +160,7 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
     }
 
     final class LeafNode implements Node {
+        private static final long serialVersionUID = 1L;
         final int hash;
         final Object key;
         final Object value;
@@ -205,6 +207,7 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
     }
 
     final class CollisionNode implements Node {
+        private static final long serialVersionUID = 1L;
         final int hash;
         final List<Entry<?, ?>> entries;
 
@@ -250,6 +253,7 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
     }
 
     final class IndexedNode implements Node {
+        private static final long serialVersionUID = 1L;
         private final int bitmap;
         private final Node[] nodes;
 

@@ -57,6 +57,7 @@ public interface Vector<T> extends Collection<T> {
     }
 
     final class VectorImpl<T> implements Vector<T> {
+        private static final long serialVersionUID = 1L;
         private static final int BITS = 5;
         private static final int WIDTH = 1 << BITS;
         private static final int MASK = WIDTH - 1;

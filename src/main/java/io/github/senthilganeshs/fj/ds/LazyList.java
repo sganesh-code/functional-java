@@ -152,6 +152,7 @@ public interface LazyList<T> extends List<T> {
     }
 
     final class NonEmpty<T> implements LazyList<T> {
+        private static final long serialVersionUID = 1L;
         private final T head;
         private final Supplier<LazyList<T>> tail;
 
@@ -190,6 +191,7 @@ public interface LazyList<T> extends List<T> {
     }
 
     final class Empty<T> implements LazyList<T> {
+        private static final long serialVersionUID = 1L;
         static final Empty<?> INSTANCE = new Empty<>();
         @Override public String toString() { return "[]"; }
         @Override public int length() { return 0; }

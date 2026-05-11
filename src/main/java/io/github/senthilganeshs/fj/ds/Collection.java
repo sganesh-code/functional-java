@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 /**
  * The root interface for all purely functional polymorphic collections.
  */
-public interface Collection<T> extends Higher<Collection.µ, T>, Iterable<T> {
+public interface Collection<T> extends Higher<Collection.µ, T>, Iterable<T>, java.io.Serializable {
     final class µ {}
 
     <R> Collection<R> empty();

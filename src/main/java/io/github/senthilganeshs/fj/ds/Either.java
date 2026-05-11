@@ -153,6 +153,7 @@ public interface Either<A, B> extends Collection<B> {
     }
 
     final static class Left<A, B> implements Either<A, B> {
+        private static final long serialVersionUID = 1L;
         private final A value;
         Left(A value) { this.value = value; }
         @Override public <R> R foldl(R seed, BiFunction<R, B, R> fn) { return seed; }
@@ -166,6 +167,7 @@ public interface Either<A, B> extends Collection<B> {
     }
 
     final static class Right<A, B> implements Either<A, B> {
+        private static final long serialVersionUID = 1L;
         private final B value;
         Right(B value) { this.value = value; }
         @Override public <R> R foldl(R seed, BiFunction<R, B, R> fn) { return fn.apply(seed, value); }

@@ -37,6 +37,7 @@ public interface Queue<T> extends Collection<T> {
     }
 
     final class BankersQueue<T> implements Queue<T> {
+        private static final long serialVersionUID = 1L;
         private final Stack<T> front;
         private final Stack<T> back;
 

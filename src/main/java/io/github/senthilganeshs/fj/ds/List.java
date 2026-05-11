@@ -143,6 +143,7 @@ public interface List<T> extends Collection<T> {
     final static List<Void> EMPTY = new EmptyList<>();
 
     final static class EmptyList<T> implements List<T> {
+        private static final long serialVersionUID = 1L;
         @Override public boolean isEmpty() { return true; }
         @Override public <R> R foldl(R seed, BiFunction<R, T, R> fn) { return seed; }
         @Override public String toString() { return Collection.toString(this); }
@@ -153,6 +154,7 @@ public interface List<T> extends Collection<T> {
     }
 
     final static class LinkedList<T> implements List<T> {
+        private static final long serialVersionUID = 1L;
         private final List<T> head;
         private final T tail;
 

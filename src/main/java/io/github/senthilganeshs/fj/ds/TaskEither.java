@@ -64,6 +64,14 @@ public record TaskEither<E, A>(Task<Either<E, A>> task) implements Higher<Higher
         return task.run();
     }
 
+    public Either<E, A> runSync() {
+        return run();
+    }
+
+    public void runSync(java.util.function.Consumer<Either<E, A>> callback) {
+        callback.accept(run());
+    }
+
     public Either<E, A> run(Maybe<CancellationToken> token) {
         return task.run(token);
     }

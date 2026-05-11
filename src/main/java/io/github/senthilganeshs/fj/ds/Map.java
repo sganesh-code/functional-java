@@ -31,6 +31,7 @@ public interface Map<K extends Comparable<K>, V> {
     Collection<Entry<K, V>> entries();
 
     final class BinaryTreeMap<K extends Comparable<K>, V> implements Map<K, V> {
+        private static final long serialVersionUID = 1L;
         private final Set<Entry<K, V>> entries;
 
         BinaryTreeMap(Set<Entry<K, V>> entries) {

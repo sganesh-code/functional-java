@@ -9,7 +9,7 @@ import java.util.function.Function;
  * @param <A> Type of the first element.
  * @param <B> Type of the second element.
  */
-public interface Tuple<A, B> {
+public interface Tuple<A, B> extends java.io.Serializable {
 
     Maybe<A> getA();
     Maybe<B> getB();
@@ -52,6 +52,7 @@ public interface Tuple<A, B> {
     }
 
     final static class TupleImpl<A, B> implements Tuple<A, B> {
+        private static final long serialVersionUID = 1L;
 
         private final Maybe<A> a;
         private final Maybe<B> b;

@@ -12,6 +12,7 @@ import java.util.function.BiFunction;
  * Uses BigInteger for a persistent bitset and Hashable for stable hashing.
  */
 public final class BloomFilter<T> implements Collection<T> {
+    private static final long serialVersionUID = 1L;
 
     private final int m; // Size of bitset
     private final int k; // Number of hash functions

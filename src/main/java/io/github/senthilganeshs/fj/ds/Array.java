@@ -12,6 +12,7 @@ public interface Array<T> extends Collection<T> {
     public Array<T> shift();
 
     final static class NonEmpty<T> implements Array<T> {
+        private static final long serialVersionUID = 1L;
 
         private Object[] values;
         private int cursor;

@@ -106,6 +106,7 @@ public interface Set<T> extends Collection<T> {
     }
    
     final class NonEmpty<T> implements AVLTree<T> {
+        private static final long serialVersionUID = 1L;
 
         private final Ord<T> ord;
         private final AVLTree<T> right;
@@ -247,6 +248,7 @@ public interface Set<T> extends Collection<T> {
     }
     
     final class Empty<T> implements AVLTree<T> {
+        private static final long serialVersionUID = 1L;
         private final Ord<T> ord;
 
         Empty(Ord<T> ord) {

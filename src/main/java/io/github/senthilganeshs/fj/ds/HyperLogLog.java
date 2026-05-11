@@ -11,6 +11,7 @@ import java.util.function.BiFunction;
  * Uses a fixed number of registers (m = 2^p) for a fixed memory footprint.
  */
 public final class HyperLogLog<T> implements Collection<T> {
+    private static final long serialVersionUID = 1L;
 
     private final int p; // Precision (number of bits for register index)
     private final int m; // Number of registers (2^p)

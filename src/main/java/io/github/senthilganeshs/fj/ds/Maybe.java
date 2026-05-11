@@ -97,6 +97,7 @@ public interface Maybe<T> extends Collection<T> {
     }
 
     final static class Nothing<T> implements Maybe<T> {
+        private static final long serialVersionUID = 1L;
         @Override public <R> R foldl(R seed, BiFunction<R, T, R> fn) { return seed; }
         @Override public String toString() { return "Nothing"; }
         @Override public boolean equals(Object other) { return other instanceof Nothing; }
@@ -107,6 +108,7 @@ public interface Maybe<T> extends Collection<T> {
     }
 
     final static class Some<T> implements Maybe<T> {
+        private static final long serialVersionUID = 1L;
         private final T value;
         Some(T value) { this.value = value; }
         @Override public <R> R foldl(R seed, BiFunction<R, T, R> fn) { return fn.apply(seed, value); }

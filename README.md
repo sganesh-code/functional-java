@@ -510,7 +510,7 @@ Version: `2.0.15`
 ### Gradle
 
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:2.0.15'
+implementation 'io.github.sganesh-code:functional-java:2.0.16'
 ```
 
 ## Contributing

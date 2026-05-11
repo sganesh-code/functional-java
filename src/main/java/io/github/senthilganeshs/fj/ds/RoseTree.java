@@ -36,6 +36,7 @@ public interface RoseTree<T> extends Collection<T> {
     }
 
     final class RoseTreeImpl<T> implements RoseTree<T> {
+        private static final long serialVersionUID = 1L;
         private final T value;
         private final List<RoseTree<T>> children;
 
