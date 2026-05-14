@@ -32,7 +32,7 @@ public interface Queue<T> extends Collection<T> {
     Maybe<Tuple<T, Queue<T>>> dequeue();
 
     @Override
-    default Collection<T> build(T input) {
+    default Queue<T> build(T input) {
         return enqueue(input);
     }
 

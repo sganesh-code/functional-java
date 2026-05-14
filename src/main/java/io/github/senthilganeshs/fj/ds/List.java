@@ -79,7 +79,7 @@ public interface List<T> extends Collection<T> {
     }
 
     @Override
-    default Collection<T> build(T input) {
+    default List<T> build(T input) {
         return cons(this, input);
     }
 
@@ -150,7 +150,7 @@ public interface List<T> extends Collection<T> {
         @Override public boolean equals(Object other) { return other instanceof List && ((List<?>) other).isEmpty(); }
         @Override public int hashCode() { return 0; }
         @Override public <R> Collection<R> empty() { return nil(); }
-        @Override public Collection<T> build(T input) { return cons(this, input); }
+        @Override public List<T> build(T input) { return cons(this, input); }
     }
 
     final static class LinkedList<T> implements List<T> {
@@ -192,6 +192,6 @@ public interface List<T> extends Collection<T> {
 
         @Override public int hashCode() { return toString().hashCode(); }
         @Override public <R> Collection<R> empty() { return nil(); }
-        @Override public Collection<T> build(T input) { return cons(this, input); }
+        @Override public List<T> build(T input) { return cons(this, input); }
     }
 }

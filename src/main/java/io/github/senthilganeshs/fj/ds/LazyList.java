@@ -65,7 +65,7 @@ public interface LazyList<T> extends List<T> {
     }
 
     @Override
-    default Collection<T> build(T input) {
+    default LazyList<T> build(T input) {
         return concat(of(input));
     }
 

@@ -48,7 +48,7 @@ public interface Stack<T> extends Collection<T> {
     }
 
     @Override
-    default Collection<T> build(T input) {
+    default Stack<T> build(T input) {
         return push(input);
     }
 
