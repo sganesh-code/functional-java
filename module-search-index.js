@@ -1,1 +1,1 @@
-moduleSearchIndex = [];updateSearchResults();
+moduleSearchIndex = [{"l":"io.github.senthilganeshs.fj"}];updateSearchResults();
