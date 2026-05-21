@@ -2,18 +2,39 @@ package io.github.senthilganeshs.fj.ds;
 
 import io.github.senthilganeshs.fj.hkt.Higher;
 import io.github.senthilganeshs.fj.typeclass.Monad;
-import java.util.concurrent.*;
+import java.util.Objects;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
  * A purely functional abstraction for an asynchronous computation.
- * 
+ *
  * @param <A> The type of the value produced by the task.
  */
 public final class Task<A> implements Higher<Task.µ, A> {
     public final static class µ {}
+
+    @FunctionalInterface
+    public interface Canceler {
+        void cancel();
+    }
+
+    public interface AsyncCallback<A> {
+        void success(A value);
+        void failure(Throwable error);
+        void cancel();
+    }
 
     @SuppressWarnings("unchecked")
     public static <A> Task<A> narrowK(Higher<µ, A> hka) {
@@ -30,30 +51,104 @@ public final class Task<A> implements Higher<Task.µ, A> {
         return futureFactory.apply(token);
     }
 
+    /**
+     * Defers construction of the underlying task until interpretation time.
+     */
+    public static <A> Task<A> defer(Supplier<Task<A>> supplier) {
+        Objects.requireNonNull(supplier, "supplier");
+        return new Task<>(token -> supplier.get().toFuture(token));
+    }
+
     public static <A> Task<A> of(Supplier<A> supplier) {
-        return new Task<>(token -> CompletableFuture.supplyAsync(() -> {
+        Objects.requireNonNull(supplier, "supplier");
+        return defer(() -> new Task<>(token -> CompletableFuture.supplyAsync(() -> {
             token.forEach(CancellationToken::throwIfCancelled);
             return supplier.get();
-        }));
+        })));
     }
 
     public static <A> Task<A> of(Supplier<A> supplier, Executor executor) {
-        return new Task<>(token -> CompletableFuture.supplyAsync(() -> {
+        Objects.requireNonNull(supplier, "supplier");
+        Objects.requireNonNull(executor, "executor");
+        return defer(() -> new Task<>(token -> CompletableFuture.supplyAsync(() -> {
             token.forEach(CancellationToken::throwIfCancelled);
             return supplier.get();
-        }, executor));
+        }, executor)));
     }
 
     /**
      * Creates a Task from a callback-based asynchronous API.
      */
     public static <A> Task<A> async(java.util.function.Consumer<java.util.function.Consumer<A>> callback) {
+        Objects.requireNonNull(callback, "callback");
+        return asyncCancelable(bridge -> {
+            callback.accept(bridge::success);
+            return () -> { };
+        });
+    }
+
+    /**
+     * Creates a task from a callback-based API with explicit success, failure, and cancellation handling.
+     */
+    public static <A> Task<A> asyncCancelable(Function<AsyncCallback<A>, Canceler> register) {
+        Objects.requireNonNull(register, "register");
         return new Task<>(token -> {
             CompletableFuture<A> future = new CompletableFuture<>();
+            AtomicBoolean terminal = new AtomicBoolean(false);
+            AtomicBoolean cancelRequested = new AtomicBoolean(false);
+            AtomicReference<Canceler> cancelerRef = new AtomicReference<>(() -> { });
+
+            AsyncCallback<A> callback = new AsyncCallback<>() {
+                @Override
+                public void success(A value) {
+                    completeTerminal(() -> future.complete(value));
+                }
+
+                @Override
+                public void failure(Throwable error) {
+                    completeTerminal(() -> future.completeExceptionally(error));
+                }
+
+                @Override
+                public void cancel() {
+                    completeTerminal(() -> future.completeExceptionally(new CancellationException("Task cancelled")));
+                }
+
+                private void completeTerminal(Supplier<Boolean> action) {
+                    if (terminal.compareAndSet(false, true)) {
+                        action.get();
+                    }
+                }
+            };
+
+            Runnable cancelAction = () -> {
+                cancelRequested.set(true);
+                if (terminal.compareAndSet(false, true)) {
+                    try {
+                        cancelerRef.get().cancel();
+                    } finally {
+                        future.completeExceptionally(new CancellationException("Task cancelled"));
+                    }
+                } else {
+                    cancelerRef.get().cancel();
+                }
+            };
+
+            token.forEach(t -> t.onCancel(cancelAction));
+            if (token.isSome() && token.orElse(null).isCancelled()) {
+                cancelAction.run();
+            }
+
             try {
-                callback.accept(future::complete);
-            } catch (Exception e) {
-                future.completeExceptionally(e);
+                Canceler canceler = register.apply(callback);
+                cancelerRef.set(canceler == null ? () -> { } : canceler);
+            } catch (Throwable t) {
+                callback.failure(t);
+                return future;
+            }
+
+            if (cancelRequested.get()) {
+                cancelerRef.get().cancel();
             }
             return future;
         });
@@ -67,21 +162,112 @@ public final class Task<A> implements Higher<Task.µ, A> {
         return new Task<>(token -> CompletableFuture.failedFuture(t));
     }
 
+    static <A> Task<A> fromFuture(CompletableFuture<A> future) {
+        Objects.requireNonNull(future, "future");
+        return new Task<>(token -> future);
+    }
+
     public <B> Task<B> map(Function<A, B> fn) {
+        Objects.requireNonNull(fn, "fn");
         return new Task<>(token -> toFuture(token).thenApply(fn));
     }
 
     public <B> Task<B> flatMap(Function<A, Task<B>> fn) {
+        Objects.requireNonNull(fn, "fn");
         return new Task<>(token -> toFuture(token).thenCompose(a -> fn.apply(a).toFuture(token)));
     }
 
     public <B, C> Task<C> liftA2(BiFunction<A, B, C> fn, Task<B> second) {
+        Objects.requireNonNull(fn, "fn");
+        Objects.requireNonNull(second, "second");
         return new Task<>(token -> toFuture(token).thenCombine(second.toFuture(token), fn));
+    }
+
+    /**
+     * Starts the task and returns a fiber that can be joined or cancelled.
+     */
+    public Fiber<Throwable, A> start() {
+        CancellationToken cancellationToken = new CancellationToken();
+        CompletableFuture<Outcome<Throwable, A>> started = toFuture(Maybe.some(cancellationToken))
+            .handle((value, error) -> {
+                if (error == null) {
+                    return Outcome.succeeded(value);
+                }
+                Throwable cause = unwrap(error);
+                if (cause instanceof CancellationException) {
+                    return Outcome.cancelled();
+                }
+                return Outcome.failed(cause);
+            });
+        return new Fiber<>(cancellationToken, Task.fromFuture(started));
+    }
+
+    /**
+     * Recovers from a failure by mapping the error to a fallback value.
+     */
+    public Task<A> recover(Function<Throwable, A> fn) {
+        Objects.requireNonNull(fn, "fn");
+        return new Task<A>(token -> {
+            CompletableFuture<CompletableFuture<A>> handled = toFuture(token).handle((val, ex) -> {
+                if (ex == null) {
+                    return CompletableFuture.completedFuture(val);
+                }
+                Throwable cause = unwrap(ex);
+                if (cause instanceof CancellationException) {
+                    return failedFuture(cause);
+                }
+                return CompletableFuture.completedFuture(fn.apply(cause));
+            });
+            return handled.thenCompose(inner -> inner);
+        });
+    }
+
+    /**
+     * Recovers from a failure by switching to another task.
+     */
+    public Task<A> recoverWith(Function<Throwable, Task<A>> fn) {
+        Objects.requireNonNull(fn, "fn");
+        return new Task<A>(token -> {
+            CompletableFuture<CompletableFuture<A>> handled = toFuture(token).handle((val, ex) -> {
+                if (ex == null) {
+                    return CompletableFuture.completedFuture(val);
+                }
+                Throwable cause = unwrap(ex);
+                if (cause instanceof CancellationException) {
+                    return failedFuture(cause);
+                }
+                return fn.apply(cause).toFuture(token);
+            });
+            return handled.thenCompose(inner -> inner);
+        });
+    }
+
+    /**
+     * Maps a failure to another failure without changing successful values.
+     */
+    public Task<A> mapError(Function<Throwable, Throwable> fn) {
+        Objects.requireNonNull(fn, "fn");
+        return new Task<A>(token -> {
+            CompletableFuture<CompletableFuture<A>> handled = toFuture(token).handle((val, ex) -> {
+                if (ex == null) {
+                    return CompletableFuture.completedFuture(val);
+                }
+                Throwable cause = unwrap(ex);
+                if (cause instanceof CancellationException) {
+                    return failedFuture(cause);
+                }
+                Throwable mapped = Objects.requireNonNull(fn.apply(cause), "mapped error");
+                return failedFuture(mapped);
+            });
+            return handled.thenCompose(inner -> inner);
+        });
     }
 
     public static final Monad<µ> monad = new Monad<>() {
         @Override
-        public <A> Higher<µ, A> pure(A a) { return Task.succeed(a); }
+        public <A> Higher<µ, A> pure(A a) {
+            return Task.succeed(a);
+        }
 
         @Override
         public <A, B> Higher<µ, B> flatMap(Function<A, Higher<µ, B>> fn, Higher<µ, A> fa) {
@@ -114,7 +300,10 @@ public final class Task<A> implements Higher<Task.µ, A> {
         try {
             return toFuture(token).get();
         } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            throw new RuntimeException(unwrap(e));
         }
     }
 
@@ -127,13 +316,12 @@ public final class Task<A> implements Higher<Task.µ, A> {
     }
 
     public void runAsync(Maybe<CancellationToken> token, java.util.function.Consumer<Either<Throwable, A>> callback) {
-        toFuture(token).handle((val, ex) -> {
+        toFuture(token).whenComplete((val, ex) -> {
             if (ex != null) {
-                callback.accept(Either.left(ex));
+                callback.accept(Either.left(unwrap(ex)));
             } else {
                 callback.accept(Either.right(val));
             }
-            return null;
         });
     }
 
@@ -165,14 +353,14 @@ public final class Task<A> implements Higher<Task.µ, A> {
                 result.complete(val);
             } else if (remaining > 0) {
                 if (delay > 0) {
-                    CompletableFuture.delayedExecutor(delay, unit).execute(() -> 
+                    CompletableFuture.delayedExecutor(delay, unit).execute(() ->
                         attemptRetry(remaining - 1, delay, unit, result, token)
                     );
                 } else {
                     attemptRetry(remaining - 1, delay, unit, result, token);
                 }
             } else {
-                result.completeExceptionally(ex);
+                result.completeExceptionally(unwrap(ex));
             }
             return null;
         });
@@ -190,10 +378,41 @@ public final class Task<A> implements Higher<Task.µ, A> {
      * Races multiple tasks and returns the result of the first to complete.
      */
     public static <A> Task<A> race(Collection<Task<A>> tasks) {
-        return new Task<>(token -> {
-            CompletableFuture<A> result = new CompletableFuture<>();
-            tasks.forEach(task -> task.toFuture(token).thenAccept(result::complete));
-            return result;
+        if (tasks.isEmpty()) {
+            return Task.fail(new IllegalArgumentException("race requires at least one task"));
+        }
+        return Task.asyncCancelable(callback -> {
+            java.util.List<Fiber<Throwable, A>> fibers = new java.util.ArrayList<>();
+            tasks.forEach(task -> fibers.add(task.start()));
+
+            AtomicBoolean done = new AtomicBoolean(false);
+            Runnable cancelLosers = () -> fibers.forEach(Fiber::cancel);
+
+            fibers.forEach(fiber -> fiber.join().runAsync(outcome -> {
+                if (done.compareAndSet(false, true)) {
+                    outcome.either(
+                        failure -> {
+                            callback.failure(failure);
+                            return null;
+                        },
+                        winner -> {
+                            if (winner.isCancelled()) {
+                                callback.cancel();
+                            } else if (winner.isFailed()) {
+                                Outcome.Failed<Throwable, A> failed = (Outcome.Failed<Throwable, A>) winner;
+                                callback.failure(failed.error());
+                            } else {
+                                Outcome.Succeeded<Throwable, A> succeeded = (Outcome.Succeeded<Throwable, A>) winner;
+                                callback.success(succeeded.value());
+                            }
+                            return null;
+                        }
+                    );
+                    cancelLosers.run();
+                }
+            }));
+
+            return cancelLosers::run;
         });
     }
 
@@ -204,10 +423,14 @@ public final class Task<A> implements Higher<Task.µ, A> {
         return acquire.flatMap(resource -> new Task<>(token -> {
             CompletableFuture<A> result = new CompletableFuture<>();
             use.apply(resource).toFuture(token).handle((val, ex) -> {
-                release.apply(resource).toFuture(token).handle((__, ex2) -> {
-                    if (ex != null) result.completeExceptionally(ex);
-                    else if (ex2 != null) result.completeExceptionally(ex2);
-                    else result.complete(val);
+                release.apply(resource).toFuture(Maybe.nothing()).handle((__, ex2) -> {
+                    if (ex != null) {
+                        result.completeExceptionally(unwrap(ex));
+                    } else if (ex2 != null) {
+                        result.completeExceptionally(unwrap(ex2));
+                    } else {
+                        result.complete(val);
+                    }
                     return null;
                 });
                 return null;
@@ -222,16 +445,14 @@ public final class Task<A> implements Higher<Task.µ, A> {
      */
     public static <A, B> Task<List<B>> parTraverse(List<A> items, Function<A, Task<B>> fn) {
         return new Task<>(token -> {
-            // 1. Initiate all tasks concurrently using foldl for Snoc-list order.
-            List<CompletableFuture<B>> futures = (List<CompletableFuture<B>>) items.foldl(List.<CompletableFuture<B>>nil(), (acc, a) -> 
+            List<CompletableFuture<B>> futures = (List<CompletableFuture<B>>) items.foldl(List.<CompletableFuture<B>>nil(), (acc, a) ->
                 (List<CompletableFuture<B>>) acc.build(fn.apply(a).toFuture(token)));
-            
-            // 2. Conver to array for allOf
+
             CompletableFuture<?>[] array = new CompletableFuture<?>[futures.length()];
             final int[] i = {0};
             futures.forEach(f -> array[i[0]++] = f);
 
-            return CompletableFuture.allOf(array).thenApply(__ -> 
+            return CompletableFuture.allOf(array).thenApply(__ ->
                 List.from(futures.map(CompletableFuture::join))
             );
         });
@@ -250,15 +471,15 @@ public final class Task<A> implements Higher<Task.µ, A> {
      */
     public static <A, B> Task<List<B>> boundedParTraverse(ExecutorService executor, List<A> items, Function<A, Task<B>> fn, boolean shutdownExecutor) {
         return new Task<>(token -> {
-            List<CompletableFuture<B>> futures = (List<CompletableFuture<B>>) items.foldl(List.<CompletableFuture<B>>nil(), (acc, a) -> 
+            List<CompletableFuture<B>> futures = (List<CompletableFuture<B>>) items.foldl(List.<CompletableFuture<B>>nil(), (acc, a) ->
                 (List<CompletableFuture<B>>) acc.build(CompletableFuture.supplyAsync(() -> fn.apply(a), executor)
                     .thenCompose(t -> t.toFuture(token))));
-            
+
             CompletableFuture<?>[] array = new CompletableFuture<?>[futures.length()];
             final int[] i = {0};
             futures.forEach(f -> array[i[0]++] = f);
 
-            CompletableFuture<List<B>> result = CompletableFuture.allOf(array).thenApply(__ -> 
+            CompletableFuture<List<B>> result = CompletableFuture.allOf(array).thenApply(__ ->
                 List.from(futures.map(CompletableFuture::join))
             );
 
@@ -283,8 +504,22 @@ public final class Task<A> implements Higher<Task.µ, A> {
      * Useful when tasks have dependencies or should not run concurrently.
      */
     public static <A> Task<List<A>> sequenceSequential(List<Task<A>> tasks) {
-        return tasks.foldl(Task.succeed(List.<A>nil()), (accTask, task) -> 
+        return tasks.foldl(Task.succeed(List.<A>nil()), (accTask, task) ->
             accTask.flatMap(list -> task.map(a -> List.from(list.build(a))))
         );
+    }
+
+    private static Throwable unwrap(Throwable throwable) {
+        Throwable current = throwable;
+        while ((current instanceof CompletionException || current instanceof ExecutionException) && current.getCause() != null) {
+            current = current.getCause();
+        }
+        return current;
+    }
+
+    private static <A> CompletableFuture<A> failedFuture(Throwable throwable) {
+        CompletableFuture<A> future = new CompletableFuture<>();
+        future.completeExceptionally(throwable);
+        return future;
     }
 }

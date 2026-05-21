@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'io.github.sganesh-code'
-version = "2.0.17"
+version = "2.0.18"
 
 
 java {
@@ -23,11 +23,14 @@ repositories {
 }
 
 dependencies {
+    api 'io.projectreactor:reactor-core:3.8.5'
+
     testImplementation 'org.testng:testng:6.14.3'
     testImplementation 'junit:junit:4.13.1'
     testImplementation 'org.testcontainers:testcontainers:1.20.3'
     testImplementation 'org.testcontainers:neo4j:1.20.3'
     testImplementation 'org.neo4j.driver:neo4j-java-driver:5.26.0'
+    testImplementation 'io.projectreactor:reactor-test:3.8.5'
     testImplementation 'org.openjdk.jmh:jmh-core:1.20'
     testAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.20'
     

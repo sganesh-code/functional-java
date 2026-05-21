@@ -5,7 +5,11 @@ import io.github.senthilganeshs.fj.typeclass.Monad;
 import java.util.function.Function;
 
 /**
- * Represents a computation that reads from an environment of type R.
+ * Represents a computation that reads from an environment of type {@code R}.
+ *
+ * For streaming workflows, the common pattern is {@code Reader<R, AsyncStream<A>>}
+ * so the environment stays explicit while the stream remains reusable and
+ * Reactor-free.
  */
 public record Reader<R, A>(Function<R, A> run) implements Higher<Higher<Reader.µ, R>, A> {
     public final static class µ {}

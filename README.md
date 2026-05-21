@@ -246,6 +246,83 @@ ReaderTaskEither<AppEnv, String, String> program =
     );
 ```
 
+### Reactive Interop
+
+Reactor support lives in `io.github.senthilganeshs.fj.reactor`. The core primitives stay Reactor-free, and the bridge handles framework boundary conversions.
+
+```java
+Task<String> task = ReactorInterop.monoToTask(mono);
+Mono<String> mono = ReactorInterop.taskToMono(task);
+AsyncStream<String> stream = ReactorInterop.fluxToAsyncStream(flux);
+Flux<String> flux = ReactorInterop.asyncStreamToFlux(stream);
+```
+
+`Mono.empty()` maps naturally through the `Task<Maybe<A>>` bridge:
+
+```java
+Task<Maybe<String>> maybeTask = ReactorInterop.monoToMaybeTask(Mono.empty());
+```
+
+At the WebFlux edge, return Reactor types from controllers and keep the domain service in functional-java types:
+
+```java
+@RestController
+class InvoiceController {
+    private final InvoiceService service;
+
+    @GetMapping("/invoices/{id}")
+    Mono<InvoiceDto> getInvoice(@PathVariable String id) {
+        return ReactorInterop.taskEitherToMono(
+            service.findInvoice(id),
+            DomainError::toHttpException
+        );
+    }
+}
+```
+
+Cancellation and release stay explicit. Cancelling a Reactor subscription cancels the underlying task or stream, and `Resource.use(...)` still releases on success, failure, and cancellation.
+
+Release `2.0.18` adds the Reactor bridge, `AsyncStream`, `Resource`, `Deferred`, `Fiber`, and `Outcome` support introduced by the epic work, along with the cancellation and resource-safety behavior that makes those pieces usable at the framework boundary.
+
+### Context And Error Mapping
+
+For single-result workflows, `ReaderTaskEither<R, E, A>` is the preferred way to carry request context such as correlation IDs, auth state, or tenant information.
+
+```java
+record RequestContext(String correlationId, String tenantId, String userId) {}
+
+ReaderTaskEither<RequestContext, DomainError, Invoice> flow =
+    ReaderTaskEither.ask().flatMap(ctx ->
+        loadInvoice(ctx.tenantId(), ctx.userId())
+            .mapError(err -> new DomainError("invoice", err))
+    );
+```
+
+For streaming workflows, use `Reader<R, AsyncStream<A>>` so the stream remains context-aware without introducing a separate context-local primitive.
+
+```java
+record StreamContext(String tenantId) {}
+
+Reader<StreamContext, AsyncStream<Event>> events =
+    Reader.ask().map(ctx ->
+        fetchEvents(ctx.tenantId()).map(Event::normalize)
+    );
+```
+
+At the framework edge, map framework exceptions into domain errors and domain errors back to framework exceptions explicitly:
+
+```java
+TaskEither<DomainError, Customer> service = loadCustomer(customerId);
+
+Mono<Customer> endpoint =
+    ReactorInterop.taskEitherToMono(service, DomainError::toHttpException);
+
+TaskEither<DomainError, Customer> back =
+    ReactorInterop.monoToTaskEither(endpoint, DomainError::fromThrowable);
+```
+
+This keeps Reactor Context, HTTP exceptions, and subscription mechanics at the boundary. Domain services expose `ReaderTaskEither`, `TaskEither`, `Reader`, `Task`, and `AsyncStream` instead of Reactor types.
+
 ### Resource Safety With `bracket`
 
 If you use `try/catch/finally` for resource management, the cleanup logic usually gets buried under control flow. `Task.bracket` keeps acquisition, use, and release in one composable shape.
@@ -495,7 +572,7 @@ That style is useful when you want to test a normalization rule, a parser, or a 
 
 ## Installation
 
-Version: `2.0.17`
+Version: `2.0.18`
 
 ### Maven
 
@@ -503,14 +580,14 @@ Version: `2.0.17`
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>2.0.17</version>
+    <version>2.0.18</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:2.0.17'
+implementation 'io.github.sganesh-code:functional-java:2.0.18'
 ```
 
 ## Contributing

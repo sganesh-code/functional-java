@@ -1,0 +1,72 @@
+package io.github.senthilganeshs.fj.ds;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
+
+/**
+ * A one-shot completion cell.
+ *
+ * @param <A> The type of value carried by the deferred.
+ */
+public final class Deferred<A> {
+    private static final Object UNSET = new Object();
+    private static final Object NULL_VALUE = new Object();
+
+    private final AtomicReference<Object> state = new AtomicReference<>(UNSET);
+    private final CompletableFuture<A> future = new CompletableFuture<>();
+
+    public static <A> Deferred<A> of() {
+        return new Deferred<>();
+    }
+
+    /**
+     * Completes the deferred once. Returns {@code true} for the winning completion.
+     */
+    public boolean complete(A value) {
+        Object encoded = encode(value);
+        if (state.compareAndSet(UNSET, encoded)) {
+            future.complete(value);
+            return true;
+        }
+        return false;
+    }
+
+    public Maybe<A> tryGet() {
+        Object current = state.get();
+        if (current == UNSET) {
+            return Maybe.nothing();
+        }
+        return Maybe.some(decode(current));
+    }
+
+    /**
+     * Returns a task that completes when the deferred is completed.
+     */
+    public Task<A> get() {
+        return Task.asyncCancelable(callback -> {
+            if (state.get() != UNSET) {
+                callback.success(decode(state.get()));
+                return () -> { };
+            }
+
+            future.whenComplete((value, error) -> {
+                if (error != null) {
+                    callback.failure(error);
+                } else {
+                    callback.success(value);
+                }
+            });
+
+            return () -> { };
+        });
+    }
+
+    private static Object encode(Object value) {
+        return value == null ? NULL_VALUE : value;
+    }
+
+    @SuppressWarnings("unchecked")
+    private A decode(Object value) {
+        return value == NULL_VALUE ? null : (A) value;
+    }
+}

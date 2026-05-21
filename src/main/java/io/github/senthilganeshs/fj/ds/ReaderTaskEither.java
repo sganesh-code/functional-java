@@ -5,9 +5,16 @@ import io.github.senthilganeshs.fj.typeclass.Monad;
 import java.util.function.Function;
 
 /**
- * The ultimate effect for modern applications.
- * A Reader that returns a TaskEither.
- * Supports dependency injection (R), asynchronous failure (E), and successful results (A).
+ * A reader-based async effect with typed failure.
+ *
+ * Use this for single-result workflows that need environment-aware dependency
+ * injection without exposing Reactor Context or other framework-specific state
+ * in domain code.
+ *
+ * It combines:
+ * - environment access via {@link Reader},
+ * - async execution via {@link TaskEither},
+ * - explicit typed errors via {@code E}.
  */
 public record ReaderTaskEither<R, E, A>(Reader<R, TaskEither<E, A>> reader) implements Higher<Higher<Higher<ReaderTaskEither.µ, R>, E>, A> {
     public final static class µ {}

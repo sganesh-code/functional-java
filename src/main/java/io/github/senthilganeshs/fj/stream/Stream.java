@@ -91,6 +91,10 @@ public record Stream<F, A>(Higher<F, Maybe<Tuple<A, Stream<F, A>>>> step) {
     /**
      * Concurrently evaluates effects within a stream while preserving order.
      * Specific to Task context.
+     *
+     * Note: the current implementation preserves ordering but does not enforce
+     * bounded parallelism yet. The parallelism parameter is reserved for a
+     * future implementation.
      */
     @SuppressWarnings("unchecked")
     public <B> Stream<Task.µ, B> parEvalMap(int parallelism, Function<A, Task<B>> fn) {

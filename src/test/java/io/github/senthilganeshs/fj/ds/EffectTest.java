@@ -5,6 +5,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class EffectTest {
 
@@ -67,6 +68,31 @@ public class EffectTest {
         TaskEither<String, Integer> te3 = te1.flatMap(i -> TaskEither.left("Fail"));
         Assert.assertTrue(te3.task().run().isLeft());
         Assert.assertEquals(te3.task().run().fromLeft(""), "Fail");
+    }
+
+    @Test
+    public void testTaskRunAsyncPreservesFailureCause() {
+        AtomicReference<Either<Throwable, Integer>> result = new AtomicReference<>();
+        Task.<Integer>fail(new IllegalStateException("boom")).runAsync(either -> result.set(either));
+
+        Assert.assertNotNull(result.get());
+        Assert.assertTrue(result.get().isLeft());
+        Assert.assertTrue(result.get().fromLeft(null) instanceof IllegalStateException);
+        Assert.assertEquals(result.get().fromLeft(null).getMessage(), "boom");
+    }
+
+    @Test
+    public void testCancellationTokenListenersAreIdempotent() {
+        CancellationToken token = new CancellationToken();
+        AtomicInteger counter = new AtomicInteger(0);
+
+        token.onCancel(counter::incrementAndGet);
+        token.cancel();
+        token.cancel();
+        token.onCancel(counter::incrementAndGet);
+
+        Assert.assertEquals(counter.get(), 2);
+        Assert.assertTrue(token.isCancelled());
     }
 
     @Test

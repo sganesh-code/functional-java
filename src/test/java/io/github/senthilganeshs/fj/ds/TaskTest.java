@@ -2,11 +2,26 @@ package io.github.senthilganeshs.fj.ds;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TaskTest {
+
+    @Test
+    public void testTaskDeferIsLazy() {
+        AtomicInteger counter = new AtomicInteger(0);
+        Task<Integer> task = Task.defer(() -> {
+            counter.incrementAndGet();
+            return Task.succeed(42);
+        });
+
+        Assert.assertEquals(counter.get(), 0);
+        Assert.assertEquals(task.run(), Integer.valueOf(42));
+        Assert.assertEquals(counter.get(), 1);
+    }
 
     @Test
     public void testTaskBasic() {
@@ -90,5 +105,71 @@ public class TaskTest {
         Task<Collection<Integer>> task = list.parMap(i -> i + 1);
         Collection<Integer> result = task.run();
         Assert.assertEquals(result.length(), 3);
+    }
+
+    @Test
+    public void testAsyncCancelableSuccessAndCleanup() {
+        AtomicBoolean cleanupCalled = new AtomicBoolean(false);
+
+        Task<Integer> task = Task.asyncCancelable(callback -> {
+            callback.success(99);
+            return () -> cleanupCalled.set(true);
+        });
+
+        Assert.assertEquals(task.run(), Integer.valueOf(99));
+        Assert.assertFalse(cleanupCalled.get());
+    }
+
+    @Test
+    public void testAsyncCancelableCancellationDisposesSource() {
+        AtomicBoolean cancelCalled = new AtomicBoolean(false);
+        CancellationToken token = new CancellationToken();
+
+        Task<Integer> task = Task.asyncCancelable(callback -> () -> cancelCalled.set(true));
+        token.cancel();
+
+        AtomicReference<Either<Throwable, Integer>> result = new AtomicReference<>();
+        task.runAsync(Maybe.some(token), result::set);
+
+        Assert.assertNotNull(result.get());
+        Assert.assertTrue(result.get().isLeft());
+        Assert.assertTrue(result.get().fromLeft(null) instanceof CancellationException);
+        Assert.assertTrue(cancelCalled.get());
+    }
+
+    @Test
+    public void testTaskStartAndCancelProducesCancelledOutcome() {
+        AtomicBoolean cancelCalled = new AtomicBoolean(false);
+        Task<Integer> task = Task.asyncCancelable(callback -> () -> cancelCalled.set(true));
+
+        Fiber<Throwable, Integer> fiber = task.start();
+        fiber.cancel();
+
+        Outcome<Throwable, Integer> outcome = fiber.join().run();
+        Assert.assertTrue(outcome.isCancelled());
+        Assert.assertTrue(cancelCalled.get());
+    }
+
+    @Test
+    public void testRaceCancelsLosers() {
+        AtomicBoolean slowCancelled = new AtomicBoolean(false);
+
+        Task<Integer> slow = Task.asyncCancelable(callback -> () -> slowCancelled.set(true));
+        Task<Integer> fast = Task.succeed(2);
+
+        Assert.assertEquals(Task.race(List.of(slow, fast)).run(), Integer.valueOf(2));
+        Assert.assertTrue(slowCancelled.get());
+    }
+
+    @Test
+    public void testRecoverAndMapError() {
+        Task<Integer> task = Task.<Integer>fail(new IllegalStateException("boom"))
+            .mapError(err -> new IllegalArgumentException(err.getMessage()))
+            .recover(err -> {
+                Assert.assertTrue(err instanceof IllegalArgumentException);
+                return 7;
+            });
+
+        Assert.assertEquals(task.run(), Integer.valueOf(7));
     }
 }
