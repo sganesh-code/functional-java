@@ -68,6 +68,17 @@ public class ResourceDeferredTest {
     }
 
     @Test
+    public void testDeferredNullValueAndLateSubscribers() {
+        Deferred<String> deferred = Deferred.of();
+
+        Assert.assertTrue(deferred.complete(null));
+        Assert.assertTrue(deferred.tryGet().isSome());
+        Assert.assertNull(deferred.tryGet().orElse("fallback"));
+        Assert.assertNull(deferred.get().run());
+        Assert.assertNull(deferred.get().run());
+    }
+
+    @Test
     public void testDeferredCancelledWaitDoesNotCorruptValue() {
         Deferred<Integer> deferred = Deferred.of();
 

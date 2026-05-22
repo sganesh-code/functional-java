@@ -1,7 +1,7 @@
 package io.github.senthilganeshs.fj.ds;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
+import reactor.core.publisher.Sinks;
 
 /**
  * A one-shot completion cell.
@@ -13,7 +13,7 @@ public final class Deferred<A> {
     private static final Object NULL_VALUE = new Object();
 
     private final AtomicReference<Object> state = new AtomicReference<>(UNSET);
-    private final CompletableFuture<A> future = new CompletableFuture<>();
+    private final Sinks.One<Task.Value<A>> sink = Sinks.one();
 
     public static <A> Deferred<A> of() {
         return new Deferred<>();
@@ -25,7 +25,7 @@ public final class Deferred<A> {
     public boolean complete(A value) {
         Object encoded = encode(value);
         if (state.compareAndSet(UNSET, encoded)) {
-            future.complete(value);
+            sink.tryEmitValue(Task.Value.of(value));
             return true;
         }
         return false;
@@ -43,21 +43,12 @@ public final class Deferred<A> {
      * Returns a task that completes when the deferred is completed.
      */
     public Task<A> get() {
-        return Task.asyncCancelable(callback -> {
-            if (state.get() != UNSET) {
-                callback.success(decode(state.get()));
-                return () -> { };
+        return Task.defer(() -> {
+            Object current = state.get();
+            if (current != UNSET) {
+                return Task.succeed(decode(current));
             }
-
-            future.whenComplete((value, error) -> {
-                if (error != null) {
-                    callback.failure(error);
-                } else {
-                    callback.success(value);
-                }
-            });
-
-            return () -> { };
+            return Task.fromNullableMono(sink.asMono());
         });
     }
 

@@ -282,7 +282,65 @@ class InvoiceController {
 
 Cancellation and release stay explicit. Cancelling a Reactor subscription cancels the underlying task or stream, and `Resource.use(...)` still releases on success, failure, and cancellation.
 
-Release `2.0.18` adds the Reactor bridge, `AsyncStream`, `Resource`, `Deferred`, `Fiber`, and `Outcome` support introduced by the epic work, along with the cancellation and resource-safety behavior that makes those pieces usable at the framework boundary.
+Release `2.0.19` adds the Reactor bridge, `AsyncStream`, `Resource`, `Deferred`, `Fiber`, and `Outcome` support introduced by the epic work, along with the cancellation and resource-safety behavior that makes those pieces usable at the framework boundary.
+
+#### Single-Result Example
+
+Keep the service in functional-java and adapt it only at the controller boundary:
+
+```java
+record CustomerId(String value) {}
+record CustomerDto(String id, String name) {}
+
+interface CustomerService {
+    TaskEither<DomainError, CustomerDto> findCustomer(CustomerId id);
+}
+
+@RestController
+class CustomerController {
+    private final CustomerService service;
+
+    @GetMapping("/customers/{id}")
+    Mono<CustomerDto> getCustomer(@PathVariable String id) {
+        return ReactorInterop.taskEitherToMono(
+            service.findCustomer(new CustomerId(id)),
+            DomainError::toHttpException
+        );
+    }
+}
+```
+
+This keeps domain failures typed in the service layer and maps them to HTTP exceptions only when Reactor is required.
+
+#### Streaming Example
+
+Use `AsyncStream` for domain streaming and convert to `Flux` at the edge:
+
+```java
+record Event(String id, String type) {}
+
+interface EventService {
+    AsyncStream<Event> eventsForTenant(String tenantId);
+}
+
+@RestController
+class EventController {
+    private final EventService service;
+
+    @GetMapping(value = "/tenants/{tenantId}/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    Flux<Event> streamEvents(@PathVariable String tenantId) {
+        return ReactorInterop.asyncStreamToFlux(service.eventsForTenant(tenantId));
+    }
+}
+```
+
+If you need to start from Reactor instead, use the inverse bridge:
+
+```java
+Task<String> value = ReactorInterop.monoToTask(Mono.just("ok"));
+Task<Maybe<String>> maybeValue = ReactorInterop.monoToMaybeTask(Mono.empty());
+AsyncStream<Integer> stream = ReactorInterop.fluxToAsyncStream(Flux.range(1, 3));
+```
 
 ### Context And Error Mapping
 
@@ -572,7 +630,7 @@ That style is useful when you want to test a normalization rule, a parser, or a 
 
 ## Installation
 
-Version: `2.0.18`
+Version: `2.0.19`
 
 ### Maven
 
@@ -580,14 +638,14 @@ Version: `2.0.18`
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>2.0.18</version>
+    <version>2.0.19</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:2.0.18'
+implementation 'io.github.sganesh-code:functional-java:2.0.19'
 ```
 
 ## Contributing

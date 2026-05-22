@@ -26,6 +26,33 @@ public class ReactorInteropTest {
     }
 
     @Test
+    public void testMonoToTaskIsLazyAndSingleSubscription() {
+        AtomicInteger subscriptions = new AtomicInteger(0);
+        Task<Integer> task = ReactorInterop.monoToTask(Mono.defer(() -> {
+            subscriptions.incrementAndGet();
+            return Mono.just(1);
+        }));
+
+        Assert.assertEquals(subscriptions.get(), 0);
+
+        StepVerifier.create(task.toMono(Maybe.nothing()))
+            .expectNext(1)
+            .verifyComplete();
+
+        Assert.assertEquals(subscriptions.get(), 1);
+    }
+
+    @Test
+    public void testMonoToMaybeTaskFailurePropagates() {
+        try {
+            ReactorInterop.monoToMaybeTask(Mono.error(new IllegalArgumentException("boom"))).run();
+            Assert.fail("Expected failure");
+        } catch (RuntimeException ex) {
+            Assert.assertTrue(ex.getCause() instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
     public void testMonoErrorAndEmptyToTaskEither() {
         try {
             ReactorInterop.monoToTask(Mono.error(new IllegalStateException("boom"))).run();
@@ -77,6 +104,22 @@ public class ReactorInteropTest {
             .verify();
 
         Assert.assertTrue(cancelled.get());
+    }
+
+    @Test
+    public void testTaskToMonoSubscribesOnce() {
+        AtomicInteger registrations = new AtomicInteger(0);
+        Task<Integer> task = Task.asyncCancelable(callback -> {
+            registrations.incrementAndGet();
+            callback.success(1);
+            return () -> { };
+        });
+
+        StepVerifier.create(ReactorInterop.taskToMono(task))
+            .expectNext(1)
+            .verifyComplete();
+
+        Assert.assertEquals(registrations.get(), 1);
     }
 
     @Test

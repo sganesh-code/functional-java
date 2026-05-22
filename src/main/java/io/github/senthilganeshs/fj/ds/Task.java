@@ -2,6 +2,7 @@ package io.github.senthilganeshs.fj.ds;
 
 import io.github.senthilganeshs.fj.hkt.Higher;
 import io.github.senthilganeshs.fj.typeclass.Monad;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
@@ -9,13 +10,18 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import reactor.core.Disposable;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
+import reactor.util.retry.Retry;
 
 /**
  * A purely functional abstraction for an asynchronous computation.
@@ -41,14 +47,43 @@ public final class Task<A> implements Higher<Task.µ, A> {
         return (Task<A>) hka;
     }
 
-    private final Function<Maybe<CancellationToken>, CompletableFuture<A>> futureFactory;
+    private final Function<Maybe<CancellationToken>, Mono<Value<A>>> monoFactory;
 
-    private Task(Function<Maybe<CancellationToken>, CompletableFuture<A>> futureFactory) {
-        this.futureFactory = futureFactory;
+    private Task(Function<Maybe<CancellationToken>, Mono<Value<A>>> monoFactory) {
+        this.monoFactory = monoFactory;
+    }
+
+    /**
+     * Converts this task to a Reactor {@link Mono}. Java {@code null} results are represented
+     * as empty Mono completion because Reactor publishers cannot emit null values.
+     */
+    public Mono<A> toMono(Maybe<CancellationToken> token) {
+        Objects.requireNonNull(token, "token");
+        return toInternalMono(token).flatMap(value ->
+            value.value() == null ? Mono.empty() : Mono.just(value.value())
+        );
     }
 
     public CompletableFuture<A> toFuture(Maybe<CancellationToken> token) {
-        return futureFactory.apply(token);
+        Objects.requireNonNull(token, "token");
+        CompletableFuture<A> future = new CompletableFuture<>();
+        AtomicReference<Disposable> disposable = new AtomicReference<>();
+
+        Disposable current = toInternalMono(token).subscribe(
+            value -> future.complete(value.value()),
+            error -> future.completeExceptionally(unwrap(error)),
+            () -> future.complete(null)
+        );
+        disposable.set(current);
+        future.whenComplete((__, ___) -> {
+            if (future.isCancelled()) {
+                Disposable d = disposable.get();
+                if (d != null) {
+                    d.dispose();
+                }
+            }
+        });
+        return future;
     }
 
     /**
@@ -56,24 +91,25 @@ public final class Task<A> implements Higher<Task.µ, A> {
      */
     public static <A> Task<A> defer(Supplier<Task<A>> supplier) {
         Objects.requireNonNull(supplier, "supplier");
-        return new Task<>(token -> supplier.get().toFuture(token));
+        return new Task<>(token -> Mono.defer(() -> supplier.get().toInternalMono(token)));
     }
 
     public static <A> Task<A> of(Supplier<A> supplier) {
         Objects.requireNonNull(supplier, "supplier");
-        return defer(() -> new Task<>(token -> CompletableFuture.supplyAsync(() -> {
+        return defer(() -> new Task<>(token -> Mono.fromSupplier(() -> {
             token.forEach(CancellationToken::throwIfCancelled);
-            return supplier.get();
-        })));
+            return Value.of(supplier.get());
+        }).subscribeOn(Schedulers.boundedElastic())));
     }
 
     public static <A> Task<A> of(Supplier<A> supplier, Executor executor) {
         Objects.requireNonNull(supplier, "supplier");
         Objects.requireNonNull(executor, "executor");
-        return defer(() -> new Task<>(token -> CompletableFuture.supplyAsync(() -> {
+        Scheduler scheduler = Schedulers.fromExecutor(executor);
+        return defer(() -> new Task<>(token -> Mono.fromSupplier(() -> {
             token.forEach(CancellationToken::throwIfCancelled);
-            return supplier.get();
-        }, executor)));
+            return Value.of(supplier.get());
+        }).subscribeOn(scheduler)));
     }
 
     /**
@@ -92,31 +128,38 @@ public final class Task<A> implements Higher<Task.µ, A> {
      */
     public static <A> Task<A> asyncCancelable(Function<AsyncCallback<A>, Canceler> register) {
         Objects.requireNonNull(register, "register");
-        return new Task<>(token -> {
-            CompletableFuture<A> future = new CompletableFuture<>();
+        return new Task<>(token -> Mono.create(sink -> {
             AtomicBoolean terminal = new AtomicBoolean(false);
             AtomicBoolean cancelRequested = new AtomicBoolean(false);
-            AtomicReference<Canceler> cancelerRef = new AtomicReference<>(() -> { });
+            AtomicBoolean cancelerCalled = new AtomicBoolean(false);
+            AtomicReference<Canceler> cancelerRef = new AtomicReference<>();
+
+            Runnable invokeCanceler = () -> {
+                Canceler canceler = cancelerRef.get();
+                if (canceler != null && cancelerCalled.compareAndSet(false, true)) {
+                    canceler.cancel();
+                }
+            };
 
             AsyncCallback<A> callback = new AsyncCallback<>() {
                 @Override
                 public void success(A value) {
-                    completeTerminal(() -> future.complete(value));
+                    if (terminal.compareAndSet(false, true)) {
+                        sink.success(Value.of(value));
+                    }
                 }
 
                 @Override
                 public void failure(Throwable error) {
-                    completeTerminal(() -> future.completeExceptionally(error));
+                    if (terminal.compareAndSet(false, true)) {
+                        sink.error(error);
+                    }
                 }
 
                 @Override
                 public void cancel() {
-                    completeTerminal(() -> future.completeExceptionally(new CancellationException("Task cancelled")));
-                }
-
-                private void completeTerminal(Supplier<Boolean> action) {
                     if (terminal.compareAndSet(false, true)) {
-                        action.get();
+                        sink.error(new CancellationException("Task cancelled"));
                     }
                 }
             };
@@ -125,62 +168,90 @@ public final class Task<A> implements Higher<Task.µ, A> {
                 cancelRequested.set(true);
                 if (terminal.compareAndSet(false, true)) {
                     try {
-                        cancelerRef.get().cancel();
+                        invokeCanceler.run();
                     } finally {
-                        future.completeExceptionally(new CancellationException("Task cancelled"));
+                        sink.error(new CancellationException("Task cancelled"));
                     }
-                } else {
-                    cancelerRef.get().cancel();
                 }
             };
 
+            sink.onCancel(new Disposable() {
+                @Override
+                public void dispose() {
+                    cancelAction.run();
+                }
+
+                @Override
+                public boolean isDisposed() {
+                    return terminal.get();
+                }
+            });
             token.forEach(t -> t.onCancel(cancelAction));
-            if (token.isSome() && token.orElse(null).isCancelled()) {
-                cancelAction.run();
-            }
 
             try {
                 Canceler canceler = register.apply(callback);
                 cancelerRef.set(canceler == null ? () -> { } : canceler);
             } catch (Throwable t) {
                 callback.failure(t);
-                return future;
+                return;
             }
 
             if (cancelRequested.get()) {
-                cancelerRef.get().cancel();
+                invokeCanceler.run();
             }
-            return future;
-        });
+        }));
     }
 
     public static <A> Task<A> succeed(A value) {
-        return new Task<>(token -> CompletableFuture.completedFuture(value));
+        return new Task<>(token -> Mono.just(Value.of(value)));
     }
 
     public static <A> Task<A> fail(Throwable t) {
-        return new Task<>(token -> CompletableFuture.failedFuture(t));
+        Objects.requireNonNull(t, "t");
+        return new Task<>(token -> Mono.error(t));
+    }
+
+    public static <A> Task<A> fromMono(Mono<A> mono) {
+        Objects.requireNonNull(mono, "mono");
+        return new Task<>(token -> fromMonoValue(mono.map(Value::of), token));
     }
 
     static <A> Task<A> fromFuture(CompletableFuture<A> future) {
         Objects.requireNonNull(future, "future");
-        return new Task<>(token -> future);
+        return new Task<>(token -> Mono.create(sink ->
+            future.whenComplete((value, error) -> {
+                if (error != null) {
+                    sink.error(unwrap(error));
+                } else {
+                    sink.success(Value.of(value));
+                }
+            })
+        ));
+    }
+
+    static <A> Task<A> fromNullableMono(Mono<Value<A>> mono) {
+        Objects.requireNonNull(mono, "mono");
+        return new Task<>(token -> fromMonoValue(mono, token));
     }
 
     public <B> Task<B> map(Function<A, B> fn) {
         Objects.requireNonNull(fn, "fn");
-        return new Task<>(token -> toFuture(token).thenApply(fn));
+        return new Task<>(token -> toInternalMono(token).map(value -> Value.of(fn.apply(value.value()))));
     }
 
     public <B> Task<B> flatMap(Function<A, Task<B>> fn) {
         Objects.requireNonNull(fn, "fn");
-        return new Task<>(token -> toFuture(token).thenCompose(a -> fn.apply(a).toFuture(token)));
+        return new Task<>(token -> toInternalMono(token).flatMap(value -> fn.apply(value.value()).toInternalMono(token)));
     }
 
     public <B, C> Task<C> liftA2(BiFunction<A, B, C> fn, Task<B> second) {
         Objects.requireNonNull(fn, "fn");
         Objects.requireNonNull(second, "second");
-        return new Task<>(token -> toFuture(token).thenCombine(second.toFuture(token), fn));
+        return new Task<>(token -> Mono.zip(
+            toInternalMono(token),
+            second.toInternalMono(token),
+            (a, b) -> Value.of(fn.apply(a.value(), b.value()))
+        ));
     }
 
     /**
@@ -207,19 +278,13 @@ public final class Task<A> implements Higher<Task.µ, A> {
      */
     public Task<A> recover(Function<Throwable, A> fn) {
         Objects.requireNonNull(fn, "fn");
-        return new Task<A>(token -> {
-            CompletableFuture<CompletableFuture<A>> handled = toFuture(token).handle((val, ex) -> {
-                if (ex == null) {
-                    return CompletableFuture.completedFuture(val);
-                }
-                Throwable cause = unwrap(ex);
-                if (cause instanceof CancellationException) {
-                    return failedFuture(cause);
-                }
-                return CompletableFuture.completedFuture(fn.apply(cause));
-            });
-            return handled.thenCompose(inner -> inner);
-        });
+        return new Task<>(token -> toInternalMono(token).onErrorResume(error -> {
+            Throwable cause = unwrap(error);
+            if (cause instanceof CancellationException) {
+                return Mono.error(cause);
+            }
+            return Mono.just(Value.of(fn.apply(cause)));
+        }));
     }
 
     /**
@@ -227,19 +292,13 @@ public final class Task<A> implements Higher<Task.µ, A> {
      */
     public Task<A> recoverWith(Function<Throwable, Task<A>> fn) {
         Objects.requireNonNull(fn, "fn");
-        return new Task<A>(token -> {
-            CompletableFuture<CompletableFuture<A>> handled = toFuture(token).handle((val, ex) -> {
-                if (ex == null) {
-                    return CompletableFuture.completedFuture(val);
-                }
-                Throwable cause = unwrap(ex);
-                if (cause instanceof CancellationException) {
-                    return failedFuture(cause);
-                }
-                return fn.apply(cause).toFuture(token);
-            });
-            return handled.thenCompose(inner -> inner);
-        });
+        return new Task<>(token -> toInternalMono(token).onErrorResume(error -> {
+            Throwable cause = unwrap(error);
+            if (cause instanceof CancellationException) {
+                return Mono.error(cause);
+            }
+            return fn.apply(cause).toInternalMono(token);
+        }));
     }
 
     /**
@@ -247,20 +306,13 @@ public final class Task<A> implements Higher<Task.µ, A> {
      */
     public Task<A> mapError(Function<Throwable, Throwable> fn) {
         Objects.requireNonNull(fn, "fn");
-        return new Task<A>(token -> {
-            CompletableFuture<CompletableFuture<A>> handled = toFuture(token).handle((val, ex) -> {
-                if (ex == null) {
-                    return CompletableFuture.completedFuture(val);
-                }
-                Throwable cause = unwrap(ex);
-                if (cause instanceof CancellationException) {
-                    return failedFuture(cause);
-                }
-                Throwable mapped = Objects.requireNonNull(fn.apply(cause), "mapped error");
-                return failedFuture(mapped);
-            });
-            return handled.thenCompose(inner -> inner);
-        });
+        return new Task<>(token -> toInternalMono(token).onErrorMap(error -> {
+            Throwable cause = unwrap(error);
+            if (cause instanceof CancellationException) {
+                return cause;
+            }
+            return Objects.requireNonNull(fn.apply(cause), "mapped error");
+        }));
     }
 
     public static final Monad<µ> monad = new Monad<>() {
@@ -329,7 +381,8 @@ public final class Task<A> implements Higher<Task.µ, A> {
      * Adds a timeout to the task.
      */
     public Task<A> timeout(long timeout, TimeUnit unit) {
-        return new Task<>(token -> toFuture(token).orTimeout(timeout, unit));
+        Objects.requireNonNull(unit, "unit");
+        return new Task<>(token -> toInternalMono(token).timeout(Duration.ofNanos(unit.toNanos(timeout))));
     }
 
     /**
@@ -340,30 +393,14 @@ public final class Task<A> implements Higher<Task.µ, A> {
     }
 
     public Task<A> retry(int maxRetries, long delay, TimeUnit unit) {
-        return new Task<>(token -> {
-            CompletableFuture<A> result = new CompletableFuture<>();
-            attemptRetry(maxRetries, delay, unit, result, token);
-            return result;
-        });
-    }
-
-    private void attemptRetry(int remaining, long delay, TimeUnit unit, CompletableFuture<A> result, Maybe<CancellationToken> token) {
-        toFuture(token).handle((val, ex) -> {
-            if (ex == null) {
-                result.complete(val);
-            } else if (remaining > 0) {
-                if (delay > 0) {
-                    CompletableFuture.delayedExecutor(delay, unit).execute(() ->
-                        attemptRetry(remaining - 1, delay, unit, result, token)
-                    );
-                } else {
-                    attemptRetry(remaining - 1, delay, unit, result, token);
-                }
-            } else {
-                result.completeExceptionally(unwrap(ex));
-            }
-            return null;
-        });
+        Objects.requireNonNull(unit, "unit");
+        if (delay <= 0) {
+            return new Task<>(token -> toInternalMono(token).retry(maxRetries));
+        }
+        Retry retry = Retry.fixedDelay(maxRetries, Duration.ofNanos(unit.toNanos(delay)))
+            .filter(error -> !(unwrap(error) instanceof CancellationException))
+            .onRetryExhaustedThrow((__, signal) -> signal.failure());
+        return new Task<>(token -> toInternalMono(token).retryWhen(retry));
     }
 
     /**
@@ -371,7 +408,10 @@ public final class Task<A> implements Higher<Task.µ, A> {
      * Useful for recovery (e.g. timeout fallbacks).
      */
     public <B> Task<B> handle(BiFunction<A, Throwable, B> fn) {
-        return new Task<>(token -> toFuture(token).handle((val, ex) -> fn.apply(val, ex)));
+        Objects.requireNonNull(fn, "fn");
+        return new Task<>(token -> toInternalMono(token)
+            .map(value -> Value.of(fn.apply(value.value(), null)))
+            .onErrorResume(error -> Mono.just(Value.of(fn.apply(null, unwrap(error))))));
     }
 
     /**
@@ -381,38 +421,10 @@ public final class Task<A> implements Higher<Task.µ, A> {
         if (tasks.isEmpty()) {
             return Task.fail(new IllegalArgumentException("race requires at least one task"));
         }
-        return Task.asyncCancelable(callback -> {
-            java.util.List<Fiber<Throwable, A>> fibers = new java.util.ArrayList<>();
-            tasks.forEach(task -> fibers.add(task.start()));
-
-            AtomicBoolean done = new AtomicBoolean(false);
-            Runnable cancelLosers = () -> fibers.forEach(Fiber::cancel);
-
-            fibers.forEach(fiber -> fiber.join().runAsync(outcome -> {
-                if (done.compareAndSet(false, true)) {
-                    outcome.either(
-                        failure -> {
-                            callback.failure(failure);
-                            return null;
-                        },
-                        winner -> {
-                            if (winner.isCancelled()) {
-                                callback.cancel();
-                            } else if (winner.isFailed()) {
-                                Outcome.Failed<Throwable, A> failed = (Outcome.Failed<Throwable, A>) winner;
-                                callback.failure(failed.error());
-                            } else {
-                                Outcome.Succeeded<Throwable, A> succeeded = (Outcome.Succeeded<Throwable, A>) winner;
-                                callback.success(succeeded.value());
-                            }
-                            return null;
-                        }
-                    );
-                    cancelLosers.run();
-                }
-            }));
-
-            return cancelLosers::run;
+        return new Task<>(token -> {
+            java.util.List<Mono<Value<A>>> monos = new java.util.ArrayList<>();
+            tasks.forEach(task -> monos.add(task.toInternalMono(token)));
+            return Mono.firstWithSignal(monos);
         });
     }
 
@@ -420,23 +432,16 @@ public final class Task<A> implements Higher<Task.µ, A> {
      * Resource-safe bracket operation.
      */
     public static <R, A> Task<A> bracket(Task<R> acquire, Function<R, Task<A>> use, Function<R, Task<Void>> release) {
-        return acquire.flatMap(resource -> new Task<>(token -> {
-            CompletableFuture<A> result = new CompletableFuture<>();
-            use.apply(resource).toFuture(token).handle((val, ex) -> {
-                release.apply(resource).toFuture(Maybe.nothing()).handle((__, ex2) -> {
-                    if (ex != null) {
-                        result.completeExceptionally(unwrap(ex));
-                    } else if (ex2 != null) {
-                        result.completeExceptionally(unwrap(ex2));
-                    } else {
-                        result.complete(val);
-                    }
-                    return null;
-                });
-                return null;
-            });
-            return result;
-        }));
+        Objects.requireNonNull(acquire, "acquire");
+        Objects.requireNonNull(use, "use");
+        Objects.requireNonNull(release, "release");
+        return new Task<>(token -> Mono.usingWhen(
+            acquire.toInternalMono(token),
+            resource -> use.apply(resource.value()).toInternalMono(token),
+            resource -> release.apply(resource.value()).toInternalMono(Maybe.nothing()).then(),
+            (resource, __) -> release.apply(resource.value()).toInternalMono(Maybe.nothing()).then(),
+            resource -> release.apply(resource.value()).toInternalMono(Maybe.nothing()).then()
+        ));
     }
 
     /**
@@ -444,50 +449,36 @@ public final class Task<A> implements Higher<Task.µ, A> {
      * Guaranteed to initiate all tasks concurrently before waiting for results.
      */
     public static <A, B> Task<List<B>> parTraverse(List<A> items, Function<A, Task<B>> fn) {
-        return new Task<>(token -> {
-            List<CompletableFuture<B>> futures = (List<CompletableFuture<B>>) items.foldl(List.<CompletableFuture<B>>nil(), (acc, a) ->
-                (List<CompletableFuture<B>>) acc.build(fn.apply(a).toFuture(token)));
-
-            CompletableFuture<?>[] array = new CompletableFuture<?>[futures.length()];
-            final int[] i = {0};
-            futures.forEach(f -> array[i[0]++] = f);
-
-            return CompletableFuture.allOf(array).thenApply(__ ->
-                List.from(futures.map(CompletableFuture::join))
-            );
-        });
+        Objects.requireNonNull(items, "items");
+        Objects.requireNonNull(fn, "fn");
+        int concurrency = Math.max(1, items.length());
+        return traverseWithConcurrency(concurrency, items, fn, Function.identity(), () -> { });
     }
 
     /**
      * Bounded parallel traverse to limit concurrency.
      */
     public static <A, B> Task<List<B>> boundedParTraverse(int limit, List<A> items, Function<A, Task<B>> fn) {
-        return boundedParTraverse(Executors.newFixedThreadPool(limit), items, fn, true);
+        if (limit <= 0) {
+            return Task.fail(new IllegalArgumentException("limit must be positive"));
+        }
+        return traverseWithConcurrency(limit, items, fn, Function.identity(), () -> { });
     }
 
     /**
      * Executes a list of tasks in parallel using the provided executor.
      * Truly non-blocking: does not use .run() or .get() internally.
      */
-    public static <A, B> Task<List<B>> boundedParTraverse(ExecutorService executor, List<A> items, Function<A, Task<B>> fn, boolean shutdownExecutor) {
-        return new Task<>(token -> {
-            List<CompletableFuture<B>> futures = (List<CompletableFuture<B>>) items.foldl(List.<CompletableFuture<B>>nil(), (acc, a) ->
-                (List<CompletableFuture<B>>) acc.build(CompletableFuture.supplyAsync(() -> fn.apply(a), executor)
-                    .thenCompose(t -> t.toFuture(token))));
-
-            CompletableFuture<?>[] array = new CompletableFuture<?>[futures.length()];
-            final int[] i = {0};
-            futures.forEach(f -> array[i[0]++] = f);
-
-            CompletableFuture<List<B>> result = CompletableFuture.allOf(array).thenApply(__ ->
-                List.from(futures.map(CompletableFuture::join))
-            );
-
-            if (shutdownExecutor) {
-                result.whenComplete((__, ex) -> executor.shutdown());
-            }
-            return result;
-        });
+    public static <A, B> Task<List<B>> boundedParTraverse(
+        ExecutorService executor,
+        List<A> items,
+        Function<A, Task<B>> fn,
+        boolean shutdownExecutor
+    ) {
+        Objects.requireNonNull(executor, "executor");
+        Scheduler scheduler = Schedulers.fromExecutorService(executor);
+        Runnable cleanup = shutdownExecutor ? executor::shutdown : () -> { };
+        return traverseWithConcurrency(Integer.MAX_VALUE, items, fn, mono -> mono.subscribeOn(scheduler), cleanup);
     }
 
     /**
@@ -509,6 +500,89 @@ public final class Task<A> implements Higher<Task.µ, A> {
         );
     }
 
+    private Mono<Value<A>> toInternalMono(Maybe<CancellationToken> token) {
+        return monoFactory.apply(token);
+    }
+
+    private static <A, B> Task<List<B>> traverseWithConcurrency(
+        int concurrency,
+        List<A> items,
+        Function<A, Task<B>> fn,
+        Function<Mono<Value<B>>, Mono<Value<B>>> scheduler,
+        Runnable cleanup
+    ) {
+        Objects.requireNonNull(items, "items");
+        Objects.requireNonNull(fn, "fn");
+        Objects.requireNonNull(scheduler, "scheduler");
+        Objects.requireNonNull(cleanup, "cleanup");
+        return new Task<>(token -> Flux.fromIterable(items)
+            .flatMapSequential(item -> scheduler.apply(Mono.defer(() -> fn.apply(item).toInternalMono(token))), concurrency)
+            .collectList()
+            .map(values -> {
+                List<B> result = List.nil();
+                for (Value<B> value : values) {
+                    result = result.build(value.value());
+                }
+                return Value.of(result);
+            })
+            .doFinally(__ -> cleanup.run()));
+    }
+
+    private static <A> Mono<Value<A>> fromMonoValue(Mono<Value<A>> mono, Maybe<CancellationToken> token) {
+        return Mono.create(sink -> {
+            if (token.isSome() && token.orElse(null).isCancelled()) {
+                sink.error(new CancellationException("Task cancelled"));
+                return;
+            }
+
+            AtomicBoolean terminal = new AtomicBoolean(false);
+            AtomicReference<Disposable> disposableRef = new AtomicReference<>();
+            Runnable cancel = () -> {
+                if (terminal.compareAndSet(false, true)) {
+                    try {
+                        sink.error(new CancellationException("Task cancelled"));
+                    } finally {
+                        Disposable disposable = disposableRef.get();
+                        if (disposable != null) {
+                            disposable.dispose();
+                        }
+                    }
+                }
+            };
+
+            Disposable disposable = mono.subscribe(
+                value -> {
+                    if (terminal.compareAndSet(false, true)) {
+                        sink.success(value);
+                    }
+                },
+                error -> {
+                    if (terminal.compareAndSet(false, true)) {
+                        sink.error(unwrap(error));
+                    }
+                },
+                () -> {
+                    if (terminal.compareAndSet(false, true)) {
+                        sink.success();
+                    }
+                }
+            );
+            disposableRef.set(disposable);
+            sink.onCancel(new Disposable() {
+                @Override
+                public void dispose() {
+                    cancel.run();
+                }
+
+                @Override
+                public boolean isDisposed() {
+                    return terminal.get();
+                }
+            });
+            token.forEach(t -> t.onCancel(cancel));
+        });
+    }
+
     private static Throwable unwrap(Throwable throwable) {
         Throwable current = throwable;
         while ((current instanceof CompletionException || current instanceof ExecutionException) && current.getCause() != null) {
@@ -517,9 +591,19 @@ public final class Task<A> implements Higher<Task.µ, A> {
         return current;
     }
 
-    private static <A> CompletableFuture<A> failedFuture(Throwable throwable) {
-        CompletableFuture<A> future = new CompletableFuture<>();
-        future.completeExceptionally(throwable);
-        return future;
+    static final class Value<A> {
+        private final A value;
+
+        private Value(A value) {
+            this.value = value;
+        }
+
+        static <A> Value<A> of(A value) {
+            return new Value<>(value);
+        }
+
+        A value() {
+            return value;
+        }
     }
 }

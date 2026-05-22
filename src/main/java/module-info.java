@@ -1,5 +1,6 @@
 module io.github.senthilganeshs.fj {
     requires transitive reactor.core;
+    requires org.reactivestreams;
 
     exports io.github.senthilganeshs.fj.codec;
     exports io.github.senthilganeshs.fj.ds;

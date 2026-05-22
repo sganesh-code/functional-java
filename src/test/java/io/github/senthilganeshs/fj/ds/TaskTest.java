@@ -3,10 +3,16 @@ package io.github.senthilganeshs.fj.ds;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+import reactor.test.StepVerifier;
 
 public class TaskTest {
 
@@ -27,6 +33,95 @@ public class TaskTest {
     public void testTaskBasic() {
         Task<Integer> t = Task.of(() -> 10).map(i -> i * 2);
         Assert.assertEquals(t.run(), Integer.valueOf(20));
+    }
+
+    @Test
+    public void testTaskToMonoIsLazyAndCancelable() {
+        AtomicInteger subscriptions = new AtomicInteger(0);
+        AtomicBoolean cancelled = new AtomicBoolean(false);
+
+        Task<Integer> task = Task.fromMono(Mono.<Integer>create(sink -> {
+            subscriptions.incrementAndGet();
+            sink.onCancel(() -> cancelled.set(true));
+        }));
+
+        Mono<Integer> mono = task.toMono(Maybe.nothing());
+        Assert.assertEquals(subscriptions.get(), 0);
+
+        StepVerifier.create(mono)
+            .thenCancel()
+            .verify();
+
+        Assert.assertEquals(subscriptions.get(), 1);
+        Assert.assertTrue(cancelled.get());
+    }
+
+    @Test
+    public void testTaskToMonoPreCancelledTokenSkipsSubscription() {
+        AtomicInteger subscriptions = new AtomicInteger(0);
+        CancellationToken token = new CancellationToken();
+        token.cancel();
+
+        Task<Integer> task = Task.fromMono(Mono.<Integer>create(sink -> subscriptions.incrementAndGet()));
+
+        StepVerifier.create(task.toMono(Maybe.some(token)))
+            .expectErrorMatches(error -> error instanceof CancellationException)
+            .verify();
+
+        Assert.assertEquals(subscriptions.get(), 0);
+    }
+
+    @Test
+    public void testTaskFromMonoSuccessErrorAndEmpty() {
+        Assert.assertEquals(Task.fromMono(Mono.just(10)).run(), Integer.valueOf(10));
+        Assert.assertNull(Task.fromMono(Mono.<Integer>empty()).run());
+
+        try {
+            Task.fromMono(Mono.error(new IllegalStateException("boom"))).run();
+            Assert.fail("Expected failure");
+        } catch (RuntimeException ex) {
+            Assert.assertTrue(ex.getCause() instanceof IllegalStateException);
+        }
+    }
+
+    @Test
+    public void testTaskOfRunsOffCallerThread() {
+        String caller = Thread.currentThread().getName();
+        AtomicReference<String> executing = new AtomicReference<>();
+
+        Task.of(() -> {
+            executing.set(Thread.currentThread().getName());
+            return 1;
+        }).run();
+
+        Assert.assertNotEquals(executing.get(), caller);
+    }
+
+    @Test
+    public void testTaskOfWithExecutorUsesProvidedExecutor() {
+        ExecutorService executor = Executors.newSingleThreadExecutor(r -> new Thread(r, "task-exec"));
+        AtomicReference<String> threadName = new AtomicReference<>();
+
+        try {
+            Task<Integer> task = Task.of(() -> {
+                threadName.set(Thread.currentThread().getName());
+                return 1;
+            }, executor);
+
+            Assert.assertNull(threadName.get());
+            Assert.assertEquals(task.run(), Integer.valueOf(1));
+            Assert.assertEquals(threadName.get(), "task-exec");
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    public void testNullValuesStillFlowThroughTaskCombinators() {
+        Assert.assertEquals(
+            Task.<String>succeed(null).map(value -> value == null ? "null" : value).run(),
+            "null"
+        );
     }
 
     @Test
@@ -84,6 +179,30 @@ public class TaskTest {
         );
 
         Assert.assertEquals(result.run(), Integer.valueOf(8));
+        Assert.assertTrue(released.get());
+    }
+
+    @Test
+    public void testBracketReleasesOnCancellation() throws InterruptedException {
+        AtomicBoolean released = new AtomicBoolean(false);
+        CountDownLatch started = new CountDownLatch(1);
+
+        Fiber<Throwable, Integer> fiber = Task.bracket(
+            Task.succeed("resource"),
+            __ -> Task.<Integer>asyncCancelable(callback -> {
+                started.countDown();
+                return () -> { };
+            }),
+            __ -> Task.of(() -> {
+                released.set(true);
+                return null;
+            })
+        ).start();
+
+        Assert.assertTrue(started.await(1, TimeUnit.SECONDS));
+        fiber.cancel();
+
+        Assert.assertTrue(fiber.join().run().isCancelled());
         Assert.assertTrue(released.get());
     }
 
@@ -159,6 +278,47 @@ public class TaskTest {
 
         Assert.assertEquals(Task.race(List.of(slow, fast)).run(), Integer.valueOf(2));
         Assert.assertTrue(slowCancelled.get());
+    }
+
+    @Test
+    public void testBoundedParTraverseRespectsLimit() {
+        AtomicInteger active = new AtomicInteger(0);
+        AtomicInteger maxActive = new AtomicInteger(0);
+
+        Task.boundedParTraverse(2, List.range(0, 8), i -> Task.fromMono(Mono.fromSupplier(() -> {
+            int current = active.incrementAndGet();
+            maxActive.updateAndGet(previous -> Math.max(previous, current));
+            try {
+                Thread.sleep(30);
+                return i;
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(ex);
+            } finally {
+                active.decrementAndGet();
+            }
+        }).subscribeOn(Schedulers.boundedElastic()))).run();
+
+        Assert.assertTrue(maxActive.get() <= 2, "max concurrency was " + maxActive.get());
+    }
+
+    @Test
+    public void testBoundedParTraverseWithExecutorShutsDownExecutor() {
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        try {
+            Task<List<Integer>> task = Task.boundedParTraverse(
+                executor,
+                List.of(1, 2, 3),
+                i -> Task.of(() -> i + 1),
+                true
+            );
+
+            Assert.assertEquals(task.run().toString(), "[2,3,4]");
+            Assert.assertTrue(executor.isShutdown());
+        } finally {
+            executor.shutdownNow();
+        }
     }
 
     @Test

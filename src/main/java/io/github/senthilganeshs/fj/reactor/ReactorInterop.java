@@ -2,7 +2,6 @@ package io.github.senthilganeshs.fj.reactor;
 
 import io.github.senthilganeshs.fj.ds.CancellationToken;
 import io.github.senthilganeshs.fj.ds.Either;
-import io.github.senthilganeshs.fj.ds.Fiber;
 import io.github.senthilganeshs.fj.ds.Maybe;
 import io.github.senthilganeshs.fj.ds.Task;
 import io.github.senthilganeshs.fj.ds.TaskEither;
@@ -12,12 +11,10 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import org.reactivestreams.Subscription;
-import reactor.core.Disposable;
 import reactor.core.publisher.BaseSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
@@ -39,12 +36,7 @@ public final class ReactorInterop {
      */
     public static <A> Task<A> monoToTask(Mono<A> mono) {
         Objects.requireNonNull(mono, "mono");
-        return monoToMaybeTask(mono).flatMap(maybe ->
-            maybe.either(
-                () -> Task.fail(new NoSuchElementException("Mono completed empty")),
-                Task::succeed
-            )
-        );
+        return Task.fromMono(mono.switchIfEmpty(Mono.error(new NoSuchElementException("Mono completed empty"))));
     }
 
     /**
@@ -52,14 +44,7 @@ public final class ReactorInterop {
      */
     public static <A> Task<Maybe<A>> monoToMaybeTask(Mono<A> mono) {
         Objects.requireNonNull(mono, "mono");
-        return Task.asyncCancelable(callback -> {
-            Disposable disposable = mono.subscribe(
-                value -> callback.success(Maybe.some(value)),
-                callback::failure,
-                () -> callback.success(Maybe.nothing())
-            );
-            return disposable::dispose;
-        });
+        return Task.fromMono(mono.map(Maybe::some).switchIfEmpty(Mono.just(Maybe.nothing())));
     }
 
     /**
@@ -80,30 +65,7 @@ public final class ReactorInterop {
      */
     public static <A> Mono<A> taskToMono(Task<A> task) {
         Objects.requireNonNull(task, "task");
-        return Mono.create(sink -> {
-            Fiber<Throwable, A> fiber = task.start();
-            sink.onCancel(fiber::cancel);
-            fiber.join().runAsync(result -> result.either(
-                error -> {
-                    sink.error(error);
-                    return null;
-                },
-                outcome -> outcome.fold(
-                    () -> {
-                        sink.error(new CancellationException("Task cancelled"));
-                        return null;
-                    },
-                    error -> {
-                        sink.error(error);
-                        return null;
-                    },
-                    value -> {
-                        sink.success(value);
-                        return null;
-                    }
-                )
-            ));
-        });
+        return task.toMono(Maybe.nothing());
     }
 
     /**
@@ -111,36 +73,12 @@ public final class ReactorInterop {
      */
     public static <A> Mono<A> taskMaybeToMono(Task<Maybe<A>> task) {
         Objects.requireNonNull(task, "task");
-        return Mono.create(sink -> {
-            Fiber<Throwable, Maybe<A>> fiber = task.start();
-            sink.onCancel(fiber::cancel);
-            fiber.join().runAsync(result -> result.either(
-                error -> {
-                    sink.error(error);
-                    return null;
-                },
-                outcome -> outcome.fold(
-                    () -> {
-                        sink.error(new CancellationException("Task cancelled"));
-                        return null;
-                    },
-                    error -> {
-                        sink.error(error);
-                        return null;
-                    },
-                    maybe -> maybe.either(
-                        () -> {
-                            sink.success();
-                            return null;
-                        },
-                        value -> {
-                            sink.success(value);
-                            return null;
-                        }
-                    )
-                )
-            ));
-        });
+        return task.toMono(Maybe.nothing()).flatMap(maybe ->
+            maybe.either(
+                Mono::empty,
+                value -> value == null ? Mono.empty() : Mono.just(value)
+            )
+        );
     }
 
     /**
@@ -149,36 +87,12 @@ public final class ReactorInterop {
     public static <E, A> Mono<A> taskEitherToMono(TaskEither<E, A> taskEither, Function<E, Throwable> errorMapper) {
         Objects.requireNonNull(taskEither, "taskEither");
         Objects.requireNonNull(errorMapper, "errorMapper");
-        return Mono.create(sink -> {
-            Fiber<Throwable, Either<E, A>> fiber = taskEither.task().start();
-            sink.onCancel(fiber::cancel);
-            fiber.join().runAsync(result -> result.either(
-                error -> {
-                    sink.error(error);
-                    return null;
-                },
-                outcome -> outcome.fold(
-                    () -> {
-                        sink.error(new CancellationException("Task cancelled"));
-                        return null;
-                    },
-                    error -> {
-                        sink.error(error);
-                        return null;
-                    },
-                    either -> either.either(
-                        e -> {
-                            sink.error(Objects.requireNonNull(errorMapper.apply(e), "mapped error"));
-                            return null;
-                        },
-                        value -> {
-                            sink.success(value);
-                            return null;
-                        }
-                    )
-                )
-            ));
-        });
+        return taskEither.task().toMono(Maybe.nothing()).flatMap(either ->
+            either.either(
+                error -> Mono.error(Objects.requireNonNull(errorMapper.apply(error), "mapped error")),
+                value -> value == null ? Mono.empty() : Mono.just(value)
+            )
+        );
     }
 
     /**
