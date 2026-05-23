@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -216,6 +217,75 @@ public final class Task<A> implements Higher<Task.µ, A> {
         return new Task<>(token -> fromMonoValue(mono.map(Value::of), token));
     }
 
+    /**
+     * Lazily creates a task from a Java {@link CompletionStage}-producing API.
+     * Prefer this over manual {@link #async(java.util.function.Consumer)} wrapping for APIs
+     * such as {@code HttpClient.sendAsync(...)}.
+     */
+    public static <A> Task<A> fromCompletionStage(Supplier<? extends CompletionStage<A>> supplier) {
+        Objects.requireNonNull(supplier, "supplier");
+        return new Task<>(token -> Mono.create(sink -> {
+            if (token.isSome() && token.orElse(null).isCancelled()) {
+                sink.error(new CancellationException("Task cancelled"));
+                return;
+            }
+
+            AtomicBoolean terminal = new AtomicBoolean(false);
+            AtomicReference<CompletableFuture<A>> futureRef = new AtomicReference<>();
+            Runnable cancel = () -> {
+                if (terminal.compareAndSet(false, true)) {
+                    try {
+                        CompletableFuture<A> future = futureRef.get();
+                        if (future != null) {
+                            future.cancel(true);
+                        }
+                    } finally {
+                        sink.error(new CancellationException("Task cancelled"));
+                    }
+                }
+            };
+
+            sink.onCancel(new Disposable() {
+                @Override
+                public void dispose() {
+                    cancel.run();
+                }
+
+                @Override
+                public boolean isDisposed() {
+                    return terminal.get();
+                }
+            });
+            token.forEach(t -> t.onCancel(cancel));
+
+            CompletionStage<A> stage;
+            try {
+                stage = Objects.requireNonNull(supplier.get(), "completion stage");
+            } catch (Throwable error) {
+                if (terminal.compareAndSet(false, true)) {
+                    sink.error(error);
+                }
+                return;
+            }
+
+            CompletableFuture<A> future = stage.toCompletableFuture();
+            futureRef.set(future);
+            if (terminal.get()) {
+                future.cancel(true);
+                return;
+            }
+            stage.whenComplete((value, error) -> {
+                if (terminal.compareAndSet(false, true)) {
+                    if (error != null) {
+                        sink.error(unwrap(error));
+                    } else {
+                        sink.success(Value.of(value));
+                    }
+                }
+            });
+        }));
+    }
+
     static <A> Task<A> fromFuture(CompletableFuture<A> future) {
         Objects.requireNonNull(future, "future");
         return new Task<>(token -> Mono.create(sink ->
@@ -244,6 +314,13 @@ public final class Task<A> implements Higher<Task.µ, A> {
         return new Task<>(token -> toInternalMono(token).flatMap(value -> fn.apply(value.value()).toInternalMono(token)));
     }
 
+    /**
+     * Combines two independent tasks concurrently.
+     *
+     * @deprecated Prefer {@link Task#zip(Task, Task)} or {@link Task#parZip(Task, Task)}
+     * for clearer concurrent composition naming, followed by {@code map(...)}.
+     */
+    @Deprecated(since = "2.0.20", forRemoval = false)
     public <B, C> Task<C> liftA2(BiFunction<A, B, C> fn, Task<B> second) {
         Objects.requireNonNull(fn, "fn");
         Objects.requireNonNull(second, "second");
@@ -380,9 +457,27 @@ public final class Task<A> implements Higher<Task.µ, A> {
     /**
      * Adds a timeout to the task.
      */
+    public Task<A> timeout(Duration duration) {
+        Objects.requireNonNull(duration, "duration");
+        return new Task<>(token -> toInternalMono(token).timeout(duration));
+    }
+
+    /**
+     * Adds a timeout to the task.
+     *
+     * @deprecated Prefer {@link #timeout(Duration)} for safer, modern time handling.
+     */
+    @Deprecated(since = "2.0.20", forRemoval = false)
     public Task<A> timeout(long timeout, TimeUnit unit) {
         Objects.requireNonNull(unit, "unit");
-        return new Task<>(token -> toInternalMono(token).timeout(Duration.ofNanos(unit.toNanos(timeout))));
+        return timeout(Duration.ofNanos(unit.toNanos(timeout)));
+    }
+
+    /**
+     * Discards the successful value while preserving completion, failure, and cancellation.
+     */
+    public Task<Void> voided() {
+        return map(__ -> null);
     }
 
     /**
@@ -426,6 +521,57 @@ public final class Task<A> implements Higher<Task.µ, A> {
             tasks.forEach(task -> monos.add(task.toInternalMono(token)));
             return Mono.firstWithSignal(monos);
         });
+    }
+
+    /**
+     * Races two tasks and returns the result of the first to complete.
+     */
+    public static <A> Task<A> race(Task<A> first, Task<A> second) {
+        Objects.requireNonNull(first, "first");
+        Objects.requireNonNull(second, "second");
+        return race(List.of(first, second));
+    }
+
+    /**
+     * Zips two independent tasks concurrently and returns both results.
+     */
+    public static <A, B> Task<Tuple<A, B>> zip(Task<A> first, Task<B> second) {
+        Objects.requireNonNull(first, "first");
+        Objects.requireNonNull(second, "second");
+        return new Task<>(token -> Mono.zip(
+            first.toInternalMono(token),
+            second.toInternalMono(token),
+            (a, b) -> Value.of(Tuple.of(a.value(), b.value()))
+        ));
+    }
+
+    /**
+     * Zips two independent tasks concurrently and returns both results.
+     */
+    public static <A, B> Task<Tuple<A, B>> parZip(Task<A> first, Task<B> second) {
+        return zip(first, second);
+    }
+
+    /**
+     * Runs all tasks in parallel for their side effects and discards their results.
+     */
+    public static Task<Void> whenAll(List<? extends Task<?>> tasks) {
+        Objects.requireNonNull(tasks, "tasks");
+        int concurrency = Math.max(1, tasks.length());
+        return parWhenAll(concurrency, tasks);
+    }
+
+    /**
+     * Runs all tasks with bounded parallelism for their side effects and discards their results.
+     */
+    public static Task<Void> parWhenAll(int concurrency, List<? extends Task<?>> tasks) {
+        Objects.requireNonNull(tasks, "tasks");
+        if (concurrency <= 0) {
+            return Task.fail(new IllegalArgumentException("concurrency must be positive"));
+        }
+        return new Task<>(token -> Flux.fromIterable(tasks)
+            .flatMap(task -> Mono.defer(() -> toAnyInternalMono(task, token)), concurrency)
+            .then(Mono.just(Value.of((Void) null))));
     }
 
     /**
@@ -502,6 +648,11 @@ public final class Task<A> implements Higher<Task.µ, A> {
 
     private Mono<Value<A>> toInternalMono(Maybe<CancellationToken> token) {
         return monoFactory.apply(token);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Mono<Value<?>> toAnyInternalMono(Task<?> task, Maybe<CancellationToken> token) {
+        return (Mono<Value<?>>) (Mono<?>) task.toInternalMono(token);
     }
 
     private static <A, B> Task<List<B>> traverseWithConcurrency(

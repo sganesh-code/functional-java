@@ -233,6 +233,31 @@ TaskEither<String, Invoice> invoiceFlow =
         .flatMap(tax -> TaskEither.right(new Invoice(orderId, tax)));
 ```
 
+Use `Task.zip` or `Task.parZip` when two independent effects can run concurrently:
+
+```java
+Task<Tuple<Customer, Account>> loaded =
+    Task.zip(loadCustomer(customerId), loadAccount(accountId));
+
+Task<Void> auditWrites =
+    Task.whenAll(List.of(writeAuditEvent(event), publishMetric(metric)));
+```
+
+For Java async APIs, keep construction lazy with `fromCompletionStage`:
+
+```java
+Task<HttpResponse<String>> response =
+    Task.fromCompletionStage(() -> httpClient.sendAsync(request, BodyHandlers.ofString()))
+        .timeout(Duration.ofSeconds(2));
+```
+
+Typed failure workflows have matching collection helpers:
+
+```java
+TaskEither<DomainError, List<Customer>> customers =
+    TaskEither.parTraverse(customerIds, id -> findCustomer(id));
+```
+
 ### Environment-Aware Composition
 
 When a workflow depends on configuration, repositories, and feature flags, `ReaderTaskEither` makes those dependencies explicit instead of hiding them in globals or service locators.
@@ -282,7 +307,7 @@ class InvoiceController {
 
 Cancellation and release stay explicit. Cancelling a Reactor subscription cancels the underlying task or stream, and `Resource.use(...)` still releases on success, failure, and cancellation.
 
-Release `2.0.19` adds the Reactor bridge, `AsyncStream`, `Resource`, `Deferred`, `Fiber`, and `Outcome` support introduced by the epic work, along with the cancellation and resource-safety behavior that makes those pieces usable at the framework boundary.
+Release `2.0.20` adds Reactor-familiar `Task` and `TaskEither` orchestration helpers such as `zip`, `parZip`, `whenAll`, `parWhenAll`, `timeout(Duration)`, and lazy `fromCompletionStage` interop. Release `2.0.19` added the Reactor bridge, `AsyncStream`, `Resource`, `Deferred`, `Fiber`, and `Outcome` support introduced by the epic work, along with the cancellation and resource-safety behavior that makes those pieces usable at the framework boundary.
 
 #### Single-Result Example
 
@@ -630,7 +655,7 @@ That style is useful when you want to test a normalization rule, a parser, or a 
 
 ## Installation
 
-Version: `2.0.19`
+Version: `2.0.20`
 
 ### Maven
 
@@ -638,14 +663,14 @@ Version: `2.0.19`
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>2.0.19</version>
+    <version>2.0.20</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:2.0.19'
+implementation 'io.github.sganesh-code:functional-java:2.0.20'
 ```
 
 ## Contributing

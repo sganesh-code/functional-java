@@ -2,11 +2,14 @@ package io.github.senthilganeshs.fj.ds;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import java.time.Duration;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -139,6 +142,20 @@ public class TaskTest {
     }
 
     @Test
+    public void testZipAndParZip() {
+        Task<Integer> t1 = Task.of(() -> 10);
+        Task<String> t2 = Task.of(() -> "ok");
+
+        Tuple<Integer, String> zipped = Task.zip(t1, t2).run();
+        Assert.assertEquals(zipped.getA().orElse(0), Integer.valueOf(10));
+        Assert.assertEquals(zipped.getB().orElse(""), "ok");
+
+        Tuple<Integer, String> parZipped = Task.parZip(t1, t2).run();
+        Assert.assertEquals(parZipped.getA().orElse(0), Integer.valueOf(10));
+        Assert.assertEquals(parZipped.getB().orElse(""), "ok");
+    }
+
+    @Test
     public void testParTraverse() {
         List<Integer> list = List.of(1, 2, 3, 4, 5);
         AtomicInteger counter = new AtomicInteger(0);
@@ -219,6 +236,17 @@ public class TaskTest {
     }
 
     @Test
+    public void testRaceTwoTasks() {
+        Task<Integer> slow = Task.of(() -> {
+            try { Thread.sleep(100); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+            return 1;
+        });
+        Task<Integer> fast = Task.of(() -> 2);
+
+        Assert.assertEquals(Task.race(slow, fast).run(), Integer.valueOf(2));
+    }
+
+    @Test
     public void testCollectionParMap() {
         List<Integer> list = List.of(1, 2, 3);
         Task<Collection<Integer>> task = list.parMap(i -> i + 1);
@@ -267,6 +295,78 @@ public class TaskTest {
         Outcome<Throwable, Integer> outcome = fiber.join().run();
         Assert.assertTrue(outcome.isCancelled());
         Assert.assertTrue(cancelCalled.get());
+    }
+
+    @Test
+    public void testTimeoutDuration() {
+        Task<Long> slow = Task.fromMono(Mono.delay(Duration.ofMillis(200)));
+
+        try {
+            slow.timeout(Duration.ofMillis(20)).run();
+            Assert.fail("Expected timeout");
+        } catch (RuntimeException ex) {
+            Assert.assertTrue(ex.getCause() instanceof TimeoutException);
+        }
+    }
+
+    @Test
+    public void testVoided() {
+        Assert.assertNull(Task.succeed("discarded").voided().run());
+    }
+
+    @Test
+    public void testWhenAllRunsTasksAndDiscardsValues() {
+        AtomicInteger counter = new AtomicInteger(0);
+
+        Void result = Task.whenAll(List.of(
+            Task.of(() -> counter.incrementAndGet()),
+            Task.of(() -> counter.addAndGet(2))
+        )).run();
+
+        Assert.assertNull(result);
+        Assert.assertEquals(counter.get(), 3);
+    }
+
+    @Test
+    public void testParWhenAllRespectsConcurrency() {
+        AtomicInteger active = new AtomicInteger(0);
+        AtomicInteger maxActive = new AtomicInteger(0);
+        List<Task<?>> tasks = List.range(0, 8).map(i -> Task.fromMono(Mono.fromRunnable(() -> {
+            int current = active.incrementAndGet();
+            maxActive.updateAndGet(previous -> Math.max(previous, current));
+            try {
+                Thread.sleep(30);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(ex);
+            } finally {
+                active.decrementAndGet();
+            }
+        }).subscribeOn(Schedulers.boundedElastic())));
+
+        Task.parWhenAll(2, tasks).run();
+
+        Assert.assertTrue(maxActive.get() <= 2, "max concurrency was " + maxActive.get());
+    }
+
+    @Test
+    public void testFromCompletionStageCancellationCancelsFuture() throws InterruptedException {
+        AtomicReference<CompletableFuture<Integer>> futureRef = new AtomicReference<>();
+        CountDownLatch created = new CountDownLatch(1);
+
+        Task<Integer> task = Task.fromCompletionStage(() -> {
+            CompletableFuture<Integer> future = new CompletableFuture<>();
+            futureRef.set(future);
+            created.countDown();
+            return future;
+        });
+
+        Fiber<Throwable, Integer> fiber = task.start();
+        Assert.assertTrue(created.await(1, TimeUnit.SECONDS));
+        fiber.cancel();
+
+        Assert.assertTrue(fiber.join().run().isCancelled());
+        Assert.assertTrue(futureRef.get().isCancelled());
     }
 
     @Test
