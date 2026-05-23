@@ -307,7 +307,7 @@ class InvoiceController {
 
 Cancellation and release stay explicit. Cancelling a Reactor subscription cancels the underlying task or stream, and `Resource.use(...)` still releases on success, failure, and cancellation.
 
-Release `2.0.20` adds Reactor-familiar `Task` and `TaskEither` orchestration helpers such as `zip`, `parZip`, `whenAll`, `parWhenAll`, `timeout(Duration)`, and lazy `fromCompletionStage` interop. Release `2.0.19` added the Reactor bridge, `AsyncStream`, `Resource`, `Deferred`, `Fiber`, and `Outcome` support introduced by the epic work, along with the cancellation and resource-safety behavior that makes those pieces usable at the framework boundary.
+Release `2.0.21` republishes the Reactor-familiar `Task` and `TaskEither` orchestration helpers from `2.0.20` and includes the ReactorInterop test stabilization needed to keep CI and the Maven Central publish flow deterministic. Release `2.0.19` added the Reactor bridge, `AsyncStream`, `Resource`, `Deferred`, `Fiber`, and `Outcome` support introduced by the epic work, along with the cancellation and resource-safety behavior that makes those pieces usable at the framework boundary.
 
 #### Single-Result Example
 
@@ -655,7 +655,7 @@ That style is useful when you want to test a normalization rule, a parser, or a 
 
 ## Installation
 
-Version: `2.0.20`
+Version: `2.0.21`
 
 ### Maven
 
@@ -663,14 +663,14 @@ Version: `2.0.20`
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>2.0.20</version>
+    <version>2.0.21</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:2.0.20'
+implementation 'io.github.sganesh-code:functional-java:2.0.21'
 ```
 
 ## Contributing

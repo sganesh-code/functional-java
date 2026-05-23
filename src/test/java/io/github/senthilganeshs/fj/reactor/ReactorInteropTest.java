@@ -8,6 +8,7 @@ import io.github.senthilganeshs.fj.ds.Task;
 import io.github.senthilganeshs.fj.ds.TaskEither;
 import io.github.senthilganeshs.fj.ds.Tuple;
 import io.github.senthilganeshs.fj.stream.AsyncStream;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.testng.Assert;
@@ -170,14 +171,16 @@ public class ReactorInteropTest {
     }
 
     @Test
-    public void testAsyncStreamToFluxCompletesAndFinalizesOnSuccess() {
+    public void testAsyncStreamToFluxCompletesAndFinalizesOnSuccess() throws InterruptedException {
         AtomicInteger finalized = new AtomicInteger(0);
+        CountDownLatch finalizedLatch = new CountDownLatch(1);
         AsyncStream<Integer> stream = AsyncStream.unfoldTask(0, n ->
             n < 3
                 ? Task.succeed(Maybe.some(Tuple.of(n, n + 1)))
                 : Task.succeed(Maybe.nothing())
         ).onFinalize(Task.of(() -> {
             finalized.incrementAndGet();
+            finalizedLatch.countDown();
             return null;
         }));
 
@@ -185,16 +188,19 @@ public class ReactorInteropTest {
             .expectNext(0, 1, 2)
             .verifyComplete();
 
+        Assert.assertTrue(finalizedLatch.await(1, java.util.concurrent.TimeUnit.SECONDS));
         Assert.assertEquals(finalized.get(), 1);
     }
 
     @Test
-    public void testAsyncStreamToFluxFinalizesOnCancel() {
+    public void testAsyncStreamToFluxFinalizesOnCancel() throws InterruptedException {
         AtomicInteger finalized = new AtomicInteger(0);
+        CountDownLatch finalizedLatch = new CountDownLatch(1);
         AsyncStream<Integer> stream = AsyncStream.unfoldTask(0, n ->
             Task.succeed(Maybe.some(Tuple.of(n, n + 1)))
         ).onFinalize(Task.of(() -> {
             finalized.incrementAndGet();
+            finalizedLatch.countDown();
             return null;
         }));
 
@@ -203,6 +209,7 @@ public class ReactorInteropTest {
             .thenCancel()
             .verify();
 
+        Assert.assertTrue(finalizedLatch.await(1, java.util.concurrent.TimeUnit.SECONDS));
         Assert.assertEquals(finalized.get(), 1);
     }
 }
