@@ -1,0 +1,30 @@
+# Implementation Plan: TICKET-005 - Advice Agent Reference Implementation
+
+- [x] **🎟️ [TICKET-005]: Advice Agent Reference Implementation**
+  - **Description:** Implement the "DIL Advice Agent" example from the proposal as a comprehensive integration test to demonstrate real-world usage of the Automaton engine.
+  - **Scope:**
+    - **In scope:**
+        - `src/test/java/io/github/senthilganeshs/fj/automaton/AdviceAgentIntegrationTest.java`
+    - **Out of scope:**
+        - Production-ready persistence or worker implementations.
+  - **Implementation Tasks:**
+    - [x] **Investigate:**
+        - Review the example logic in `@PROPOSAL-FJ-AUTOMATON.md` for `AdviceState`, `DilMessage`, and `DilCommand`.
+      - *Reviewed the proposal example and extracted the core states, messages, and commands.*
+    - [x] **Define Test Data Models:**
+        - Define `AdviceState` (Idle, Thinking, Responding, Done).
+        - Define `DilMessage` (AdviceRequested, ThoughtProduced, ResponseGenerated).
+        - Define `DilCommand` (GenerateThought, GenerateResponse).
+      - *Implemented using Java 21 sealed interfaces and records for type-safe modeling.*
+    - [x] **Implement Mock Components:**
+        - Implement `Machine<AdviceState, DilMessage, DilCommand>` (Logic).
+        - Implement `Interpreter<Task.µ, DilCommand, DilMessage>` (Worker).
+        - Implement `Repository<Task.µ, String, AdviceState>` (Store).
+      - *Created mock implementations for all components within the integration test file.*
+    - [x] **Implement Integration Test:**
+        - Create `@src/test/java/io/github/senthilganeshs/fj/automaton/AdviceAgentIntegrationTest.java`.
+        - Verify the full flow from `AdviceRequested` through `ThoughtProduced` to `ResponseGenerated`.
+      - *Added `testAdviceAgentFlow` to orchestrate the end-to-end multi-step transition process.*
+    - [x] **Verification:**
+        - Run `./gradlew test` (targeting this test) to ensure the agent reaches the terminal state correctly.
+      - *Verified full agent flow passes correctly. Build successful.*
