@@ -1,24 +1,17 @@
-# Implementation Plan: TICKET-006 - Documentation and README Integration
+# Implementation Plan: TICKET-006 - Documentation and Migration Guide
 
-- [x] **🎟️ [TICKET-006]: Documentation and README Integration**
-  - **Description:** Update the project documentation to include the new Automaton feature and provide clear examples for users.
+- [x] **🎟️ [TICKET-006]: Documentation and Migration Guide**
+  - **Description:** Document the architectural shift towards "Collection-first" interop. Provide a migration guide for users who were relying on covariant return types.
   - **Scope:**
-    - **In scope:**
-        - `README.md`
-        - `src/main/java/io/github/senthilganeshs/fj/automaton/*.java` (Javadocs)
+    - **In scope:** `@README.md`, `@GEMINI.md`.
+    - **Out of scope:** Modifying source code.
   - **Implementation Tasks:**
-    - [x] **Investigate:**
-        - Review `README.md` to find an appropriate location for the "Automaton Engine" section.
-      - *Identified "Resource Safety With bracket" as a good preceding section for "Automaton Engine".*
-    - [x] **Update README.md:**
-        - Add a section for "Automaton Engine".
-        - Explain the core concepts (Machine, Interpreter, Repository).
-        - Provide a concise usage example (e.g., the Counter or Advice Agent).
-      - *Added Automaton Engine section with concepts and a Task-based example to `README.md`.*
-    - [x] **Review Javadocs:**
-        - Ensure `Machine`, `Interpreter`, `Repository`, and `Automaton` have clear, helpful Javadocs for all public methods and records.
-      - *Reviewed and confirmed high-quality Javadocs for all new public APIs.*
-    - [x] **Verification:**
-        - Ensure the `README.md` renders correctly (manually verified via content).
-        - Run `./gradlew javadoc` to ensure no Jadoc errors were introduced.
-      - *Verified README content and confirmed no regression in Javadoc generation. Build successful.*
+    - [x] **Update README Examples:** Update usage examples in `@README.md` to show usage with generic `Collection` types.
+      - *Updated interop, transformation, and optic examples to use generic Collection return types.*
+    - [x] **Document Narrowing:** Add a section on "Type Narrowing" in `@README.md` explaining how to use `from(Collection<T>)` when implementation-specific features are needed.
+      - *Added "Type Narrowing" section with examples for List and Maybe.*
+    - [x] **Update Design Mandates:** Update `@GEMINI.md` with the new design principle regarding covariant overrides (mandating return of base `Collection` for construction and transformation methods).
+      - *Formalized "Standardized Return Types" as a top-level architectural mandate.*
+    - [x] **Final Review:** Ensure all documentation aligns with the implemented changes.
+      - *Verified all documentation updates align with the technical implementation.*
+

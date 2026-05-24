@@ -55,7 +55,7 @@ The following tickets break down the implementation of the epic.
     - [ ] Update `ListTest.java`, `StackTest.java`, `MaybeTest.java`, `EitherTest.java`, etc., to accommodate the new return types.
     - [ ] Introduce "Interoperability Tests" that demonstrate mixing different collection types in a single pipeline through the `Collection` interface.
 
-- [ ] **🎟️ [TICKET-006]: Documentation and Migration Guide**
+- [x] **🎟️ [TICKET-006]: Documentation and Migration Guide**
   - **Description:** Document the architectural shift towards "Collection-first" interop. Provide a migration guide for users who were relying on covariant return types.
   - **Scope:**
     - **In scope:** `README.md`, `GEMINI.md`.

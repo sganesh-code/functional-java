@@ -9,6 +9,7 @@ This file defines the foundational rules for AI agents working on this repositor
 
 ## 🏗 Architectural Design Principles
 - **The Core Triad**: All collection logic MUST derive from three methods: `empty()`, `build(T)`, and `foldl(seed, fn)`.
+- **Standardized Return Types**: Construction (`build`, `empty`) and generic transformation methods (`map`, `filter`, `flatMap`, `concat`, `reverse`, `take`, `drop`, etc.) MUST return the base `Collection<T>` (or `Collection<R>`) type at compile-time. Covariant return type overrides are forbidden to maximize interoperability across data structures. Use explicit narrowing via `Type.from(Collection)` when implementation-specific features are required.
 - **Persistence**: All data structures MUST be immutable/persistent. Every "update" operation must return a new instance.
 - **Paradigm Balance**: Enforce functional principles (referential transparency) without violating Java's OO standards (e.g., use covariant overrides to keep the API fluent).
 - **FIFO/LIFO Consistency**: 

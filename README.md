@@ -125,31 +125,37 @@ That means a new data structure does not need a custom utility layer before it b
 
 ### 2. Interoperate With Existing Types
 
-Because the abstraction is shared, a custom collection can feed into existing helpers and get results back in their native types.
+Because the abstraction is shared, a custom collection can feed into existing helpers and get results back as a generic `Collection`.
 
 ```java
 EventWindow<String> raw = new EventWindow<>(3, List.of("  Ada ", "  Bob ", " "));
 
-List<String> cleaned = raw
+// Generic transformations return Collection<T>
+Collection<String> cleaned = raw
     .filter(name -> !name.isBlank())
     .map(String::trim)
     .map(String::toUpperCase);
 
+// You can still access generic features like optics
 Maybe<String> first = cleaned.atIndex(0);
 ```
 
-The same idea works for sequencing effects:
+### 3. Type Narrowing
+
+If you need implementation-specific features after a transformation, use the static `from()` narrowing methods provided by each data structure.
 
 ```java
-List<Task<String>> lookups = List.of(
-    Task.of(() -> "alice"),
-    Task.of(() -> "bob")
-);
+Collection<Integer> result = List.of(1, 2, 3).map(i -> i * 2);
 
-Task<Collection<String>> resolved = Task.sequence(lookups);
+// Narrow back to List to use List-specific features like tail()
+List<Integer> list = List.from(result);
+Maybe<List<Integer>> rest = list.tail();
+
+// Narrowing works for monadic types too
+Maybe<Integer> maybe = Maybe.from(list.filter(i -> i > 10));
 ```
 
-### 3. Solve A Real Problem With Multiple Structures
+### 4. Solve A Real Problem With Multiple Structures
 
 Suppose you receive a webhook payload, need to validate fields, normalize a few nested values, and prepare the request for downstream processing. The standard Java version usually becomes a mix of null checks, temporary objects, and exception handling.
 
@@ -538,10 +544,10 @@ User updated = addressL.compose(cityL).set("San Francisco", user);
 
 ### Persistent Collection Transformations
 
-You can transform whole collections without introducing temporary mutable state or collectors.
+You can transform whole collections generically without introducing temporary mutable state or collectors.
 
 ```java
-List<String> names = List.of("a", "b", "c")
+Collection<String> names = List.of("a", "b", "c")
     .filter(name -> !name.isBlank())
     .map(String::toUpperCase);
 ```
@@ -586,7 +592,7 @@ User updated = addressL.compose(cityL)
 ```java
 // Transform every string in a persistent list without extra collectors or mutation
 List<String> rawNames = List.of(" Ada ", "Bob ", "  Carla");
-List<String> cleaned = Collection.eachP().modify(rawNames, String::trim);
+Collection<String> cleaned = Collection.eachP().modify(rawNames, String::trim);
 ```
 
 ## Performance Notes
