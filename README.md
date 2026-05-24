@@ -694,7 +694,7 @@ That style is useful when you want to test a normalization rule, a parser, or a 
 
 ## Installation
 
-Version: `2.1.0`
+Version: `2.1.1`
 
 ### Maven
 
@@ -702,14 +702,14 @@ Version: `2.1.0`
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:2.1.0'
+implementation 'io.github.sganesh-code:functional-java:2.1.1'
 ```
 
 ## Contributing
