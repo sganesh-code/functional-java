@@ -65,7 +65,7 @@ public interface List<T> extends Collection<T> {
     }
 
     default Maybe<List<T>> tail() {
-        return isEmpty() ? Maybe.nothing() : Maybe.some(drop(1));
+        return isEmpty() ? Maybe.nothing() : Maybe.some(from(drop(1)));
     }
 
     @SuppressWarnings("unchecked")
@@ -79,63 +79,13 @@ public interface List<T> extends Collection<T> {
     }
 
     @Override
-    default List<T> build(T input) {
+    default Collection<T> build(T input) {
         return cons(this, input);
-    }
-
-    @SuppressWarnings("unchecked")
-    default <R> List<R> map(Function<T, R> fn) {
-        return (List<R>) Collection.super.map(fn);
-    }
-
-    @SuppressWarnings("unchecked")
-    default <R> List<R> flatMap(Function<T, Collection<R>> fn) {
-        return (List<R>) Collection.super.flatMap(fn);
-    }
-
-    @SuppressWarnings("unchecked")
-    default List<T> concat(Collection<T> other) {
-        return (List<T>) Collection.super.concat(other);
     }
 
     @SuppressWarnings("unchecked")
     default <R> List<Tuple<T, R>> zip(List<R> other) {
         return (List<Tuple<T, R>>) zipWith(Tuple::of, other);
-    }
-
-    @SuppressWarnings("unchecked")
-    default List<T> filter(Predicate<T> pred) {
-        return (List<T>) Collection.super.filter(pred);
-    }
-
-    @SuppressWarnings("unchecked")
-    default <R, S> List<S> zipWith(BiFunction<T, R, S> fn, Collection<R> other) {
-        return (List<S>) Collection.super.zipWith(fn, other);
-    }
-
-    @SuppressWarnings("unchecked")
-    default List<T> take(int n) {
-        return (List<T>) Collection.super.take(n);
-    }
-
-    @SuppressWarnings("unchecked")
-    default List<T> drop(int n) {
-        return (List<T>) Collection.super.drop(n);
-    }
-
-    @SuppressWarnings("unchecked")
-    default List<T> slice(int start, int n) {
-        return (List<T>) Collection.super.slice(start, n);
-    }
-
-    @SuppressWarnings("unchecked")
-    default List<T> reverse() {
-        return (List<T>) Collection.super.reverse();
-    }
-
-    @SuppressWarnings("unchecked")
-    default <R> List<R> mapMaybe(Function<T, Maybe<R>> fn) {
-        return (List<R>) Collection.super.mapMaybe(fn);
     }
 
     boolean isEmpty();
@@ -150,7 +100,7 @@ public interface List<T> extends Collection<T> {
         @Override public boolean equals(Object other) { return other instanceof List && ((List<?>) other).isEmpty(); }
         @Override public int hashCode() { return 0; }
         @Override public <R> Collection<R> empty() { return nil(); }
-        @Override public List<T> build(T input) { return cons(this, input); }
+        @Override public Collection<T> build(T input) { return cons(this, input); }
     }
 
     final static class LinkedList<T> implements List<T> {
@@ -192,6 +142,6 @@ public interface List<T> extends Collection<T> {
 
         @Override public int hashCode() { return toString().hashCode(); }
         @Override public <R> Collection<R> empty() { return nil(); }
-        @Override public List<T> build(T input) { return cons(this, input); }
+        @Override public Collection<T> build(T input) { return cons(this, input); }
     }
 }

@@ -670,11 +670,11 @@ public final class Task<A> implements Higher<Task.µ, A> {
             .flatMapSequential(item -> scheduler.apply(Mono.defer(() -> fn.apply(item).toInternalMono(token))), concurrency)
             .collectList()
             .map(values -> {
-                List<B> result = List.nil();
+                Collection<B> result = List.nil();
                 for (Value<B> value : values) {
                     result = result.build(value.value());
                 }
-                return Value.of(result);
+                return Value.of(List.from(result));
             })
             .doFinally(__ -> cleanup.run()));
     }

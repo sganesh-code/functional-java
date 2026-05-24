@@ -91,7 +91,7 @@ public final class AsyncStream<A> {
     }
 
     public Task<List<A>> toList() {
-        return foldl(List.<A>nil(), (acc, a) -> acc.build(a));
+        return foldl(List.<A>nil(), (acc, a) -> List.from(acc.build(a)));
     }
 
     Stream<Task.µ, A> materialized() {

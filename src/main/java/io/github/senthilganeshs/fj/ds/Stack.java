@@ -48,7 +48,7 @@ public interface Stack<T> extends Collection<T> {
     }
 
     @Override
-    default Stack<T> build(T input) {
+    default Collection<T> build(T input) {
         return push(input);
     }
 
@@ -63,52 +63,6 @@ public interface Stack<T> extends Collection<T> {
         Maybe<T> h = head();
         Maybe<Stack<T>> t = tail();
         return h.flatMapMaybe(hv -> t.map(tv -> Tuple.of(hv, tv)));
-    }
-
-    @SuppressWarnings("unchecked")
-    default Stack<T> reverse() {
-        return (Stack<T>) new StackImpl<>(List.from(Collection.super.reverse()));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default <R> Stack<R> map(java.util.function.Function<T, R> fn) {
-        return new StackImpl<>(internal().map(fn));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default <R> Stack<R> flatMap(java.util.function.Function<T, Collection<R>> fn) {
-        return new StackImpl<>(internal().flatMap(fn));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default Stack<T> filter(java.util.function.Predicate<T> pred) {
-        return new StackImpl<>(internal().filter(pred));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default Stack<T> take(int n) {
-        // Stack is LIFO, so take(n) takes from the TOP (end of Snoc-list)
-        return new StackImpl<>(internal().reverse().take(n).reverse());
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default Stack<T> drop(int n) {
-        return new StackImpl<>(internal().reverse().drop(n).reverse());
-    }
-
-    @SuppressWarnings("unchecked")
-    default Stack<T> concat(Collection<T> other) {
-        return new StackImpl<>(internal().concat(other));
-    }
-
-    @SuppressWarnings("unchecked")
-    default <R> Stack<R> mapMaybe(java.util.function.Function<T, Maybe<R>> fn) {
-        return new StackImpl<>(internal().mapMaybe(fn));
     }
 
     record StackImpl<T>(List<T> internal) implements Stack<T> {
@@ -135,5 +89,6 @@ public interface Stack<T> extends Collection<T> {
 
         @Override public List<T> internal() { return internal; }
         @Override public <R> Collection<R> empty() { return emptyStack(); }
+        @Override public Collection<T> build(T input) { return push(input); }
     }
 }

@@ -43,8 +43,8 @@ public final class HyperLogLog<T> implements Collection<T> {
      */
     public static <T> Monoid<HyperLogLog<T>> monoid(int p, Hashable<T> hashable) {
         return Monoid.of(empty(p, hashable), (a, b) -> {
-            List<Integer> merged = a.registers.zip(b.registers).map(t -> 
-                Math.max(t.getA().orElse(0), t.getB().orElse(0)));
+            List<Integer> merged = List.from(a.registers.zip(b.registers).map(t -> 
+                Math.max(t.getA().orElse(0), t.getB().orElse(0))));
             return new HyperLogLog<>(p, merged, hashable);
         });
     }

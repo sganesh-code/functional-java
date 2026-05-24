@@ -189,13 +189,13 @@ public record TaskEither<E, A>(Task<Either<E, A>> task) implements Higher<Higher
     }
 
     private static <E, A> Either<E, List<A>> collectResults(List<Either<E, A>> results) {
-        List<A> values = List.nil();
+        Collection<A> values = List.nil();
         for (Either<E, A> result : results) {
             if (result.isLeft()) {
                 return Either.left(result.fromLeft(null));
             }
             values = values.build(result.fromRight(null));
         }
-        return Either.right(values);
+        return Either.right(List.from(values));
     }
 }

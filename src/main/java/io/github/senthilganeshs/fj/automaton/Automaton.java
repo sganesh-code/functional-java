@@ -116,7 +116,7 @@ public final class Automaton<F, K, S, I, O> {
         return items.foldl(
             monad.pure(List.nil()),
             (accF, a) -> monad.flatMap(bs -> 
-                monad.map(bs::build, fn.apply(a)),
+                monad.map(b -> List.from(bs.build(b)), fn.apply(a)),
                 accF
             )
         );
