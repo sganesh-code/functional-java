@@ -1,0 +1,98 @@
+package io.github.senthilganeshs.fj.automaton;
+
+import io.github.senthilganeshs.fj.ds.Collection;
+import io.github.senthilganeshs.fj.ds.List;
+import io.github.senthilganeshs.fj.hkt.Higher;
+import io.github.senthilganeshs.fj.typeclass.Monad;
+import java.util.function.Function;
+
+/**
+ * The orchestrator engine that drives the effectful state machine.
+ *
+ * <p>The Automaton stitches together the pure logic (Machine), the side-effects (Interpreter),
+ * and the persistence (Repository) into a cohesive execution loop.</p>
+ *
+ * @param <F> The effect type (e.g., Task.µ).
+ * @param <K> The key type used to identify the state.
+ * @param <S> The state type.
+ * @param <I> The input message/event type.
+ * @param <O> The abstract command/output type.
+ */
+public final class Automaton<F, K, S, I, O> {
+    private final Machine<S, I, O> machine;
+    private final Interpreter<F, O, I> interpreter;
+    private final Repository<F, K, S> repository;
+    private final Monad<F> monad;
+
+    /**
+     * Creates a new Automaton orchestrator.
+     *
+     * @param machine     The pure logic of the state machine.
+     * @param interpreter The side-effect interpreter.
+     * @param repository  The state persistence layer.
+     * @param monad       The monad instance for the effect type F.
+     */
+    public Automaton(
+            Machine<S, I, O> machine,
+            Interpreter<F, O, I> interpreter,
+            Repository<F, K, S> repository,
+            Monad<F> monad) {
+        this.machine = machine;
+        this.interpreter = interpreter;
+        this.repository = repository;
+        this.monad = monad;
+    }
+
+    /**
+     * Drives the automaton for a single input, potentially triggering a recursive loop.
+     *
+     * <p>This method performs the following steps:
+     * 1. Loads the current state from the repository.
+     * 2. Executes the state transition logic.
+     * 3. Persists the new state (checkpointing).
+     * 4. Executes emitted commands via the interpreter.
+     * 5. Sequentially processes any new inputs yielded by the interpreter.</p>
+     *
+     * @param key   The key identifying the state.
+     * @param input The incoming message/event.
+     * @return      An effect F that yields the final state after all transitions.
+     */
+    public Higher<F, S> run(K key, I input) {
+        return monad.flatMap(state -> {
+            // 1. Transition to next state
+            Machine.Result<S, O> result = machine.transition(state, input);
+
+            // 2. Persist state immediately (Checkpointing)
+            return monad.flatMap(v ->
+                // 3. Execute side-effects
+                monad.flatMap(newInputsList -> {
+                    List<I> flattenedInputs = List.from(Collection.flatten(newInputsList));
+                    
+                    if (flattenedInputs.isEmpty()) {
+                        return monad.pure(result.state());
+                    }
+
+                    // 4. Recursive feedback loop - process new inputs sequentially
+                    return flattenedInputs.foldl(
+                        monad.pure(result.state()),
+                        (accF, nextInput) -> monad.flatMap(s -> run(key, nextInput), accF)
+                    );
+                }, traverse(result.commands(), interpreter::execute)),
+                repository.save(key, result.state())
+            );
+        }, repository.load(key));
+    }
+
+    /**
+     * Helper to traverse a list of values with an effectful function.
+     */
+    private <A, B> Higher<F, List<B>> traverse(List<A> items, Function<A, Higher<F, B>> fn) {
+        return items.foldl(
+            monad.pure(List.nil()),
+            (accF, a) -> monad.flatMap(bs -> 
+                monad.map(b -> bs.build(b), fn.apply(a)),
+                accF
+            )
+        );
+    }
+}
