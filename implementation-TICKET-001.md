@@ -1,40 +1,33 @@
-# Implementation Plan: TICKET-001 - Define Core Automaton Interfaces
+# Implementation Plan: TICKET-001 - Audit and Impact Analysis of Covariant Overrides
 
-- [x] **🎟️ [TICKET-001]: Define Core Automaton Interfaces**
-  - **Description:** Define the foundational functional interfaces and data models for the automaton logic, side-effects, and persistence as outlined in @PROPOSAL-FJ-AUTOMATON.md.
+- [x] **🎟️ [TICKET-001]: Audit and Impact Analysis of Covariant Overrides**
+  - **Description:** Conduct a comprehensive audit of all interfaces extending `Collection<T>` to identify covariant overrides of standard collection methods (map, filter, flatMap, etc.). Document the current state and identify necessary narrowing APIs (`from`, `of`) to prepare for the standardization refactoring.
   - **Scope:**
-    - **In scope:**
-        - `io.github.senthilganeshs.fj.automaton.Machine`
-        - `io.github.senthilganeshs.fj.automaton.Interpreter`
-        - `io.github.senthilganeshs.fj.automaton.Repository`
-    - **Out of scope:**
-        - Implementation of the `Automaton` orchestrator.
-        - `Task`-specific optimizations.
+    - **In scope:** `Collection.java` and all its implementations: `List.java`, `Stack.java`, `Maybe.java`, `Either.java`, `Validation.java`, `Array.java`, `Vector.java`, `Queue.java`, `Deque.java`, `Set.java`, `HashMap.java`.
+    - **Out of scope:** Non-collection data structures or unrelated refactoring outside of identifying covariance.
   - **Implementation Tasks:**
-    - [x] **Investigate:** 
-        - Review `@src/main/java/io/github/senthilganeshs/fj/hkt/Higher.java` to ensure proper usage of Higher-Kinded Type witnesses.
-        - Review `@src/main/java/io/github/senthilganeshs/fj/ds/List.java` for command collection representation.
-      - *Confirmed `Higher<W, A>` usage and `List<T>` as the primary functional list type.*
-    - [x] **Implement Machine Interface:**
-        - Create `@src/main/java/io/github/senthilganeshs/fj/automaton/Machine.java`.
-        - Define `@FunctionalInterface public interface Machine<S, I, O>`.
-        - Add `Result<S, O>` record: `public record Result<S, O>(S state, List<O> commands) {}`.
-        - Implement `transition(S state, I input)` method.
-      - *Created `Machine.java` with the `Result` record and `transition` functional interface.*
-    - [x] **Implement Interpreter Interface:**
-        - Create `@src/main/java/io/github/senthilganeshs/fj/automaton/Interpreter.java`.
-        - Define `@FunctionalInterface public interface Interpreter<F, O, I>`.
-        - Implement `Higher<F, List<I>> execute(O command)` method.
-      - *Created `Interpreter.java` using `Higher<F, List<I>>` for the execution effect.*
-    - [x] **Implement Repository Interface:**
-        - Create `@src/main/java/io/github/senthilganeshs/fj/automaton/Repository.java`.
-        - Define `public interface Repository<F, K, S>`.
-        - Implement `Higher<F, S> load(K key)` and `Higher<F, Void> save(K key, S state)`. 
-        - *Note: Convention in this project is to use `Void` for effectful operations with no result (e.g., in `Task<Void>`).*
-      - *Created `Repository.java` with `load` and `save` methods using `Higher` and `Void`.*
-    - [x] **Documentation:**
-        - Add comprehensive Javadoc to all new interfaces, explaining their roles in the effectful state machine pattern.
-      - *Added detailed Javadocs to `Machine`, `Interpreter`, and `Repository` explaining their purpose in the orchestrator flow.*
-    - [x] **Verify:**
-        - Run `mise exec -- gradle classes` to ensure everything compiles correctly.
-      - *Verified compilation using `./gradlew classes`. Build successful.*
+    - [x] **Investigate Core Interface:** Analyze `@src/main/java/io/github/senthilganeshs/fj/ds/Collection.java` to identify all default methods that return `Collection<R>` or `Collection<T>`. These are the primary targets for covariant overrides.
+      - *Identified map, flatMap, filter, concat, take, drop, slice, reverse, mapMaybe, chunk, and several liftA/traverse methods as primary targets for covariant overrides in the base Collection interface.*
+    - [x] **Audit Sequential Collections:** 
+      - [x] Identify and document all covariant overrides in `@src/main/java/io/github/senthilganeshs/fj/ds/List.java` (e.g., `map`, `flatMap`, `filter`).
+        - *Confirmed List overrides map, flatMap, concat, filter, zipWith, take, drop, slice, reverse, mapMaybe, and build to return List types.*
+      - [x] Identify and document all covariant overrides in `@src/main/java/io/github/senthilganeshs/fj/ds/Stack.java`.
+        - *Confirmed Stack overrides build, reverse, map, flatMap, filter, take, drop, concat, and mapMaybe to return Stack types.*
+      - [x] Verify existence and consistency of `from(Collection<T>)` and `of(T...)` factory methods for both.
+        - *Verified both List and Stack have appropriate from(Collection) and of(...) factory methods.*
+    - [x] **Audit Monadic/Applicative Types:**
+      - [x] Identify covariant overrides in `@src/main/java/io/github/senthilganeshs/fj/ds/Maybe.java`.
+        - *Maybe overrides map and flatMap to return Maybe types.*
+      - [x] Identify covariant overrides in `@src/main/java/io/github/senthilganeshs/fj/ds/Either.java`.
+        - *Either overrides map and flatMap to return Either types.*
+      - [x] Identify covariant overrides in `@src/main/java/io/github/senthilganeshs/fj/ds/Validation.java`.
+        - *Validation overrides map to return Validation types.*
+      - [x] Note if these types lack a `from(Collection<T>)` narrowing API.
+        - *Confirmed that Maybe, Either, and Validation currently lack a standard from(Collection) narrowing API.*
+    - [x] **Audit Structured Collections:**
+      - [x] Check `@src/main/java/io/github/senthilganeshs/fj/ds/Array.java`, `@src/main/java/io/github/senthilganeshs/fj/ds/Vector.java`, `@src/main/java/io/github/senthilganeshs/fj/ds/Queue.java`, `@src/main/java/io/github/senthilganeshs/fj/ds/Deque.java`, `@src/main/java/io/github/senthilganeshs/fj/ds/Set.java`, and `@src/main/java/io/github/senthilganeshs/fj/ds/HashMap.java` for any stray covariant overrides.
+        - *Identified that Queue and Set have covariant overrides for build(). Other structured collections mostly rely on the base Collection return types or define unique methods.*
+    - [x] **Document Impact:** Create a summary table of all methods to be changed across the library and the corresponding narrowing method to be used.
+      - *Created detailed audit summary in @COVARIANT_AUDIT.md detailing targeted methods and required narrowing API additions for Maybe, Either, and Validation.*
+    - [x] **Verify Test Coverage:** Identify existing tests in `@src/test/java/io/github/senthilganeshs/fj/ds/` that specifically rely on these covariant return types to estimate the scope of TICKET-005.
+      - *Found 12+ instances in tests (StackTest, EitherTest, etc.) where variables are explicitly typed as the implementation class after a map/filter/reverse call. These will require TICKET-005 to refactor using List.from() or similar.*
