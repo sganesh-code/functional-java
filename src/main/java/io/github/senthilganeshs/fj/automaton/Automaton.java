@@ -2,6 +2,7 @@ package io.github.senthilganeshs.fj.automaton;
 
 import io.github.senthilganeshs.fj.ds.Collection;
 import io.github.senthilganeshs.fj.ds.List;
+import io.github.senthilganeshs.fj.ds.Task;
 import io.github.senthilganeshs.fj.hkt.Higher;
 import io.github.senthilganeshs.fj.typeclass.Monad;
 import java.util.function.Function;
@@ -41,6 +42,25 @@ public final class Automaton<F, K, S, I, O> {
         this.interpreter = interpreter;
         this.repository = repository;
         this.monad = monad;
+    }
+
+    /**
+     * Ergonomic factory method for creating an Automaton using the library's Task type.
+     *
+     * @param machine     The pure logic of the state machine.
+     * @param interpreter The side-effect interpreter.
+     * @param repository  The state persistence layer.
+     * @param <K>         The key type.
+     * @param <S>         The state type.
+     * @param <I>         The input message type.
+     * @param <O>         The command type.
+     * @return            A new Automaton instance using Task.µ as the effect type.
+     */
+    public static <K, S, I, O> Automaton<Task.µ, K, S, I, O> ofTask(
+            Machine<S, I, O> machine,
+            Interpreter<Task.µ, O, I> interpreter,
+            Repository<Task.µ, K, S> repository) {
+        return new Automaton<>(machine, interpreter, repository, Task.monad);
     }
 
     /**
