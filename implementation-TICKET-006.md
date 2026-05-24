@@ -1,0 +1,24 @@
+# Implementation Plan: TICKET-006 - Documentation and README Integration
+
+- [x] **🎟️ [TICKET-006]: Documentation and README Integration**
+  - **Description:** Update the project documentation to include the new Automaton feature and provide clear examples for users.
+  - **Scope:**
+    - **In scope:**
+        - `README.md`
+        - `src/main/java/io/github/senthilganeshs/fj/automaton/*.java` (Javadocs)
+  - **Implementation Tasks:**
+    - [x] **Investigate:**
+        - Review `README.md` to find an appropriate location for the "Automaton Engine" section.
+      - *Identified "Resource Safety With bracket" as a good preceding section for "Automaton Engine".*
+    - [x] **Update README.md:**
+        - Add a section for "Automaton Engine".
+        - Explain the core concepts (Machine, Interpreter, Repository).
+        - Provide a concise usage example (e.g., the Counter or Advice Agent).
+      - *Added Automaton Engine section with concepts and a Task-based example to `README.md`.*
+    - [x] **Review Javadocs:**
+        - Ensure `Machine`, `Interpreter`, `Repository`, and `Automaton` have clear, helpful Javadocs for all public methods and records.
+      - *Reviewed and confirmed high-quality Javadocs for all new public APIs.*
+    - [x] **Verification:**
+        - Ensure the `README.md` renders correctly (manually verified via content).
+        - Run `./gradlew javadoc` to ensure no Jadoc errors were introduced.
+      - *Verified README content and confirmed no regression in Javadoc generation. Build successful.*

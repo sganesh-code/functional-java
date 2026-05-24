@@ -27,7 +27,8 @@ Java's standard library is solid, but it often pushes boilerplate into the exact
 | Async composition | `CompletableFuture` chains | `Task`, `TaskEither`, `ReaderTaskEither` |
 | Immutable collections | streams + collectors | persistent `List`, `Vector`, `Set`, `HashMap`, `Queue`, `Deque` |
 | Deep updates | constructors/builders/manual copying | optics: `Lens`, `Prism`, `Iso`, `Traversal` |
-| Shared behavior | repeated utility code | `Functor`, `Applicative`, `Monad`, `Traversable`, `Monoid`, `Eq`, `Ord`, `Hashable` |
+| shared behavior | repeated utility code | `Functor`, `Applicative`, `Monad`, `Traversable`, `Monoid`, `Eq`, `Ord`, `Hashable` |
+| state machines | ad hoc orchestration | effectful `Automaton` engine |
 | Parsing/encoding | hand-written glue | `Parser`, `JsonParser`, `Codec`, `JsonValue` |
 | Verification | ad hoc tests | `Gen`, `Property`, `Shrink`, and law tests |
 
@@ -426,6 +427,36 @@ Task<Path> stagedReport =
 ```
 
 This is especially useful when the `use` step can fail. The release step still runs, which keeps cleanup logic explicit and local to the resource.
+
+### Effectful State Machines: `Automaton`
+
+Complex processes—like background workers, UI orchestrators, or AI agents—often follow a loop: receive input, consult logic, update state, run side-effects, and repeat. The `Automaton` engine abstracts this orchestration, ensuring that state is persisted (checkpointed) before any side-effects are triggered.
+
+It consists of three parts:
+- **Machine**: The "Brain" (Pure logic mapping `State + Input` to `NextState + Commands`).
+- **Interpreter**: The "Hands" (Effectful execution of `Commands` yielding new `Inputs`).
+- **Repository**: The "Memory" (Persistent storage for `State`).
+
+```java
+// 1. Define your logic (Pure)
+Machine<Integer, String, String> counter = (state, input) -> 
+    new Machine.Result<>(state + 1, List.nil());
+
+// 2. Define your effects (Side-effectful)
+Interpreter<Task.µ, String, String> worker = cmd -> Task.succeed(List.nil());
+
+// 3. Define your persistence
+Repository<Task.µ, String, Integer> repo = new MyDatabaseRepo();
+
+// 4. Stitch it together
+Automaton<Task.µ, String, Integer, String, String> engine = 
+    Automaton.ofTask(counter, worker, repo);
+
+// 5. Run the engine
+Task<Integer> finalState = Task.narrowK(engine.run("user-123", "increment"));
+```
+
+The engine handles the recursive feedback loop automatically: if the interpreter yields new inputs, they are fed back into the machine sequentially until the process settles.
 
 ### Patterns Worth Knowing
 
