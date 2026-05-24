@@ -87,20 +87,26 @@ public final class Automaton<F, K, S, I, O> {
                 // 3. Execute side-effects
                 monad.flatMap(newInputsList -> {
                     List<I> flattenedInputs = List.from(Collection.flatten(newInputsList));
-                    
-                    if (flattenedInputs.isEmpty()) {
-                        return monad.pure(result.state());
-                    }
-
-                    // 4. Recursive feedback loop - process new inputs sequentially
-                    return flattenedInputs.foldl(
-                        monad.pure(result.state()),
-                        (accF, nextInput) -> monad.flatMap(s -> run(key, nextInput), accF)
-                    );
+                    return processInputs(key, result.state(), flattenedInputs);
                 }, traverse(result.commands(), interpreter::execute)),
                 repository.save(key, result.state())
             );
         }, repository.load(key));
+    }
+
+    /**
+     * Recursively processes a list of inputs sequentially.
+     */
+    private Higher<F, S> processInputs(K key, S currentState, List<I> inputs) {
+        if (inputs.isEmpty()) {
+            return monad.pure(currentState);
+        }
+
+        // Sequential feedback loop - each input transition must see the state from the previous one
+        return inputs.foldl(
+            monad.pure(currentState),
+            (accF, nextInput) -> monad.flatMap(s -> run(key, nextInput), accF)
+        );
     }
 
     /**
@@ -110,7 +116,7 @@ public final class Automaton<F, K, S, I, O> {
         return items.foldl(
             monad.pure(List.nil()),
             (accF, a) -> monad.flatMap(bs -> 
-                monad.map(b -> bs.build(b), fn.apply(a)),
+                monad.map(bs::build, fn.apply(a)),
                 accF
             )
         );
