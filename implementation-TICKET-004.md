@@ -1,0 +1,31 @@
+# Implementation Plan: TICKET-004 - Unit Testing for Automaton
+
+- [x] **🎟️ [TICKET-004]: Unit Testing for Automaton**
+  - **Description:** Develop a suite of unit tests to verify the correctness of the Automaton engine across various scenarios.
+  - **Scope:**
+    - **In scope:**
+        - `src/test/java/io/github/senthilganeshs/fj/automaton/AutomatonTest.java`
+    - **Out of scope:**
+        - Complex integration tests (handled in TICKET-005).
+  - **Implementation Tasks:**
+    - [x] **Investigate:**
+        - Review `@src/test/java/io/github/senthilganeshs/fj/ds/TaskTest.java` for patterns on testing `Task`-based computations.
+      - *Confirmed usage of TestNG and `task.run()` for synchronous verification.*
+    - [x] **Setup Test Infrastructure:**
+        - Create `@src/test/java/io/github/senthilganeshs/fj/automaton/AutomatonTest.java`.
+        - Define simple mock `Machine`, `Interpreter`, and `Repository` implementations for testing.
+      - *Created `AutomatonTest.java` with in-memory mocks for all components.*
+    - [x] **Test Simple Transitions:**
+        - Verify that `run` correctly loads state, applies logic, and saves the new state.
+        - Verify the final state returned is correct.
+      - *Added `testSimpleTransition` to verify the basic end-to-end flow.*
+    - [x] **Test Feedback Loop (Recursion):**
+        - Verify that commands yielding new inputs correctly trigger subsequent transitions.
+        - Verify that multiple commands are processed correctly.
+      - *Added `testEffectFeedbackLoop` and `testMultipleFeedbackInputs` to verify recursive input processing.*
+    - [x] **Test Checkpointing:**
+        - Use a stateful mock repository to verify that `save` is called *before* the interpreter's `execute` method.
+      - *Added `testCheckpointingOrder` to ensure state is persisted before side-effects are triggered.*
+    - [x] **Verification:**
+        - Run `./gradlew test` (specifically targeting this test) to ensure all scenarios pass.
+      - *Verified all tests pass using `./gradlew test`. Build successful.*
