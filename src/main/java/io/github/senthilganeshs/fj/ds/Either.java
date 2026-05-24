@@ -14,7 +14,7 @@ public interface Either<A, B> extends Collection<B> {
     @SuppressWarnings("unchecked")
     static <A, B> Either<A, Collection<B>> sequence(Collection<Either<A, B>> es) {
         return es.foldl(Either.right(es.empty()), (acc, e) -> 
-            acc.flatMapEither(rs -> e.map(r -> (Collection<B>) rs.build(r)))
+            acc.flatMapEither(rs -> Either.from(e.map(r -> rs.build(r))))
         );
     }
 
@@ -26,6 +26,12 @@ public interface Either<A, B> extends Collection<B> {
     @SuppressWarnings("unchecked")
     static <A, B> Collection<A> lefts(Collection<Either<A, B>> es) {
         return es.mapMaybe(e -> e.isLeft() ? Maybe.some(e.fromLeft(null)) : Maybe.nothing());
+    }
+
+    @SuppressWarnings("unchecked")
+    static <A, B> Either<A, B> from(Collection<B> c) {
+        if (c instanceof Either) return (Either<A, B>) c;
+        return (Either<A, B>) Maybe.from(c.headMaybe().map(Either::right)).orElse(left(null));
     }
 
     static <A, B> Either<A, B> left(final A value) {
@@ -93,21 +99,8 @@ public interface Either<A, B> extends Collection<B> {
     }
 
     @SuppressWarnings("unchecked")
-    default <R> Either<A, R> map(Function<B, R> fn) {
-        return isRight() ? right(fn.apply(fromRight(null))) : (Either<A, R>) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    default <R> Either<A, R> flatMap(Function<B, Collection<R>> fn) {
-        if (isLeft()) return (Either<A, R>) this;
-        Collection<R> res = fn.apply(fromRight(null));
-        if (res instanceof Either) return (Either<A, R>) res;
-        return (Either<A, R>) res.foldl(empty(), (acc, r) -> acc.build(r));
-    }
-
-    @SuppressWarnings("unchecked")
-    default <C> Either<A, C> flatMapEither(Function<B, Either<A, C>> fn) {
-        return isRight() ? fn.apply(fromRight(null)) : (Either<A, C>) this;
+    default <R> Either<A, R> flatMapEither(Function<B, Either<A, R>> fn) {
+        return isRight() ? fn.apply(fromRight(null)) : (Either<A, R>) this;
     }
 
     @SuppressWarnings("unchecked")

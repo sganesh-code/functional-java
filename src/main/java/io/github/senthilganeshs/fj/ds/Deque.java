@@ -81,7 +81,7 @@ public interface Deque<T> extends Collection<T> {
         public Maybe<Tuple<T, Deque<T>>> popBack() {
             if (isEmpty()) return Maybe.nothing();
             // If f was moved to b in check, we might have b not empty but f empty.
-            if (b.isEmpty()) return popFront().map(t -> Tuple.of(t.getA().orElse(null), nil())); // Should not happen with check
+            if (b.isEmpty()) return Maybe.from(popFront().map(t -> Tuple.of(t.getA().orElse(null), nil()))); // Should not happen with check
             return Maybe.some(Tuple.of(b.head().orElse(null), check(f, b.tail().orElse(Stack.emptyStack()))));
         }
 

@@ -62,7 +62,7 @@ public interface Stack<T> extends Collection<T> {
         if (isEmpty()) return Maybe.nothing();
         Maybe<T> h = head();
         Maybe<Stack<T>> t = tail();
-        return h.flatMapMaybe(hv -> t.map(tv -> Tuple.of(hv, tv)));
+        return h.flatMapMaybe(hv -> Maybe.from(t.map(tv -> Tuple.of(hv, tv))));
     }
 
     record StackImpl<T>(List<T> internal) implements Stack<T> {

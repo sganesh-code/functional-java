@@ -27,7 +27,7 @@ The following tickets break down the implementation of the epic.
     - [ ] Ensure `List.from(Collection<T>)` and `Stack.from(Collection<T>)` are correctly implemented to facilitate narrowing when needed.
     - [ ] Update any internal usages within these files that depend on the narrower types.
 
-- [ ] **🎟️ [TICKET-003]: Standardize Applicative and Monadic Data Structures**
+- [x] **🎟️ [TICKET-003]: Standardize Applicative and Monadic Data Structures**
   - **Description:** Remove covariant return type overrides in `Maybe`, `Either`, and `Validation`. While these are often used as monads, standardizing them as `Collection` implementations simplifies generic data processing pipelines.
   - **Scope:**
     - **In scope:** `Maybe.java`, `Either.java`, `Validation.java`.

@@ -36,7 +36,7 @@ public record Stream<F, A>(Higher<F, Maybe<Tuple<A, Stream<F, A>>>> step) {
 
     public <B> Stream<F, B> map(Function<A, B> fn, Monad<F> monad) {
         return new Stream<>(monad.map(maybe -> 
-            maybe.map(t -> Tuple.of(fn.apply(t.getA().orElse(null)), t.getB().orElse(null).map(fn, monad))),
+            Maybe.from(maybe.map(t -> Tuple.of(fn.apply(t.getA().orElse(null)), t.getB().orElse(null).map(fn, monad)))),
             step
         ));
     }
@@ -65,10 +65,10 @@ public record Stream<F, A>(Higher<F, Maybe<Tuple<A, Stream<F, A>>>> step) {
             Monad<F> monad) {
         return new Stream<>(monad.flatMap(resource -> 
             monad.map(maybe -> 
-                maybe.map(t -> Tuple.of(
+                Maybe.from(maybe.map(t -> Tuple.of(
                     t.getA().orElse(null), 
                     t.getB().orElse(null).onFinalize(release.apply(resource), monad)
-                )),
+                ))),
                 use.apply(resource).step()
             ),
             acquire

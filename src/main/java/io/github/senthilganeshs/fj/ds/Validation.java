@@ -16,6 +16,12 @@ public interface Validation<E, T> extends Collection<T> {
 
     boolean isValid();
 
+    @SuppressWarnings("unchecked")
+    static <E, T> Validation<E, T> from(Collection<T> c) {
+        if (c instanceof Validation) return (Validation<E, T>) c;
+        return (Validation<E, T>) Maybe.from(c.headMaybe().map(Validation::valid)).orElse(invalid(null));
+    }
+
     default Maybe<E> getErrors() {
         return isValid() ? Maybe.nothing() : Maybe.some(((Invalid<E, T>) this).error);
     }
@@ -25,14 +31,6 @@ public interface Validation<E, T> extends Collection<T> {
      */
     default T orElse(T def) {
         return isValid() ? foldl(null, (__, t) -> t) : def;
-    }
-
-    /**
-     * Transforms the valid value if present.
-     */
-    @SuppressWarnings("unchecked")
-    default <R> Validation<E, R> map(Function<T, R> fn) {
-        return isValid() ? valid(fn.apply(orElse(null))) : (Validation<E, R>) this;
     }
 
     /**

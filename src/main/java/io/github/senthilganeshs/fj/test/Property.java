@@ -38,12 +38,12 @@ public record Property<A>(Gen<A> gen, Predicate<A> predicate, Maybe<Shrink<A>> s
     }
 
     private A shrink(A value) {
-        return shrinker.map(s -> {
+        return Maybe.from(shrinker.map(s -> {
             List<A> shrunk = s.apply(value);
-            return shrunk.find(v -> !predicate.test(v))
-                .map(this::shrink)
+            return Maybe.from(shrunk.find(v -> !predicate.test(v))
+                .map(this::shrink))
                 .orElse(value);
-        }).orElse(value);
+        })).orElse(value);
     }
 
     /**

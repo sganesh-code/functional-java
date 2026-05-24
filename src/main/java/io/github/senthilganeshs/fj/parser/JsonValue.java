@@ -160,7 +160,7 @@ public sealed interface JsonValue {
         if (val instanceof String s) return new JsonString(s);
         if (val instanceof Number n) return new JsonNumber(n.doubleValue());
         if (val instanceof Boolean b) return new JsonBoolean(b);
-        if (val instanceof Maybe<?> m) return m.map(JsonValue::of).orElse(new JsonNull());
+        if (val instanceof Maybe<?> m) return Maybe.from(m.map(JsonValue::of)).orElse(new JsonNull());
         
         if (val instanceof HashMap<?, ?> m) {
             HashMap<String, JsonValue> fields = m.foldl(HashMap.nil(), (acc, entry) ->

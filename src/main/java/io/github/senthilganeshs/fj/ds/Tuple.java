@@ -16,7 +16,7 @@ public interface Tuple<A, B> extends java.io.Serializable {
 
     @SuppressWarnings("unchecked")
     default <C, D> Tuple<C, D> bimap (final Function<A, C> fa, final Function<B, D> fb) {
-        return Tuple.of(getA().map(fa).orElse(null), getB().map(fb).orElse(null));
+        return Tuple.of(Maybe.from(getA().map(fa)).orElse(null), Maybe.from(getB().map(fb)).orElse(null));
     }
 
     default <C> Tuple<C, B> mapA (final Function<A, C> fa) {

@@ -76,10 +76,10 @@ public final class AsyncStream<A> {
      */
     public Task<Maybe<Tuple<A, AsyncStream<A>>>> step() {
         return Task.narrowK(stream.step()).map(maybe ->
-            maybe.map(tuple -> Tuple.of(
+            Maybe.from(maybe.map(tuple -> Tuple.of(
                 tuple.getA().orElse(null),
                 new AsyncStream<>(tuple.getB().orElse(null), finalizer)
-            ))
+            )))
         );
     }
 
@@ -101,10 +101,10 @@ public final class AsyncStream<A> {
     private static <S, A> Stream<Task.µ, A> unfold(S seed, Function<S, Task<Maybe<Tuple<A, S>>>> fn) {
         return new Stream<>(Task.defer(() ->
             fn.apply(seed).map(maybe ->
-                maybe.map(tuple -> Tuple.of(
+                Maybe.from(maybe.map(tuple -> Tuple.of(
                     tuple.getA().orElse(null),
                     unfold(tuple.getB().orElse(null), fn)
-                ))
+                )))
             )
         ));
     }

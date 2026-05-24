@@ -126,7 +126,7 @@ public final class RecordOptics {
         if (record instanceof String s) return new JsonString(s);
         if (record instanceof Number n) return new JsonNumber(n.doubleValue());
         if (record instanceof Boolean b) return new JsonBoolean(b);
-        if (record instanceof Maybe<?> m) return m.map(RecordOptics::toJson).orElse(new JsonNull());
+        if (record instanceof Maybe<?> m) return Maybe.from(m.map(RecordOptics::toJson)).orElse(new JsonNull());
         
         if (record instanceof HashMap<?, ?> m) {
             HashMap<String, JsonValue> fields = m.foldl(HashMap.nil(), (acc, entry) ->

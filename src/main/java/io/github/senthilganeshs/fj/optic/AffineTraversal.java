@@ -15,7 +15,7 @@ public interface AffineTraversal<S, A> {
     S set(A value, S source);
 
     default S modify(S source, Function<A, A> fn) {
-        return getMaybe(source).map(a -> set(fn.apply(a), source)).orElse(source);
+        return Maybe.from(getMaybe(source).map(a -> set(fn.apply(a), source))).orElse(source);
     }
 
     /**
@@ -59,14 +59,14 @@ public interface AffineTraversal<S, A> {
      */
     @SuppressWarnings("unchecked")
     default <B> Fold<S, B> compose(Getter<A, B> other) {
-        return s -> (Collection<B>) getMaybe(s).map(other::get).foldl((Collection<B>) List.<B>nil(), Collection::build);
+        return s -> (Collection<B>) Maybe.from(getMaybe(s).map(other::get)).foldl((Collection<B>) List.<B>nil(), Collection::build);
     }
 
     /**
      * Composes this with a fold.
      */
     default <B> Fold<S, B> compose(Fold<A, B> other) {
-        return s -> getMaybe(s).map(other::getAll).orElse(List.nil());
+        return s -> Maybe.from(getMaybe(s).map(other::getAll)).orElse(List.nil());
     }
 
     /**

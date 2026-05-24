@@ -45,7 +45,7 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
      * If the key is not present, the map remains unchanged.
      */
     default HashMap<K, V> update(K key, Function<V, V> fn) {
-        return get(key).map(v -> put(key, fn.apply(v))).orElse(this);
+        return Maybe.from(get(key).map(v -> put(key, fn.apply(v)))).orElse(this);
     }
 
     int size();
@@ -101,7 +101,7 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
                 ? new LeafNode(key.hashCode(), key, value)
                 : root.put(0, key.hashCode(), key, value);
             
-            int newSize = size + (get(key).map(v -> 0)).orElse(1);
+            int newSize = size + Maybe.from(get(key).map(v -> 0)).orElse(1);
             return new HAMT<>(newRoot, newSize);
         }
 
@@ -143,7 +143,7 @@ public interface HashMap<K, V> extends Collection<HashMap.Entry<K, V>> {
             if (!(other instanceof HashMap)) return false;
             HashMap<K, V> o = (HashMap<K, V>) other;
             if (o.size() != size) return false;
-            return foldl(true, (acc, entry) -> acc && o.get(entry.key()).map(v -> v.equals(entry.value())).orElse(false));
+            return foldl(true, (acc, entry) -> acc && Maybe.from(o.get(entry.key()).map(v -> v.equals(entry.value()))).orElse(false));
         }
 
         @Override

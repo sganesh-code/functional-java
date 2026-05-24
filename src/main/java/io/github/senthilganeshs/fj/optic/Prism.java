@@ -20,7 +20,7 @@ public interface Prism<S, A> extends AffineTraversal<S, A> {
 
     @Override
     default S modify(S source, Function<A, A> fn) {
-        return getMaybe(source).map(a -> reverseGet(fn.apply(a))).orElse(source);
+        return Maybe.from(getMaybe(source).map(a -> reverseGet(fn.apply(a)))).orElse(source);
     }
 
     /**
@@ -43,7 +43,7 @@ public interface Prism<S, A> extends AffineTraversal<S, A> {
     default <B> Traversal<S, B> compose(Traversal<A, B> other) {
         return new Traversal<S, B>() {
             @Override public Collection<B> getAll(S s) {
-                return Prism.this.getMaybe(s).map(other::getAll).orElse(List.nil());
+                return Maybe.from(Prism.this.getMaybe(s).map(other::getAll)).orElse(List.nil());
             }
             @Override public S modify(S s, UnaryOperator<B> fn) {
                 return Prism.this.modify(s, a -> other.modify(a, fn));
@@ -80,14 +80,14 @@ public interface Prism<S, A> extends AffineTraversal<S, A> {
     @Override
     @SuppressWarnings("unchecked")
     default <B> Fold<S, B> compose(Getter<A, B> other) {
-        return s -> (Collection<B>) getMaybe(s).map(other::get).foldl((Collection<B>) List.<B>nil(), Collection::build);
+        return s -> (Collection<B>) Maybe.from(getMaybe(s).map(other::get)).foldl((Collection<B>) List.<B>nil(), Collection::build);
     }
 
     /**
      * Composes this prism with a fold.
      */
     default <B> Fold<S, B> compose(Fold<A, B> other) {
-        return s -> getMaybe(s).map(other::getAll).orElse(List.nil());
+        return s -> Maybe.from(getMaybe(s).map(other::getAll)).orElse(List.nil());
     }
 
     static <S, A> Prism<S, A> of(Function<S, Maybe<A>> preview, Function<A, S> review) {

@@ -16,13 +16,13 @@ public interface Parser<A> {
     Either<ParseError, Tuple<A, State>> parse(State state);
 
     default Either<ParseError, A> parse(String input) {
-        return parse(new State(input, 0, 1, 1)).map(t -> t.getA().orElse(null));
+        return Either.from(parse(new State(input, 0, 1, 1)).map(t -> t.getA().orElse(null)));
     }
 
     // --- Combinators ---
 
     default <B> Parser<B> map(Function<A, B> fn) {
-        return state -> parse(state).map(t -> t.mapA(fn));
+        return state -> Either.from(parse(state).map(t -> t.mapA(fn)));
     }
 
     default <B> Parser<B> flatMap(Function<A, Parser<B>> fn) {
@@ -95,7 +95,7 @@ public interface Parser<A> {
     }
 
     default Parser<A> peek() {
-        return state -> parse(state).map(t -> Tuple.of(t.getA().orElse(null), state));
+        return state -> Either.from(parse(state).map(t -> Tuple.of(t.getA().orElse(null), state)));
     }
 
     default <L, R> Parser<A> between(Parser<L> left, Parser<R> right) {

@@ -18,6 +18,12 @@ public interface Maybe<T> extends Collection<T> {
         return (Maybe<R>) NOTHING;
     }
 
+    @SuppressWarnings("unchecked")
+    static <R> Maybe<R> from(Collection<R> c) {
+        if (c instanceof Maybe) return (Maybe<R>) c;
+        return c.headMaybe();
+    }
+
     static <R> Maybe<R> some(final R value) {
         return new Some<>(value);
     }
@@ -73,19 +79,6 @@ public interface Maybe<T> extends Collection<T> {
     @SuppressWarnings("unchecked")
     default <R> Maybe<R> flatMapMaybe(Function<T, Maybe<R>> fn) {
         return isSome() ? fn.apply(orElse(null)) : nothing();
-    }
-
-    @SuppressWarnings("unchecked")
-    default <R> Maybe<R> map(Function<T, R> fn) {
-        return isSome() ? some(fn.apply(orElse(null))) : nothing();
-    }
-
-    @SuppressWarnings("unchecked")
-    default <R> Maybe<R> flatMap(Function<T, Collection<R>> fn) {
-        if (isNothing()) return nothing();
-        Collection<R> res = fn.apply(orElse(null));
-        if (res instanceof Maybe) return (Maybe<R>) res;
-        return (Maybe<R>) res.foldl(Maybe.<R>nothing(), (acc, r) -> (Maybe<R>) acc.build(r));
     }
 
     default <R> R either(java.util.function.Supplier<R> onNothing, Function<T, R> onSome) {
