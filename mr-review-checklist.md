@@ -20,10 +20,14 @@ The implementation of the `Automaton` engine is well-structured, follows the pro
   - [x] Verify that the build is clean of warnings.
     - *Verified that `module-info.java` specific warnings are silenced. Also added missing export for the `automaton` package.*
 
-- [ ] **[Documentation] Fix minor typo in `README.md`**
-  - [ ] Check the `shared behavior` vs `state machines` casing in the "What Makes It Different" table (one is lowercase, others are capitalized).
-  - [ ] Standardize the casing in the table.
-  - [ ] Verify the rendered README.
+- [x] **[Documentation] Fix minor typo in `README.md`**
+  - [x] Check the `shared behavior` vs `state machines` casing in the "What Makes It Different" table (one is lowercase, others are capitalized).
+    - *Identified that both 'shared behavior' and 'state machines' were using lowercase, while others were using Sentence case.*
+  - [x] Standardize the casing in the table.
+    - *Updated entries to use Sentence case for consistency.*
+  - [x] Verify the rendered README.
+    - *Verified consistency in the README source.*
+
 
 ### Questions for the Author
 1. **Feedback Loop Strategy:** Is the choice of *sequential* feedback for new inputs a strict architectural requirement for consistency, or was it chosen for simplicity? Would there be cases where parallel execution of feedback inputs is desired?

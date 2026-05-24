@@ -27,8 +27,8 @@ Java's standard library is solid, but it often pushes boilerplate into the exact
 | Async composition | `CompletableFuture` chains | `Task`, `TaskEither`, `ReaderTaskEither` |
 | Immutable collections | streams + collectors | persistent `List`, `Vector`, `Set`, `HashMap`, `Queue`, `Deque` |
 | Deep updates | constructors/builders/manual copying | optics: `Lens`, `Prism`, `Iso`, `Traversal` |
-| shared behavior | repeated utility code | `Functor`, `Applicative`, `Monad`, `Traversable`, `Monoid`, `Eq`, `Ord`, `Hashable` |
-| state machines | ad hoc orchestration | effectful `Automaton` engine |
+| Shared behavior | repeated utility code | `Functor`, `Applicative`, `Monad`, `Traversable`, `Monoid`, `Eq`, `Ord`, `Hashable` |
+| State machines | ad hoc orchestration | effectful `Automaton` engine |
 | Parsing/encoding | hand-written glue | `Parser`, `JsonParser`, `Codec`, `JsonValue` |
 | Verification | ad hoc tests | `Gen`, `Property`, `Shrink`, and law tests |
 
