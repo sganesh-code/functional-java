@@ -331,7 +331,7 @@ public class TaskTest {
     public void testParWhenAllRespectsConcurrency() {
         AtomicInteger active = new AtomicInteger(0);
         AtomicInteger maxActive = new AtomicInteger(0);
-        List<Task<?>> tasks = List.range(0, 8).map(i -> Task.fromMono(Mono.fromRunnable(() -> {
+        List<Task<?>> tasks = List.from(List.range(0, 8).map(i -> Task.fromMono(Mono.fromRunnable(() -> {
             int current = active.incrementAndGet();
             maxActive.updateAndGet(previous -> Math.max(previous, current));
             try {
@@ -342,7 +342,7 @@ public class TaskTest {
             } finally {
                 active.decrementAndGet();
             }
-        }).subscribeOn(Schedulers.boundedElastic())));
+        }).subscribeOn(Schedulers.boundedElastic()))));
 
         Task.parWhenAll(2, tasks).run();
 

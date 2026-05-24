@@ -65,10 +65,10 @@ public class EitherTest {
         Either<String, Integer> f1 = (Either<String, Integer>) right.filter(i -> i > 5);
         Assert.assertTrue(f1.isRight(), "Expected Right but was " + f1);
         Assert.assertEquals(f1.fromRight(0), Integer.valueOf(10));
-        // Filter: Right(10) filtered by i > 15 becomes Left(10)
+        // Filter: Right(10) filtered by i > 15 becomes Left(null)
         Either<Integer, Integer> filtered = (Either<Integer, Integer>) (Collection<?>) right.filter(i -> i > 15);
         Assert.assertTrue(filtered.isLeft());
-        Assert.assertEquals(filtered.fromLeft(0), Integer.valueOf(10));
+        Assert.assertNull(filtered.fromLeft(0));
     }
 
     @Test

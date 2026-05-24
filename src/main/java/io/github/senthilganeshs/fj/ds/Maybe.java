@@ -77,6 +77,18 @@ public interface Maybe<T> extends Collection<T> {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
+    default <R> Collection<R> map(Function<T, R> fn) {
+        return isSome() ? some(fn.apply(orElse(null))) : (Collection<R>) NOTHING;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    default <R> Collection<R> flatMap(Function<T, Collection<R>> fn) {
+        return isSome() ? fn.apply(orElse(null)) : (Collection<R>) NOTHING;
+    }
+
+    @SuppressWarnings("unchecked")
     default <R> Maybe<R> flatMapMaybe(Function<T, Maybe<R>> fn) {
         return isSome() ? fn.apply(orElse(null)) : nothing();
     }

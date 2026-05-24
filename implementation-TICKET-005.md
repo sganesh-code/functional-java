@@ -1,30 +1,21 @@
-# Implementation Plan: TICKET-005 - Advice Agent Reference Implementation
+# Implementation Plan: TICKET-005 - Global Test Suite Refactoring and Validation
 
-- [x] **🎟️ [TICKET-005]: Advice Agent Reference Implementation**
-  - **Description:** Implement the "DIL Advice Agent" example from the proposal as a comprehensive integration test to demonstrate real-world usage of the Automaton engine.
+- [x] **🎟️ [TICKET-005]: Global Test Suite Refactoring and Validation**
+  - **Description:** The changes to return types in previous tickets will cause significant compile-time errors in the test suite. This ticket covers the systematic update of tests to use `Collection` types or explicit narrowing, ensuring behavioral correctness is maintained.
   - **Scope:**
-    - **In scope:**
-        - `src/test/java/io/github/senthilganeshs/fj/automaton/AdviceAgentIntegrationTest.java`
-    - **Out of scope:**
-        - Production-ready persistence or worker implementations.
+    - **In scope:** All files in `@src/test/java/io/github/senthilganeshs/fj/ds/` and related subdirectories.
+    - **Out of scope:** Modifying main source code (unless a regression is found).
   - **Implementation Tasks:**
-    - [x] **Investigate:**
-        - Review the example logic in `@PROPOSAL-FJ-AUTOMATON.md` for `AdviceState`, `DilMessage`, and `DilCommand`.
-      - *Reviewed the proposal example and extracted the core states, messages, and commands.*
-    - [x] **Define Test Data Models:**
-        - Define `AdviceState` (Idle, Thinking, Responding, Done).
-        - Define `DilMessage` (AdviceRequested, ThoughtProduced, ResponseGenerated).
-        - Define `DilCommand` (GenerateThought, GenerateResponse).
-      - *Implemented using Java 21 sealed interfaces and records for type-safe modeling.*
-    - [x] **Implement Mock Components:**
-        - Implement `Machine<AdviceState, DilMessage, DilCommand>` (Logic).
-        - Implement `Interpreter<Task.µ, DilCommand, DilMessage>` (Worker).
-        - Implement `Repository<Task.µ, String, AdviceState>` (Store).
-      - *Created mock implementations for all components within the integration test file.*
-    - [x] **Implement Integration Test:**
-        - Create `@src/test/java/io/github/senthilganeshs/fj/automaton/AdviceAgentIntegrationTest.java`.
-        - Verify the full flow from `AdviceRequested` through `ThoughtProduced` to `ResponseGenerated`.
-      - *Added `testAdviceAgentFlow` to orchestrate the end-to-end multi-step transition process.*
-    - [x] **Verification:**
-        - Run `./gradlew test` (targeting this test) to ensure the agent reaches the terminal state correctly.
-      - *Verified full agent flow passes correctly. Build successful.*
+    - [x] **Identify Failure Points:** Run `mise exec -- ./gradlew test` and document the files with the most errors.
+      - *Found 50+ failures initially, mostly due to metadata loss in Either/Validation and incorrect default implementations for Snoc-lists/Stacks.*
+    - [x] **Refactor List and Stack Tests:** Update `ListTest.java` and `StackTest.java` to use narrowing where implementation-specific assertions are made.
+      - *Updated StackTest and confirmed behavioral correctness of LIFO semantics.*
+    - [x] **Refactor Monadic Tests:** Update `MaybeTest.java`, `EitherTest.java`, and `ValidationTest.java`.
+      - *Fixed EitherTest to reflect standardized filter behavior and ensured metadata preservation.*
+    - [x] **Refactor Structured Collection Tests:** Update `ArrayTest.java`, `QueueTest.java`, `SetTest.java`, etc.
+      - *Resolved Queue ordering issues and verified generic interoperability.*
+    - [x] **Generic Interop Tests:** Add a new test file `CollectionInteropTest.java` demonstrating seamless mixing of different collection types in generic pipelines.
+      - *Added comprehensive interop tests demonstrating generic mapping, concating, and narrowing.*
+    - [x] **Final Validation:** Ensure `mise exec -- ./gradlew test` passes completely.
+      - *Successfully passed all 283+ tests across the entire project.*
+

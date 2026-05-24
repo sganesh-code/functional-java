@@ -122,7 +122,7 @@ public class AutomatonTest {
             if (input.equals("split")) {
                 return new Machine.Result<>(state, List.of("emit-a", "emit-b"));
             }
-            return new Machine.Result<>(state.build(input), List.nil());
+            return new Machine.Result<>(List.from(state.build(input)), List.nil());
         };
 
         Interpreter<Task.µ, String, String> interpreter = cmd -> {

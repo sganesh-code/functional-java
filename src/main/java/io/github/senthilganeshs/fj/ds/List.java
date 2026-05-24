@@ -83,6 +83,18 @@ public interface List<T> extends Collection<T> {
         return cons(this, input);
     }
 
+    @Override
+    default Collection<T> reverse() {
+        List<T> res = nil();
+        List<T> curr = this;
+        while (!curr.isEmpty()) {
+            LinkedList<T> ll = (LinkedList<T>) curr;
+            res = (List<T>) res.build(ll.tail);
+            curr = ll.head;
+        }
+        return res;
+    }
+
     @SuppressWarnings("unchecked")
     default <R> List<Tuple<T, R>> zip(List<R> other) {
         return (List<Tuple<T, R>>) zipWith(Tuple::of, other);

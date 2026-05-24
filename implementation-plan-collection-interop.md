@@ -46,7 +46,7 @@ The following tickets break down the implementation of the epic.
     - [ ] Ensure they return `Collection<T>` in their `@Override` declarations to encourage working with the base interface.
     - [ ] Verify that `functor()` and `monad()` implementations in these classes still utilize optimized internal methods where applicable.
 
-- [ ] **🎟️ [TICKET-005]: Global Test Suite Refactoring and Validation**
+- [x] **🎟️ [TICKET-005]: Global Test Suite Refactoring and Validation**
   - **Description:** The changes to return types will cause significant compile-time errors in the test suite and potentially in user code. This ticket covers the systematic update of tests to use `Collection` types or explicit narrowing.
   - **Scope:**
     - **In scope:** All files in `@src/test/java/io/github/senthilganeshs/fj/ds/`.

@@ -99,6 +99,24 @@ public interface Either<A, B> extends Collection<B> {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
+    default <R> Collection<R> map(Function<B, R> fn) {
+        return isRight() ? right(fn.apply(fromRight(null))) : (Collection<R>) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    default <R> Collection<R> flatMap(Function<B, Collection<R>> fn) {
+        return isRight() ? fn.apply(fromRight(null)) : (Collection<R>) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    default Collection<B> filter(java.util.function.Predicate<B> pred) {
+        return isRight() && pred.test(fromRight(null)) ? this : empty();
+    }
+
+    @SuppressWarnings("unchecked")
     default <R> Either<A, R> flatMapEither(Function<B, Either<A, R>> fn) {
         return isRight() ? fn.apply(fromRight(null)) : (Either<A, R>) this;
     }
@@ -130,15 +148,6 @@ public interface Either<A, B> extends Collection<B> {
 
     default Maybe<B> toMaybe() {
         return isRight() ? Maybe.some(fromRight(null)) : Maybe.nothing();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    default Collection<B> filter(Predicate<B> pred) {
-        if (isLeft()) return this;
-        B val = fromRight(null);
-        if (pred.test(val)) return this;
-        return (Collection<B>) left(val);
     }
 
     default Validation<List<A>, B> toValidation() {

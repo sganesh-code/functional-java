@@ -53,6 +53,12 @@ public interface Stack<T> extends Collection<T> {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
+    default Collection<T> reverse() {
+        return new StackImpl<>(List.from(internal().reverse()));
+    }
+
+    @SuppressWarnings("unchecked")
     default Stack<T> push(T value) {
         return (Stack<T>) new StackImpl<>(List.cons(internal(), value));
     }
@@ -63,6 +69,34 @@ public interface Stack<T> extends Collection<T> {
         Maybe<T> h = head();
         Maybe<Stack<T>> t = tail();
         return h.flatMapMaybe(hv -> Maybe.from(t.map(tv -> Tuple.of(hv, tv))));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    default <R> Collection<R> map(java.util.function.Function<T, R> fn) {
+        return new StackImpl<>(List.from(internal().map(fn)));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    default <R> Collection<R> flatMap(java.util.function.Function<T, Collection<R>> fn) {
+        return new StackImpl<>(List.from(internal().flatMap(fn)));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    default Collection<T> filter(java.util.function.Predicate<T> pred) {
+        return new StackImpl<>(List.from(internal().filter(pred)));
+    }
+
+    @SuppressWarnings("unchecked")
+    default Stack<T> concat(Collection<T> other) {
+        return new StackImpl<>(List.from(internal().concat(other)));
+    }
+
+    @SuppressWarnings("unchecked")
+    default <R> Stack<R> mapMaybe(java.util.function.Function<T, Maybe<R>> fn) {
+        return new StackImpl<>(List.from(internal().mapMaybe(fn)));
     }
 
     record StackImpl<T>(List<T> internal) implements Stack<T> {

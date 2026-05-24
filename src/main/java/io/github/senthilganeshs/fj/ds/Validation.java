@@ -33,6 +33,12 @@ public interface Validation<E, T> extends Collection<T> {
         return isValid() ? foldl(null, (__, t) -> t) : def;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    default <R> Collection<R> map(Function<T, R> fn) {
+        return isValid() ? valid(fn.apply(orElse(null))) : (Collection<R>) this;
+    }
+
     /**
      * Transforms the error value if present.
      */

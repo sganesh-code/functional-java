@@ -9,14 +9,14 @@ public class StackTest {
 
     @Test
     public void testStackBasic() {
-        Stack<Integer> s = (Stack<Integer>) Stack.<Integer>emptyStack().build(1).build(2).build(3);
+        Stack<Integer> s = Stack.from(Stack.<Integer>emptyStack().build(1).build(2).build(3));
         Assert.assertEquals(s.head().orElse(-1), Integer.valueOf(3));
         Assert.assertEquals(s.length(), 3);
     }
 
     @Test
     public void testStackPop() {
-        Stack<Integer> s = (Stack<Integer>) Stack.<Integer>emptyStack().build(1).build(2);
+        Stack<Integer> s = Stack.from(Stack.<Integer>emptyStack().build(1).build(2));
         Assert.assertEquals(s.head().orElse(-1), Integer.valueOf(2));
         s = s.tail().orElse(Stack.emptyStack());
         Assert.assertEquals(s.head().orElse(-1), Integer.valueOf(1));
@@ -26,8 +26,8 @@ public class StackTest {
 
     @Test
     public void testStackReverse() {
-        Stack<Integer> s = (Stack<Integer>) Stack.<Integer>emptyStack().build(1).build(2).build(3);
-        Stack<Integer> reversed = s.reverse();
+        Stack<Integer> s = Stack.from(Stack.<Integer>emptyStack().build(1).build(2).build(3));
+        Stack<Integer> reversed = Stack.from(s.reverse());
         Assert.assertEquals(reversed.head().orElse(-1), Integer.valueOf(1));
         Assert.assertEquals(reversed.toString(), "[1,2,3]");
     }
@@ -51,7 +51,7 @@ public class StackTest {
         Stack<Integer> s = Stack.newStack(new Integer[]{1, 2, 3, 4});
         // s is [4,3,2,1]
         
-        Stack<Integer> doubled = s.map(i -> i * 2);
+        Stack<Integer> doubled = Stack.from(s.map(i -> i * 2));
         // foldl visits 4,3,2,1. build pushes 8, then 6, then 4, then 2. Top is 2.
         // wait, I keep confusing myself. 
         // foldl visits 4 -> 3 -> 2 -> 1.
@@ -68,7 +68,7 @@ public class StackTest {
         // YES.
         Assert.assertEquals(doubled.toString(), "[8,6,4,2]");
         
-        Stack<Integer> filtered = s.filter(i -> i % 2 == 0);
+        Stack<Integer> filtered = Stack.from(s.filter(i -> i % 2 == 0));
         Assert.assertEquals(filtered.toString(), "[4,2]");
     }
 }
