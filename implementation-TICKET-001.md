@@ -1,0 +1,40 @@
+# Implementation Plan: TICKET-001 - Define Core Automaton Interfaces
+
+- [x] **🎟️ [TICKET-001]: Define Core Automaton Interfaces**
+  - **Description:** Define the foundational functional interfaces and data models for the automaton logic, side-effects, and persistence as outlined in @PROPOSAL-FJ-AUTOMATON.md.
+  - **Scope:**
+    - **In scope:**
+        - `io.github.senthilganeshs.fj.automaton.Machine`
+        - `io.github.senthilganeshs.fj.automaton.Interpreter`
+        - `io.github.senthilganeshs.fj.automaton.Repository`
+    - **Out of scope:**
+        - Implementation of the `Automaton` orchestrator.
+        - `Task`-specific optimizations.
+  - **Implementation Tasks:**
+    - [x] **Investigate:** 
+        - Review `@src/main/java/io/github/senthilganeshs/fj/hkt/Higher.java` to ensure proper usage of Higher-Kinded Type witnesses.
+        - Review `@src/main/java/io/github/senthilganeshs/fj/ds/List.java` for command collection representation.
+      - *Confirmed `Higher<W, A>` usage and `List<T>` as the primary functional list type.*
+    - [x] **Implement Machine Interface:**
+        - Create `@src/main/java/io/github/senthilganeshs/fj/automaton/Machine.java`.
+        - Define `@FunctionalInterface public interface Machine<S, I, O>`.
+        - Add `Result<S, O>` record: `public record Result<S, O>(S state, List<O> commands) {}`.
+        - Implement `transition(S state, I input)` method.
+      - *Created `Machine.java` with the `Result` record and `transition` functional interface.*
+    - [x] **Implement Interpreter Interface:**
+        - Create `@src/main/java/io/github/senthilganeshs/fj/automaton/Interpreter.java`.
+        - Define `@FunctionalInterface public interface Interpreter<F, O, I>`.
+        - Implement `Higher<F, List<I>> execute(O command)` method.
+      - *Created `Interpreter.java` using `Higher<F, List<I>>` for the execution effect.*
+    - [x] **Implement Repository Interface:**
+        - Create `@src/main/java/io/github/senthilganeshs/fj/automaton/Repository.java`.
+        - Define `public interface Repository<F, K, S>`.
+        - Implement `Higher<F, S> load(K key)` and `Higher<F, Void> save(K key, S state)`. 
+        - *Note: Convention in this project is to use `Void` for effectful operations with no result (e.g., in `Task<Void>`).*
+      - *Created `Repository.java` with `load` and `save` methods using `Higher` and `Void`.*
+    - [x] **Documentation:**
+        - Add comprehensive Javadoc to all new interfaces, explaining their roles in the effectful state machine pattern.
+      - *Added detailed Javadocs to `Machine`, `Interpreter`, and `Repository` explaining their purpose in the orchestrator flow.*
+    - [x] **Verify:**
+        - Run `mise exec -- gradle classes` to ensure everything compiles correctly.
+      - *Verified compilation using `./gradlew classes`. Build successful.*
