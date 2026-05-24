@@ -49,7 +49,7 @@ public interface Map<K extends Comparable<K>, V> {
 
         @Override
         public Map<K, V> put(K key, V value) {
-            return new BinaryTreeMap<>(entries.build(new Entry<>(key, value)));
+            return new BinaryTreeMap<>(entries.add(new Entry<>(key, value)));
         }
 
         @Override

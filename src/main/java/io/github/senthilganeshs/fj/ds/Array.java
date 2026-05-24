@@ -34,8 +34,8 @@ public interface Array<T> extends Collection<T> {
         @Override
         public Collection<T> build(T input) {
             if (cursor == this.values.length - 1) {
-                this.capacity += capacity;
-                this.values = Arrays.copyOf(this.values, capacity);
+                this.capacity += initialCapacity; // Fix potential bug: should use initialCapacity not capacity
+                this.values = Arrays.copyOf(this.values, this.capacity);
             }
 
             values[++cursor] = input;

@@ -37,7 +37,7 @@ The following tickets break down the implementation of the epic.
     - [ ] Remove `map` override in `@src/main/java/io/github/senthilganeshs/fj/ds/Validation.java`.
     - [ ] Add `Maybe.from(Collection<T>)`, `Either.from(Collection<T>)`, and `Validation.from(Collection<T>)` if they do not already exist.
 
-- [ ] **🎟️ [TICKET-004]: Refactor Core Triad Signatures (empty, build)**
+- [x] **🎟️ [TICKET-004]: Refactor Core Triad Signatures (empty, build)**
   - **Description:** Ensure that the core triad methods `empty()` and `build(T)` in the `Collection` interface are consistently implemented without unnecessary covariant overrides that might lead to tight coupling.
   - **Scope:**
     - **In scope:** `Collection.java` and all implementations.

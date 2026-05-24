@@ -13,11 +13,11 @@ import java.util.function.Function;
  */
 public interface Set<T> extends Collection<T> {
 
-    @Override Set<T> build(final T value);
-
-    default Set<T> add(final T value) {
-        return build(value);
+    @Override default Collection<T> build(final T value) {
+        return add(value);
     }
+
+    Set<T> add(final T value);
 
     boolean contains(final T value);
 
@@ -28,19 +28,19 @@ public interface Set<T> extends Collection<T> {
     Ord<T> order();
 
     default Set<T> union(Set<T> other) {
-        return other.foldl(this, Set::build);
+        return other.foldl(this, Set::add);
     }
 
     default Set<T> intersect(Set<T> other) {
-        return filter(other::contains).foldl(empty(order()), Set::build);
+        return filter(other::contains).foldl(empty(order()), Set::add);
     }
 
     default Set<T> difference(Set<T> other) {
-        return filter(t -> !other.contains(t)).foldl(empty(order()), Set::build);
+        return filter(t -> !other.contains(t)).foldl(empty(order()), Set::add);
     }
 
     static <R extends Comparable<R>> Collection<R> sort(Collection<R> collection) {
-        return of(collection).foldl(collection.empty(), (rs, t) -> rs.build(t));
+        return of(collection).foldl(collection.empty(), Collection::build);
     }
     
     static <R extends Comparable<R>> Set<R> nil() {
@@ -60,7 +60,7 @@ public interface Set<T> extends Collection<T> {
     }
 
     static <R> Set<R> of(Ord<R> ord, final Collection<R> values) {
-        return values.foldl(empty(ord), (r, t) -> r.build(t));
+        return values.foldl(empty(ord), Set::add);
     }
     
     static <R extends Comparable<R>> Set<R> of(final java.util.Collection<R> values) {
@@ -70,7 +70,7 @@ public interface Set<T> extends Collection<T> {
     static <R> Set<R> of(Ord<R> ord, final java.util.Collection<R> values) {
         Set<R> tree = empty(ord);
         for (final R value : values) {
-            tree = tree.build(value);
+            tree = tree.add(value);
         }
         return tree;
     }   
@@ -85,14 +85,18 @@ public interface Set<T> extends Collection<T> {
         Set<R> tree = empty(ord);
         if (values == null) return tree;
         for (final R value  : values) {
-            tree = tree.build(value);            
+            tree = tree.add(value);            
         }
         return tree;
     }
 
     interface AVLTree<T> extends Set<T> {
         
-        @Override AVLTree<T> build(final T value);
+        @Override default Collection<T> build(final T value) {
+            return add(value);
+        }
+
+        @Override AVLTree<T> add(final T value);
 
         AVLTree<T> replaceLeft(final Function<AVLTree<T>, AVLTree<T>> left);
 
@@ -149,7 +153,12 @@ public interface Set<T> extends Collection<T> {
         }
                 
         @Override
-        public AVLTree<T> build(T other) {
+        public Collection<T> build(T input) {
+            return add(input);
+        }
+
+        @Override
+        public AVLTree<T> add(T other) {
             int cmp = ord.compare(this.value, other);
             if (cmp == 0)
                 return new NonEmpty<>(ord, other, left, right);
@@ -158,11 +167,11 @@ public interface Set<T> extends Collection<T> {
             AVLTree<T> rt;
             
             if (cmp > 0) {
-                lf = this.left.build(other);
+                lf = (AVLTree<T>) left.add(other);
                 rt = this.right;
             } else {
                 lf = this.left;
-                rt = right.build(other);
+                rt = (AVLTree<T>) right.add(other);
             }
 
             int lfh = lf.height();
@@ -271,7 +280,12 @@ public interface Set<T> extends Collection<T> {
         }
 
         @Override
-        public AVLTree<T> build(T value) {
+        public Collection<T> build(T input) {
+            return add(input);
+        }
+
+        @Override
+        public AVLTree<T> add(T value) {
             return new NonEmpty<>(ord, value, this, this);
         }
         
