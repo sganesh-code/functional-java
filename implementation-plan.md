@@ -25,18 +25,25 @@ The following tickets break down the implementation of the epic to add static ut
     - [x] Create unit tests in `src/test/java/io/github/senthilganeshs/fj/typeclass/FoldableTest.java`.
       - *Created FoldableTest.java using TestNG to verify Foldable utilities and Contravariant mapping logic.*
 
-- [ ] **🎟️ [TICKET-001]: Semigroup and Monoid Static Utilities**
+- [x] **🎟️ [TICKET-001]: Semigroup and Monoid Static Utilities**
   - **Description:** Add static utility methods to `Semigroup` and `Monoid` interfaces for combining collections of elements.
   - **Scope:**
     - **In scope:** `Semigroup`, `Monoid` interfaces in `@src/main/java/io/github/senthilganeshs/fj/typeclass/`.
     - **Out of scope:** Modifying `Collection` or any existing data structure implementation.
   - **Implementation Tasks:**
-    - [ ] Add `static <T> T combine(Semigroup<T> s, T a, T b)` to `Semigroup`.
-    - [ ] Add `static <T> T combineN(Semigroup<T> s, T a, int n)` to `Semigroup`.
-    - [ ] Add `static <T> T combineAll(Monoid<T> m, Iterable<T> ts)` to `Monoid`.
-    - [ ] Add `static <A, B> B foldMap(Monoid<B> m, java.util.function.Function<A, B> f, Iterable<A> as)` to `Monoid`.
-    - [ ] Add `static <T> T intercalate(Monoid<T> m, T sep, Iterable<T> ts)` to `Monoid`.
-    - [ ] Create unit tests in `src/test/java/io/github/senthilganeshs/fj/typeclass/MonoidUtilsTest.java` verifying these methods with custom types and existing monoids (e.g., `INTEGER_SUM`).
+    - [x] Add `static <T> T combine(Semigroup<T> s, T a, T b)` to `Semigroup`.
+      - *Added static combine to Semigroup.java.*
+    - [x] Add `static <T> T combineN(Semigroup<T> s, T a, int n)` to `Semigroup`.
+      - *Added static combineN to Semigroup.java.*
+    - [x] Add `static <T> T combineAll(Monoid<T> m, Iterable<T> ts)` to `Monoid`.
+      - *Added static combineAll to Monoid.java.*
+    - [x] Add `static <A, B> B foldMap(Monoid<B> m, java.util.function.Function<A, B> f, Iterable<A> as)` to `Monoid`.
+      - *Added static foldMap to Monoid.java.*
+    - [x] Add `static <T> T intercalate(Monoid<T> m, T sep, Iterable<T> ts)` to `Monoid`.
+      - *Added static intercalate to Monoid.java.*
+    - [x] Create unit tests in `src/test/java/io/github/senthilganeshs/fj/typeclass/MonoidUtilsTest.java` verifying these methods with custom types and existing monoids (e.g., `INTEGER_SUM`).
+      - *Created MonoidUtilsTest.java with TestNG to verify Semigroup and Monoid static utilities.*
+
 
 - [ ] **🎟️ [TICKET-002]: Eq, Ord, and Hashable Static Utilities**
   - **Description:** Add static utility methods to `Eq`, `Ord`, and `Hashable` for comparison and hashing logic.

@@ -22,4 +22,39 @@ public interface Monoid<T> extends Semigroup<T> {
     Monoid<Integer> INTEGER_PRODUCT = of(1, (a, b) -> a * b);
     Monoid<String> STRING_CONCAT = of("", (a, b) -> a + b);
     Monoid<Double> DOUBLE_SUM = of(0.0, Double::sum);
+
+    /**
+     * Combines all elements of a collection using the Monoid.
+     */
+    static <T> T combineAll(Monoid<T> m, Iterable<T> ts) {
+        T res = m.empty();
+        for (T t : ts) {
+            res = m.combine(res, t);
+        }
+        return res;
+    }
+
+    /**
+     * Maps each element of the collection to a Monoid, and combines the results.
+     */
+    static <A, B> B foldMap(Monoid<B> m, java.util.function.Function<A, B> f, Iterable<A> as) {
+        B res = m.empty();
+        for (A a : as) {
+            res = m.combine(res, f.apply(a));
+        }
+        return res;
+    }
+
+    /**
+     * Combines all elements of a collection using the Monoid, with a separator between them.
+     */
+    static <T> T intercalate(Monoid<T> m, T sep, Iterable<T> ts) {
+        java.util.Iterator<T> it = ts.iterator();
+        if (!it.hasNext()) return m.empty();
+        T res = it.next();
+        while (it.hasNext()) {
+            res = m.combine(res, m.combine(sep, it.next()));
+        }
+        return res;
+    }
 }
