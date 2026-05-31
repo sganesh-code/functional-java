@@ -16,11 +16,19 @@ public interface Ord<T> extends Eq<T> {
     default boolean gt(T a, T b) { return compare(a, b) > 0; }
     default boolean gte(T a, T b) { return compare(a, b) >= 0; }
 
+    default <A> Ord<A> contramap(java.util.function.Function<A, T> f) {
+        return (a1, a2) -> compare(f.apply(a1), f.apply(a2));
+    }
+
     static <R extends Comparable<R>> Ord<R> natural() {
         return (a, b) -> a.compareTo(b);
     }
 
     static <R> Ord<R> fromComparator(java.util.Comparator<R> comparator) {
         return (a, b) -> comparator.compare(a, b);
+    }
+
+    static <A, B> Ord<A> contramap(Ord<B> ord, java.util.function.Function<A, B> f) {
+        return ord.contramap(f);
     }
 }

@@ -8,7 +8,7 @@ import java.util.function.Function;
  * 
  * @param <W> The witness type of the traversable functor.
  */
-public interface Traversable<W> extends Functor<W> {
+public interface Traversable<W> extends Functor<W>, Foldable<W> {
     /**
      * Traverses the structure, applying an effectful function to each element and collecting the results.
      */
