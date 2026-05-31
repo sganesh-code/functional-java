@@ -155,47 +155,56 @@ Maybe<List<Integer>> rest = list.tail();
 Maybe<Integer> maybe = Maybe.from(list.filter(i -> i > 10));
 ```
 
-### 4. Solve A Real Problem With Multiple Structures
+### 4. Solve A Real Problem: Real-time Metrics Aggregator
 
-Suppose you receive a webhook payload, need to validate fields, normalize a few nested values, and prepare the request for downstream processing. The standard Java version usually becomes a mix of null checks, temporary objects, and exception handling.
+Suppose you are building a monitoring dashboard. You need to fetch configurations for multiple sensors in parallel, handle potential network failures, and then process a real-time stream of readings using those configurations—all while maintaining state (like rolling averages) and triggering alerts when thresholds are breached.
 
-With `functional-java`, you can split the problem into focused pieces:
+With `functional-java`, you can orchestrate this complex, stateful workflow using a unified set of primitives.
 
 ```java
-JsonValue payload = JsonParser.parser().parse(body).orElse(new JsonValue.JsonNull());
+// 1. Fetch configurations for multiple sensors in parallel
+List<String> sensorIds = List.of("temp-1", "press-2", "hum-3");
+TaskEither<String, List<Config>> configurations = 
+    TaskEither.parTraverse(sensorIds, id -> configApi.fetch(id));
 
-var emailT = JsonValue.path("customer", "contact").compose(JsonValue.stringAt("email"));
-var zipT = JsonValue.path("customer", "address").compose(JsonValue.stringAt("zip"));
-record Request(String email, String zip) {}
+// 2. Define the "Brain" (Pure logic)
+// Tracks rolling averages and emits alerts if thresholds are breached
+Machine<Stats, Reading, Alert> brain = (stats, reading) -> {
+    Stats next = stats.update(reading.value());
+    return next.isCritical() 
+        ? new Machine.Result<>(next, List.of(new Alert(reading.sensorId())))
+        : new Machine.Result<>(next, List.nil());
+};
 
-Maybe<String> emailM = emailT.getMaybe(payload);
-Maybe<String> zipM = zipT.getMaybe(payload);
+// 3. Define the "Hands" (Side effects)
+Interpreter<Task.µ, Alert, Reading> hands = alert -> 
+    alertService.send(alert).map(__ -> List.nil());
 
-Validation<List<String>, String> emailV =
-    emailM.isSome()
-        ? Validation.valid(emailM.orElse(""))
-        : Validation.invalid(List.of("customer.contact.email is missing"));
+// 4. Orchestrate the simultaneous streaming loop
+Task<Void> pipeline = configurations.task().flatMap(either -> 
+    either.either(
+        error -> Task.fail(new RuntimeException("Fetch failed: " + error)),
+        activeConfigs -> sensorStream.readings()
+            // Filter readings to only those with an active configuration
+            .filter(r -> activeConfigs.any(c -> c.sensorId().equals(r.sensorId())))
+            // Run the state machine orchestrator for each reading concurrently
+            .parEvalMap(4, reading -> {
+                Automaton<Task.µ, String, Stats, Reading, Alert> engine = 
+                    Automaton.ofTask(brain, hands, statsRepo);
+                return Task.narrowK(engine.run(reading.sensorId(), reading));
+            })
+            .forEach(finalStats -> System.out.println("Updated Stats: " + finalStats))
+    )
+);
 
-Validation<List<String>, String> zipV =
-    zipM.isSome()
-        ? Validation.valid(zipM.orElse(""))
-        : Validation.invalid(List.of("customer.address.zip is missing"));
-
-Validation<List<String>, Request> requestV =
-    emailV.liftA2(
-        (email, zip) -> new Request(email, zip),
-        zipV,
-        List.monoid()
-    );
+pipeline.runAsync(res -> System.out.println("Aggregator running..."));
 ```
 
-That gives you:
-- explicit handling for missing payload data,
-- accumulated validation errors,
-- immutable nested updates through optics,
-- a clean handoff into downstream async work or collection processing.
-
-This is the pattern the library is built for: functional data handling at the edges, object-oriented boundaries where a domain object or message-oriented service makes the design clearer.
+This gives you:
+- **Simultaneous Async Work**: `parTraverse` initiates all configuration fetches concurrently.
+- **Complex Orchestration**: `Automaton` keeps logic (Machine), effects (Interpreter), and memory (Repository) decoupled and robust.
+- **Concurrent Streaming**: `parEvalMap` processes stream elements in parallel while maintaining resource safety and order.
+- **Declarative Pipeline**: The entire workflow—from API calls to stateful stream processing—is expressed as a single, readable chain of data and effects.
 
 ## Idiomatic Usage
 
@@ -694,7 +703,7 @@ That style is useful when you want to test a normalization rule, a parser, or a 
 
 ## Installation
 
-Version: `2.1.1`
+Version: `2.1.2`
 
 ### Maven
 
@@ -702,14 +711,14 @@ Version: `2.1.1`
 <dependency>
     <groupId>io.github.sganesh-code</groupId>
     <artifactId>functional-java</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.2</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```gradle
-implementation 'io.github.sganesh-code:functional-java:2.1.1'
+implementation 'io.github.sganesh-code:functional-java:2.1.2'
 ```
 
 ## Contributing
