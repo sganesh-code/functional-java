@@ -84,17 +84,24 @@ The following tickets break down the implementation of the epic to add static ut
       - *Created FunctorUtilsTest.java with TestNG to verify Functor static utilities.*
 
 
-- [ ] **🎟️ [TICKET-004]: Applicative and Monad Static Utilities**
+- [x] **🎟️ [TICKET-004]: Applicative and Monad Static Utilities**
   - **Description:** Add static utility methods to `Applicative` and `Monad` for sequential and effectful composition.
   - **Scope:**
     - **In scope:** `Applicative`, `Monad` interfaces in `@src/main/java/io/github/senthilganeshs/fj/typeclass/`.
   - **Implementation Tasks:**
-    - [ ] Add `static <W, A, B, C> Higher<W, C> liftA2(Applicative<W> app, java.util.function.BiFunction<A, B, C> fn, Higher<W, A> fa, Higher<W, B> fb)` to `Applicative`.
-    - [ ] Add `static <W, A, B> Higher<W, io.github.senthilganeshs.fj.ds.Tuple<A, B>> product(Applicative<W> app, Higher<W, A> fa, Higher<W, B> fb)` to `Applicative`.
-    - [ ] Add `static <W, A, B> Higher<W, B> flatMap(Monad<W> m, java.util.function.Function<A, Higher<W, B>> fn, Higher<W, A> fa)` to `Monad`.
-    - [ ] Add `static <W, A> Higher<W, A> flatten(Monad<W> m, Higher<W, Higher<W, A>> ffa)` to `Monad`.
-    - [ ] Add `static <W, A> Higher<W, A> ifM(Monad<W> m, Higher<W, Boolean> cond, Higher<W, A> ifTrue, Higher<W, A> ifFalse)` to `Monad`.
-    - [ ] Create unit tests in `src/test/java/io/github/senthilganeshs/fj/typeclass/MonadUtilsTest.java`.
+    - [x] Add `static <W, A, B, C> Higher<W, C> liftA2(Applicative<W> app, java.util.function.BiFunction<A, B, C> fn, Higher<W, A> fa, Higher<W, B> fb)` to `Applicative`.
+      - *Added static liftA2 to Applicative.java.*
+    - [x] Add `static <W, A, B> Higher<W, io.github.senthilganeshs.fj.ds.Tuple<A, B>> product(Applicative<W> app, Higher<W, A> fa, Higher<W, B> fb)` to `Applicative`.
+      - *Added static product to Applicative.java.*
+    - [x] Add `static <W, A, B> Higher<W, B> flatMap(Monad<W> m, java.util.function.Function<A, Higher<W, B>> fn, Higher<W, A> fa)` to `Monad`.
+      - *Added static flatMap to Monad.java.*
+    - [x] Add `static <W, A> Higher<W, A> flatten(Monad<W> m, Higher<W, Higher<W, A>> ffa)` to `Monad`.
+      - *Added static flatten to Monad.java.*
+    - [x] Add `static <W, A> Higher<W, A> ifM(Monad<W> m, Higher<W, Boolean> cond, Higher<W, A> ifTrue, Higher<W, A> ifFalse)` to `Monad`.
+      - *Added static ifM to Monad.java.*
+    - [x] Create unit tests in `src/test/java/io/github/senthilganeshs/fj/typeclass/MonadUtilsTest.java`.
+      - *Created MonadUtilsTest.java with TestNG to verify Applicative and Monad static utilities.*
+
 
 - [ ] **🎟️ [TICKET-005]: Traversable and Profunctor Static Utilities**
   - **Description:** Add static utility methods to `Traversable` and `Profunctor`.
