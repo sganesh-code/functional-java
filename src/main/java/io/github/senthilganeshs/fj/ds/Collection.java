@@ -35,7 +35,7 @@ public interface Collection<T> extends Higher<Collection.µ, T>, Iterable<T>, ja
         StringBuilder sb = new StringBuilder("[");
         c.forEachIndexed((val, i) -> {
             if (i > 0) sb.append(",");
-            sb.append(val);
+            sb.append(val == null ? "null" : val.toString());
         });
         return sb.append("]").toString();
     }

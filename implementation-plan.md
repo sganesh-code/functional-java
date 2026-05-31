@@ -65,17 +65,24 @@ The following tickets break down the implementation of the epic to add static ut
     - [x] Create unit tests in `src/test/java/io/github/senthilganeshs/fj/typeclass/OrdUtilsTest.java`.
       - *Created OrdUtilsTest.java with TestNG to verify Eq and Ord static utilities.*
 
-- [ ] **🎟️ [TICKET-003]: Functor and Bifunctor Static Utilities**
+- [x] **🎟️ [TICKET-003]: Functor and Bifunctor Static Utilities**
   - **Description:** Add static utility methods to `Functor` and `Bifunctor` for mapping operations.
   - **Scope:**
     - **In scope:** `Functor`, `Bifunctor` interfaces in `@src/main/java/io/github/senthilganeshs/fj/typeclass/`.
   - **Implementation Tasks:**
-    - [ ] Add `static <W, A, B> Higher<W, B> map(Functor<W> f, java.util.function.Function<A, B> fn, Higher<W, A> fa)` to `Functor`.
-    - [ ] Add `static <W, A, B> Higher<W, B> as(Functor<W> f, B b, Higher<W, A> fa)` to `Functor`.
-    - [ ] Add `static <W, A> Higher<W, Void> voidF(Functor<W> f, Higher<W, A> fa)` to `Functor`.
-    - [ ] Add `static <W, A> Higher<W, io.github.senthilganeshs.fj.ds.Tuple<A, A>> tupled(Functor<W> f, Higher<W, A> fa)` to `Functor`.
-    - [ ] Add `static <W, A, B, C, D> Higher<Higher<W, C>, D> bimap(Bifunctor<W> f, java.util.function.Function<A, C> fa, java.util.function.Function<B, D> fb, Higher<Higher<W, A>, B> fab)` to `Bifunctor`.
-    - [ ] Create unit tests in `src/test/java/io/github/senthilganeshs/fj/typeclass/FunctorUtilsTest.java`.
+    - [x] Add `static <W, A, B> Higher<W, B> map(Functor<W> f, java.util.function.Function<A, B> fn, Higher<W, A> fa)` to `Functor`.
+      - *Added static map to Functor.java.*
+    - [x] Add `static <W, A, B> Higher<W, B> as(Functor<W> f, B b, Higher<W, A> fa)` to `Functor`.
+      - *Added static as to Functor.java.*
+    - [x] Add `static <W, A> Higher<W, Void> voidF(Functor<W> f, Higher<W, A> fa)` to `Functor`.
+      - *Added static voidF to Functor.java.*
+    - [x] Add `static <W, A> Higher<W, io.github.senthilganeshs.fj.ds.Tuple<A, A>> tupled(Functor<W> f, Higher<W, A> fa)` to `Functor`.
+      - *Added static tupled to Functor.java.*
+    - [x] Add `static <W, A, B, C, D> Higher<Higher<W, C>, D> bimap(Bifunctor<W> f, java.util.function.Function<A, C> fa, java.util.function.Function<B, D> fb, Higher<Higher<W, A>, B> fab)` to `Bifunctor`.
+      - *Added static bimap to Bifunctor.java.*
+    - [x] Create unit tests in `src/test/java/io/github/senthilganeshs/fj/typeclass/FunctorUtilsTest.java`.
+      - *Created FunctorUtilsTest.java with TestNG to verify Functor static utilities.*
+
 
 - [ ] **🎟️ [TICKET-004]: Applicative and Monad Static Utilities**
   - **Description:** Add static utility methods to `Applicative` and `Monad` for sequential and effectful composition.

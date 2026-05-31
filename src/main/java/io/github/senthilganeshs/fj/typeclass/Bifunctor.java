@@ -15,6 +15,13 @@ public interface Bifunctor<W> {
     <A, B, C, D> Higher<Higher<W, C>, D> bimap(Function<A, C> fa, Function<B, D> fb, Higher<Higher<W, A>, B> fab);
 
     /**
+     * Static utility for bimap.
+     */
+    static <W, A, B, C, D> Higher<Higher<W, C>, D> bimap(Bifunctor<W> f, Function<A, C> fa, Function<B, D> fb, Higher<Higher<W, A>, B> fab) {
+        return f.bimap(fa, fb, fab);
+    }
+
+    /**
      * Maps a function over the first type argument.
      */
     default <A, B, C> Higher<Higher<W, C>, B> first(Function<A, C> fn, Higher<Higher<W, A>, B> fab) {
