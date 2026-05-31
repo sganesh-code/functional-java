@@ -102,36 +102,48 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;A,<wbr>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;W,<wbr>
+A,<wbr>
+B,<wbr>
+C,<wbr>
+D&gt;<br><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>C&gt;,<wbr>D&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#bimap(io.github.senthilganeshs.fj.typeclass.Bifunctor,java.util.function.Function,java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">bimap</a><wbr>(<a href="Bifunctor.html" title="interface in io.github.senthilganeshs.fj.typeclass">Bifunctor</a>&lt;W&gt;&nbsp;f,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>C&gt;&nbsp;fa,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;B,<wbr>D&gt;&nbsp;fb,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;,<wbr>B&gt;&nbsp;fab)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Static utility for bimap.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;A,<wbr>
 B,<wbr>
 C,<wbr>
 D&gt;<br><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Bifunctor.html" title="type parameter in Bifunctor">W</a>,<wbr>C&gt;,<wbr>D&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#bimap(java.util.function.Function,java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">bimap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>C&gt;&nbsp;fa,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#bimap(java.util.function.Function,java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">bimap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>C&gt;&nbsp;fa,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;B,<wbr>D&gt;&nbsp;fb,
  <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Bifunctor.html" title="type parameter in Bifunctor">W</a>,<wbr>A&gt;,<wbr>B&gt;&nbsp;fab)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Maps functions over both type arguments simultaneously.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;A,<wbr>
-B,<wbr>
-C&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Bifunctor.html" title="type parameter in Bifunctor">W</a>,<wbr>C&gt;,<wbr>B&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#first(java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">first</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>C&gt;&nbsp;fn,
- <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Bifunctor.html" title="type parameter in Bifunctor">W</a>,<wbr>A&gt;,<wbr>B&gt;&nbsp;fab)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Maps a function over the first type argument.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;A,<wbr>
 B,<wbr>
-D&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Bifunctor.html" title="type parameter in Bifunctor">W</a>,<wbr>A&gt;,<wbr>D&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#second(java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">second</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;B,<wbr>D&gt;&nbsp;fn,
+C&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Bifunctor.html" title="type parameter in Bifunctor">W</a>,<wbr>C&gt;,<wbr>B&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#first(java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">first</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>C&gt;&nbsp;fn,
  <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Bifunctor.html" title="type parameter in Bifunctor">W</a>,<wbr>A&gt;,<wbr>B&gt;&nbsp;fab)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Maps a function over the first type argument.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;A,<wbr>
+B,<wbr>
+D&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Bifunctor.html" title="type parameter in Bifunctor">W</a>,<wbr>A&gt;,<wbr>D&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#second(java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">second</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;B,<wbr>D&gt;&nbsp;fn,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Bifunctor.html" title="type parameter in Bifunctor">W</a>,<wbr>A&gt;,<wbr>B&gt;&nbsp;fab)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Maps a function over the second type argument.</div>
 </div>
 </div>
@@ -158,6 +170,20 @@ D&gt;</span>&nbsp;<span class="return-type"><a href="../hkt/Higher.html" title="
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;B,<wbr>D&gt;&nbsp;fb,
  <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Bifunctor.html" title="type parameter in Bifunctor">W</a>,<wbr>A&gt;,<wbr>B&gt;&nbsp;fab)</span></div>
 <div class="block">Maps functions over both type arguments simultaneously.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="bimap(io.github.senthilganeshs.fj.typeclass.Bifunctor,java.util.function.Function,java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)">
+<h3>bimap</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;W,<wbr>
+A,<wbr>
+B,<wbr>
+C,<wbr>
+D&gt;</span>&nbsp;<span class="return-type"><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>C&gt;,<wbr>D&gt;</span>&nbsp;<span class="element-name">bimap</span><wbr><span class="parameters">(<a href="Bifunctor.html" title="interface in io.github.senthilganeshs.fj.typeclass">Bifunctor</a>&lt;W&gt;&nbsp;f,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>C&gt;&nbsp;fa,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;B,<wbr>D&gt;&nbsp;fb,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;,<wbr>B&gt;&nbsp;fab)</span></div>
+<div class="block">Static utility for bimap.</div>
 </section>
 </li>
 <li>

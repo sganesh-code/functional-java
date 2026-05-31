@@ -138,13 +138,34 @@ extends <a href="Semigroup.html" title="interface in io.github.senthilganeshs.fj
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#combine(T,T)" class="member-name-link">combine</a><wbr>(<a href="Monoid.html" title="type parameter in Monoid">T</a>&nbsp;a,
  <a href="Monoid.html" title="type parameter in Monoid">T</a>&nbsp;b)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Monoid.html" title="type parameter in Monoid">T</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#empty()" class="member-name-link">empty</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R&gt;&nbsp;<a href="Monoid.html" title="interface in io.github.senthilganeshs.fj.typeclass">Monoid</a><wbr>&lt;R&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(R,java.util.function.BiFunction)" class="member-name-link">of</a><wbr>(R&nbsp;empty,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#combineAll(io.github.senthilganeshs.fj.typeclass.Monoid,java.lang.Iterable)" class="member-name-link">combineAll</a><wbr>(<a href="Monoid.html" title="interface in io.github.senthilganeshs.fj.typeclass">Monoid</a>&lt;T&gt;&nbsp;m,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;T&gt;&nbsp;ts)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Combines all elements of a collection using the Monoid.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Monoid.html" title="type parameter in Monoid">T</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#empty()" class="member-name-link">empty</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A,<wbr>
+B&gt;&nbsp;B</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#foldMap(io.github.senthilganeshs.fj.typeclass.Monoid,java.util.function.Function,java.lang.Iterable)" class="member-name-link">foldMap</a><wbr>(<a href="Monoid.html" title="interface in io.github.senthilganeshs.fj.typeclass">Monoid</a>&lt;B&gt;&nbsp;m,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;f,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;A&gt;&nbsp;as)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Maps each element of the collection to a Monoid, and combines the results.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#intercalate(io.github.senthilganeshs.fj.typeclass.Monoid,T,java.lang.Iterable)" class="member-name-link">intercalate</a><wbr>(<a href="Monoid.html" title="interface in io.github.senthilganeshs.fj.typeclass">Monoid</a>&lt;T&gt;&nbsp;m,
+ T&nbsp;sep,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;T&gt;&nbsp;ts)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Combines all elements of a collection using the Monoid, with a separator between them.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R&gt;&nbsp;<a href="Monoid.html" title="interface in io.github.senthilganeshs.fj.typeclass">Monoid</a><wbr>&lt;R&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(R,java.util.function.BiFunction)" class="member-name-link">of</a><wbr>(R&nbsp;empty,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;R,<wbr>R,<wbr>R&gt;&nbsp;combine)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -213,6 +234,33 @@ extends <a href="Semigroup.html" title="interface in io.github.senthilganeshs.fj
 <h3 id="of(java.lang.Object,java.util.function.BiFunction)">of</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Monoid.html" title="interface in io.github.senthilganeshs.fj.typeclass">Monoid</a>&lt;R&gt;</span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(R&nbsp;empty,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;R,<wbr>R,<wbr>R&gt;&nbsp;combine)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="combineAll(io.github.senthilganeshs.fj.typeclass.Monoid,java.lang.Iterable)">
+<h3>combineAll</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">combineAll</span><wbr><span class="parameters">(<a href="Monoid.html" title="interface in io.github.senthilganeshs.fj.typeclass">Monoid</a>&lt;T&gt;&nbsp;m,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;T&gt;&nbsp;ts)</span></div>
+<div class="block">Combines all elements of a collection using the Monoid.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="foldMap(io.github.senthilganeshs.fj.typeclass.Monoid,java.util.function.Function,java.lang.Iterable)">
+<h3>foldMap</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;A,<wbr>
+B&gt;</span>&nbsp;<span class="return-type">B</span>&nbsp;<span class="element-name">foldMap</span><wbr><span class="parameters">(<a href="Monoid.html" title="interface in io.github.senthilganeshs.fj.typeclass">Monoid</a>&lt;B&gt;&nbsp;m,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;f,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;A&gt;&nbsp;as)</span></div>
+<div class="block">Maps each element of the collection to a Monoid, and combines the results.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="intercalate(io.github.senthilganeshs.fj.typeclass.Monoid,T,java.lang.Iterable)">
+<h3 id="intercalate(io.github.senthilganeshs.fj.typeclass.Monoid,java.lang.Object,java.lang.Iterable)">intercalate</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">intercalate</span><wbr><span class="parameters">(<a href="Monoid.html" title="interface in io.github.senthilganeshs.fj.typeclass">Monoid</a>&lt;T&gt;&nbsp;m,
+ T&nbsp;sep,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;T&gt;&nbsp;ts)</span></div>
+<div class="block">Combines all elements of a collection using the Monoid, with a separator between them.</div>
 </section>
 </li>
 </ul>

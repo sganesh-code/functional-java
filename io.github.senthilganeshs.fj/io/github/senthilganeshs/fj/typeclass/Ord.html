@@ -109,10 +109,34 @@ extends <a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typecl
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#between(io.github.senthilganeshs.fj.typeclass.Ord,T,T,T)" class="member-name-link">between</a><wbr>(<a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;T&gt;&nbsp;ord,
+ T&nbsp;low,
+ T&nbsp;high,
+ T&nbsp;val)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Returns true if a value is between low and high (inclusive).</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#clamp(io.github.senthilganeshs.fj.typeclass.Ord,T,T,T)" class="member-name-link">clamp</a><wbr>(<a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;T&gt;&nbsp;ord,
+ T&nbsp;low,
+ T&nbsp;high,
+ T&nbsp;val)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Clamps a value between a low and high bound.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#compare(T,T)" class="member-name-link">compare</a><wbr>(<a href="Ord.html" title="type parameter in Ord">T</a>&nbsp;a,
  <a href="Ord.html" title="type parameter in Ord">T</a>&nbsp;b)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A,<wbr>
+B&gt;&nbsp;<a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a><wbr>&lt;A&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#contramap(io.github.senthilganeshs.fj.typeclass.Ord,java.util.function.Function)" class="member-name-link">contramap</a><wbr>(<a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;B&gt;&nbsp;ord,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;f)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;A&gt;&nbsp;<a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a><wbr>&lt;A&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#contramap(java.util.function.Function)" class="member-name-link">contramap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr><a href="Ord.html" title="type parameter in Ord">T</a>&gt;&nbsp;f)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#eq(T,T)" class="member-name-link">eq</a><wbr>(<a href="Ord.html" title="type parameter in Ord">T</a>&nbsp;a,
  <a href="Ord.html" title="type parameter in Ord">T</a>&nbsp;b)</code></div>
@@ -136,6 +160,20 @@ extends <a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typecl
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#lte(T,T)" class="member-name-link">lte</a><wbr>(<a href="Ord.html" title="type parameter in Ord">T</a>&nbsp;a,
  <a href="Ord.html" title="type parameter in Ord">T</a>&nbsp;b)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#max(io.github.senthilganeshs.fj.typeclass.Ord,T,T)" class="member-name-link">max</a><wbr>(<a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;T&gt;&nbsp;ord,
+ T&nbsp;a,
+ T&nbsp;b)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Returns the larger of two values.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#min(io.github.senthilganeshs.fj.typeclass.Ord,T,T)" class="member-name-link">min</a><wbr>(<a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;T&gt;&nbsp;ord,
+ T&nbsp;a,
+ T&nbsp;b)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Returns the smaller of two values.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;R&gt;&gt;<br><a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a><wbr>&lt;R&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#natural()" class="member-name-link">natural</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
@@ -200,6 +238,16 @@ extends <a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typecl
 </section>
 </li>
 <li>
+<section class="detail" id="contramap(java.util.function.Function)">
+<h3>contramap</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;A&gt;</span>&nbsp;<span class="return-type"><a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;A&gt;</span>&nbsp;<span class="element-name">contramap</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr><a href="Ord.html" title="type parameter in Ord">T</a>&gt;&nbsp;f)</span></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="Eq.html#contramap(java.util.function.Function)">contramap</a></code>&nbsp;in interface&nbsp;<code><a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typeclass">Eq</a>&lt;<a href="Ord.html" title="type parameter in Ord">T</a>&gt;</code></dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="natural()">
 <h3>natural</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;R extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;R&gt;&gt;</span>&nbsp;<span class="return-type"><a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;R&gt;</span>&nbsp;<span class="element-name">natural</span>()</div>
@@ -209,6 +257,52 @@ extends <a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typecl
 <section class="detail" id="fromComparator(java.util.Comparator)">
 <h3>fromComparator</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;R&gt;</span>&nbsp;<span class="element-name">fromComparator</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Comparator.html" title="class or interface in java.util" class="external-link">Comparator</a>&lt;R&gt;&nbsp;comparator)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="min(io.github.senthilganeshs.fj.typeclass.Ord,T,T)">
+<h3 id="min(io.github.senthilganeshs.fj.typeclass.Ord,java.lang.Object,java.lang.Object)">min</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">min</span><wbr><span class="parameters">(<a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;T&gt;&nbsp;ord,
+ T&nbsp;a,
+ T&nbsp;b)</span></div>
+<div class="block">Returns the smaller of two values.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="max(io.github.senthilganeshs.fj.typeclass.Ord,T,T)">
+<h3 id="max(io.github.senthilganeshs.fj.typeclass.Ord,java.lang.Object,java.lang.Object)">max</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">max</span><wbr><span class="parameters">(<a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;T&gt;&nbsp;ord,
+ T&nbsp;a,
+ T&nbsp;b)</span></div>
+<div class="block">Returns the larger of two values.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="clamp(io.github.senthilganeshs.fj.typeclass.Ord,T,T,T)">
+<h3 id="clamp(io.github.senthilganeshs.fj.typeclass.Ord,java.lang.Object,java.lang.Object,java.lang.Object)">clamp</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">clamp</span><wbr><span class="parameters">(<a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;T&gt;&nbsp;ord,
+ T&nbsp;low,
+ T&nbsp;high,
+ T&nbsp;val)</span></div>
+<div class="block">Clamps a value between a low and high bound.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="between(io.github.senthilganeshs.fj.typeclass.Ord,T,T,T)">
+<h3 id="between(io.github.senthilganeshs.fj.typeclass.Ord,java.lang.Object,java.lang.Object,java.lang.Object)">between</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">between</span><wbr><span class="parameters">(<a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;T&gt;&nbsp;ord,
+ T&nbsp;low,
+ T&nbsp;high,
+ T&nbsp;val)</span></div>
+<div class="block">Returns true if a value is between low and high (inclusive).</div>
+</section>
+</li>
+<li>
+<section class="detail" id="contramap(io.github.senthilganeshs.fj.typeclass.Ord,java.util.function.Function)">
+<h3>contramap</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;A,<wbr>
+B&gt;</span>&nbsp;<span class="return-type"><a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;A&gt;</span>&nbsp;<span class="element-name">contramap</span><wbr><span class="parameters">(<a href="Ord.html" title="interface in io.github.senthilganeshs.fj.typeclass">Ord</a>&lt;B&gt;&nbsp;ord,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;f)</span></div>
 </section>
 </li>
 </ul>

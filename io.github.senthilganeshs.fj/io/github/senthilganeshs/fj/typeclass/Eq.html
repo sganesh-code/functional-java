@@ -102,12 +102,20 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;A,<wbr>
+B&gt;&nbsp;<a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typeclass">Eq</a><wbr>&lt;A&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#contramap(io.github.senthilganeshs.fj.typeclass.Eq,java.util.function.Function)" class="member-name-link">contramap</a><wbr>(<a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typeclass">Eq</a>&lt;B&gt;&nbsp;eq,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;f)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;A&gt;&nbsp;<a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typeclass">Eq</a><wbr>&lt;A&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#contramap(java.util.function.Function)" class="member-name-link">contramap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr><a href="Eq.html" title="type parameter in Eq">T</a>&gt;&nbsp;f)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#eq(T,T)" class="member-name-link">eq</a><wbr>(<a href="Eq.html" title="type parameter in Eq">T</a>&nbsp;a,
  <a href="Eq.html" title="type parameter in Eq">T</a>&nbsp;b)</code></div>
@@ -115,6 +123,13 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;R&gt;&nbsp;<a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typeclass">Eq</a><wbr>&lt;R&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#fromEquals()" class="member-name-link">fromEquals</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;T&gt;&nbsp;boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#notEq(io.github.senthilganeshs.fj.typeclass.Eq,T,T)" class="member-name-link">notEq</a><wbr>(<a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typeclass">Eq</a>&lt;T&gt;&nbsp;eq,
+ T&nbsp;a,
+ T&nbsp;b)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Static utility for inequality.</div>
+</div>
 </div>
 </div>
 </div>
@@ -137,9 +152,32 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="contramap(java.util.function.Function)">
+<h3>contramap</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="type-parameters">&lt;A&gt;</span>&nbsp;<span class="return-type"><a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typeclass">Eq</a>&lt;A&gt;</span>&nbsp;<span class="element-name">contramap</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr><a href="Eq.html" title="type parameter in Eq">T</a>&gt;&nbsp;f)</span></div>
+</section>
+</li>
+<li>
 <section class="detail" id="fromEquals()">
 <h3>fromEquals</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;R&gt;</span>&nbsp;<span class="return-type"><a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typeclass">Eq</a>&lt;R&gt;</span>&nbsp;<span class="element-name">fromEquals</span>()</div>
+</section>
+</li>
+<li>
+<section class="detail" id="notEq(io.github.senthilganeshs.fj.typeclass.Eq,T,T)">
+<h3 id="notEq(io.github.senthilganeshs.fj.typeclass.Eq,java.lang.Object,java.lang.Object)">notEq</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">notEq</span><wbr><span class="parameters">(<a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typeclass">Eq</a>&lt;T&gt;&nbsp;eq,
+ T&nbsp;a,
+ T&nbsp;b)</span></div>
+<div class="block">Static utility for inequality.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="contramap(io.github.senthilganeshs.fj.typeclass.Eq,java.util.function.Function)">
+<h3>contramap</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;A,<wbr>
+B&gt;</span>&nbsp;<span class="return-type"><a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typeclass">Eq</a>&lt;A&gt;</span>&nbsp;<span class="element-name">contramap</span><wbr><span class="parameters">(<a href="Eq.html" title="interface in io.github.senthilganeshs.fj.typeclass">Eq</a>&lt;B&gt;&nbsp;eq,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;f)</span></div>
 </section>
 </li>
 </ul>

@@ -106,18 +106,50 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;W,<wbr>
+A,<wbr>
+B&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;W,<wbr>B&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#as(io.github.senthilganeshs.fj.typeclass.Functor,B,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">as</a><wbr>(<a href="Functor.html" title="interface in io.github.senthilganeshs.fj.typeclass">Functor</a>&lt;W&gt;&nbsp;f,
+ B&nbsp;b,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;&nbsp;fa)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Replaces the values in the functor with a constant value.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;W,<wbr>
+A,<wbr>
+B&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;W,<wbr>B&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#map(io.github.senthilganeshs.fj.typeclass.Functor,java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">map</a><wbr>(<a href="Functor.html" title="interface in io.github.senthilganeshs.fj.typeclass">Functor</a>&lt;W&gt;&nbsp;f,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;fn,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;&nbsp;fa)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Static utility for map.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;A,<wbr>
 B&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="Functor.html" title="type parameter in Functor">W</a>,<wbr>B&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#map(java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;fn,
  <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Functor.html" title="type parameter in Functor">W</a>,<wbr>A&gt;&nbsp;fa)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Maps a function over the values contained within the functor.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;W,<wbr>
+A&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;W,<wbr><a href="../ds/Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a>&lt;A,<wbr>A&gt;&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#tupled(io.github.senthilganeshs.fj.typeclass.Functor,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">tupled</a><wbr>(<a href="Functor.html" title="interface in io.github.senthilganeshs.fj.typeclass">Functor</a>&lt;W&gt;&nbsp;f,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;&nbsp;fa)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Tuples the values in the functor with themselves.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;W,<wbr>
+A&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;W,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#voidF(io.github.senthilganeshs.fj.typeclass.Functor,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">voidF</a><wbr>(<a href="Functor.html" title="interface in io.github.senthilganeshs.fj.typeclass">Functor</a>&lt;W&gt;&nbsp;f,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;&nbsp;fa)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Replaces the values in the functor with Void.</div>
 </div>
 </div>
 </div>
@@ -140,6 +172,46 @@ B&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilgan
 B&gt;</span>&nbsp;<span class="return-type"><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Functor.html" title="type parameter in Functor">W</a>,<wbr>B&gt;</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;fn,
  <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Functor.html" title="type parameter in Functor">W</a>,<wbr>A&gt;&nbsp;fa)</span></div>
 <div class="block">Maps a function over the values contained within the functor.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="map(io.github.senthilganeshs.fj.typeclass.Functor,java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)">
+<h3>map</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;W,<wbr>
+A,<wbr>
+B&gt;</span>&nbsp;<span class="return-type"><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>B&gt;</span>&nbsp;<span class="element-name">map</span><wbr><span class="parameters">(<a href="Functor.html" title="interface in io.github.senthilganeshs.fj.typeclass">Functor</a>&lt;W&gt;&nbsp;f,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;fn,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;&nbsp;fa)</span></div>
+<div class="block">Static utility for map.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="as(io.github.senthilganeshs.fj.typeclass.Functor,B,io.github.senthilganeshs.fj.hkt.Higher)">
+<h3 id="as(io.github.senthilganeshs.fj.typeclass.Functor,java.lang.Object,io.github.senthilganeshs.fj.hkt.Higher)">as</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;W,<wbr>
+A,<wbr>
+B&gt;</span>&nbsp;<span class="return-type"><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>B&gt;</span>&nbsp;<span class="element-name">as</span><wbr><span class="parameters">(<a href="Functor.html" title="interface in io.github.senthilganeshs.fj.typeclass">Functor</a>&lt;W&gt;&nbsp;f,
+ B&nbsp;b,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;&nbsp;fa)</span></div>
+<div class="block">Replaces the values in the functor with a constant value.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="voidF(io.github.senthilganeshs.fj.typeclass.Functor,io.github.senthilganeshs.fj.hkt.Higher)">
+<h3>voidF</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;W,<wbr>
+A&gt;</span>&nbsp;<span class="return-type"><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link">Void</a>&gt;</span>&nbsp;<span class="element-name">voidF</span><wbr><span class="parameters">(<a href="Functor.html" title="interface in io.github.senthilganeshs.fj.typeclass">Functor</a>&lt;W&gt;&nbsp;f,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;&nbsp;fa)</span></div>
+<div class="block">Replaces the values in the functor with Void.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="tupled(io.github.senthilganeshs.fj.typeclass.Functor,io.github.senthilganeshs.fj.hkt.Higher)">
+<h3>tupled</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;W,<wbr>
+A&gt;</span>&nbsp;<span class="return-type"><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr><a href="../ds/Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a>&lt;A,<wbr>A&gt;&gt;</span>&nbsp;<span class="element-name">tupled</span><wbr><span class="parameters">(<a href="Functor.html" title="interface in io.github.senthilganeshs.fj.typeclass">Functor</a>&lt;W&gt;&nbsp;f,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;&nbsp;fa)</span></div>
+<div class="block">Tuples the values in the functor with themselves.</div>
 </section>
 </li>
 </ul>

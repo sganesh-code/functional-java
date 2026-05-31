@@ -111,7 +111,7 @@ extends <a href="Functor.html" title="interface in io.github.senthilganeshs.fj.t
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -124,21 +124,41 @@ B&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilgan
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Applies a function within an applicative context to a value within an applicative context.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;A,<wbr>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static &lt;W,<wbr>
+A,<wbr>
 B,<wbr>
-C&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="Applicative.html" title="type parameter in Applicative">W</a>,<wbr>C&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#liftA2(java.util.function.BiFunction,io.github.senthilganeshs.fj.hkt.Higher,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">liftA2</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;A,<wbr>B,<wbr>C&gt;&nbsp;fn,
- <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Applicative.html" title="type parameter in Applicative">W</a>,<wbr>A&gt;&nbsp;fa,
- <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Applicative.html" title="type parameter in Applicative">W</a>,<wbr>B&gt;&nbsp;fb)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Combines two applicative values using a binary function.</div>
+C&gt;<br><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;W,<wbr>C&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#liftA2(io.github.senthilganeshs.fj.typeclass.Applicative,java.util.function.BiFunction,io.github.senthilganeshs.fj.hkt.Higher,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">liftA2</a><wbr>(<a href="Applicative.html" title="interface in io.github.senthilganeshs.fj.typeclass">Applicative</a>&lt;W&gt;&nbsp;app,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;A,<wbr>B,<wbr>C&gt;&nbsp;fn,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;&nbsp;fa,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>B&gt;&nbsp;fb)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Static utility for liftA2.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;A,<wbr>
-B&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="Applicative.html" title="type parameter in Applicative">W</a>,<wbr>B&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;fn,
- <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Applicative.html" title="type parameter in Applicative">W</a>,<wbr>A&gt;&nbsp;fa)</code></div>
+B,<wbr>
+C&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="Applicative.html" title="type parameter in Applicative">W</a>,<wbr>C&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#liftA2(java.util.function.BiFunction,io.github.senthilganeshs.fj.hkt.Higher,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">liftA2</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;A,<wbr>B,<wbr>C&gt;&nbsp;fn,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Applicative.html" title="type parameter in Applicative">W</a>,<wbr>A&gt;&nbsp;fa,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Applicative.html" title="type parameter in Applicative">W</a>,<wbr>B&gt;&nbsp;fb)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Combines two applicative values using a binary function.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;A,<wbr>
+B&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="Applicative.html" title="type parameter in Applicative">W</a>,<wbr>B&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#map(java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">map</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;fn,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Applicative.html" title="type parameter in Applicative">W</a>,<wbr>A&gt;&nbsp;fa)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Maps a function over the values contained within the functor.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;W,<wbr>
+A,<wbr>
+B&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;W,<wbr><a href="../ds/Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a>&lt;A,<wbr>B&gt;&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#product(io.github.senthilganeshs.fj.typeclass.Applicative,io.github.senthilganeshs.fj.hkt.Higher,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">product</a><wbr>(<a href="Applicative.html" title="interface in io.github.senthilganeshs.fj.typeclass">Applicative</a>&lt;W&gt;&nbsp;app,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;&nbsp;fa,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>B&gt;&nbsp;fb)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Combines two applicative values into a tuple.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;A&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="Applicative.html" title="type parameter in Applicative">W</a>,<wbr>A&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#pure(A)" class="member-name-link">pure</a><wbr>(A&nbsp;a)</code></div>
@@ -173,6 +193,30 @@ B&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilgan
 B&gt;</span>&nbsp;<span class="return-type"><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Applicative.html" title="type parameter in Applicative">W</a>,<wbr>B&gt;</span>&nbsp;<span class="element-name">ap</span><wbr><span class="parameters">(<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Applicative.html" title="type parameter in Applicative">W</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&gt;&nbsp;ff,
  <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Applicative.html" title="type parameter in Applicative">W</a>,<wbr>A&gt;&nbsp;fa)</span></div>
 <div class="block">Applies a function within an applicative context to a value within an applicative context.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="liftA2(io.github.senthilganeshs.fj.typeclass.Applicative,java.util.function.BiFunction,io.github.senthilganeshs.fj.hkt.Higher,io.github.senthilganeshs.fj.hkt.Higher)">
+<h3>liftA2</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;W,<wbr>
+A,<wbr>
+B,<wbr>
+C&gt;</span>&nbsp;<span class="return-type"><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>C&gt;</span>&nbsp;<span class="element-name">liftA2</span><wbr><span class="parameters">(<a href="Applicative.html" title="interface in io.github.senthilganeshs.fj.typeclass">Applicative</a>&lt;W&gt;&nbsp;app,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;A,<wbr>B,<wbr>C&gt;&nbsp;fn,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;&nbsp;fa,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>B&gt;&nbsp;fb)</span></div>
+<div class="block">Static utility for liftA2.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="product(io.github.senthilganeshs.fj.typeclass.Applicative,io.github.senthilganeshs.fj.hkt.Higher,io.github.senthilganeshs.fj.hkt.Higher)">
+<h3>product</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;W,<wbr>
+A,<wbr>
+B&gt;</span>&nbsp;<span class="return-type"><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr><a href="../ds/Tuple.html" title="interface in io.github.senthilganeshs.fj.ds">Tuple</a>&lt;A,<wbr>B&gt;&gt;</span>&nbsp;<span class="element-name">product</span><wbr><span class="parameters">(<a href="Applicative.html" title="interface in io.github.senthilganeshs.fj.typeclass">Applicative</a>&lt;W&gt;&nbsp;app,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;&nbsp;fa,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>B&gt;&nbsp;fb)</span></div>
+<div class="block">Combines two applicative values into a tuple.</div>
 </section>
 </li>
 <li>

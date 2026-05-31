@@ -103,36 +103,48 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;A,<wbr>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static &lt;W,<wbr>
+A,<wbr>
+B,<wbr>
+C,<wbr>
+D&gt;<br><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;,<wbr>D&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#dimap(io.github.senthilganeshs.fj.typeclass.Profunctor,java.util.function.Function,java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">dimap</a><wbr>(<a href="Profunctor.html" title="interface in io.github.senthilganeshs.fj.typeclass">Profunctor</a>&lt;W&gt;&nbsp;p,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;f,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;C,<wbr>D&gt;&nbsp;g,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>B&gt;,<wbr>C&gt;&nbsp;pbc)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Static utility for dimap.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;A,<wbr>
 B,<wbr>
 C,<wbr>
 D&gt;<br><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Profunctor.html" title="type parameter in Profunctor">W</a>,<wbr>A&gt;,<wbr>D&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#dimap(java.util.function.Function,java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">dimap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;f,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#dimap(java.util.function.Function,java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">dimap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;f,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;C,<wbr>D&gt;&nbsp;g,
  <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Profunctor.html" title="type parameter in Profunctor">W</a>,<wbr>B&gt;,<wbr>C&gt;&nbsp;pbc)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Maps functions over both type arguments simultaneously.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;A,<wbr>
-B,<wbr>
-C&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Profunctor.html" title="type parameter in Profunctor">W</a>,<wbr>A&gt;,<wbr>C&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#lmap(java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">lmap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;f,
- <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Profunctor.html" title="type parameter in Profunctor">W</a>,<wbr>B&gt;,<wbr>C&gt;&nbsp;pbc)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Maps a function over the first type argument (contravariantly).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;A,<wbr>
 B,<wbr>
 C&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Profunctor.html" title="type parameter in Profunctor">W</a>,<wbr>A&gt;,<wbr>C&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#rmap(java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">rmap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;B,<wbr>C&gt;&nbsp;g,
- <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Profunctor.html" title="type parameter in Profunctor">W</a>,<wbr>A&gt;,<wbr>B&gt;&nbsp;pab)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#lmap(java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">lmap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;f,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Profunctor.html" title="type parameter in Profunctor">W</a>,<wbr>B&gt;,<wbr>C&gt;&nbsp;pbc)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Maps a function over the first type argument (contravariantly).</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default &lt;A,<wbr>
+B,<wbr>
+C&gt;&nbsp;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a><wbr>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Profunctor.html" title="type parameter in Profunctor">W</a>,<wbr>A&gt;,<wbr>C&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#rmap(java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)" class="member-name-link">rmap</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;B,<wbr>C&gt;&nbsp;g,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="Profunctor.html" title="type parameter in Profunctor">W</a>,<wbr>A&gt;,<wbr>B&gt;&nbsp;pab)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Maps a function over the second type argument (covariantly).</div>
 </div>
 </div>
@@ -162,6 +174,20 @@ D&gt;</span>&nbsp;<span class="return-type"><a href="../hkt/Higher.html" title="
  Contravariant in the first, covariant in the second.
  
  Haskell: dimap :: (a -&gt; b) -&gt; (c -&gt; d) -&gt; p b c -&gt; p a d</div>
+</section>
+</li>
+<li>
+<section class="detail" id="dimap(io.github.senthilganeshs.fj.typeclass.Profunctor,java.util.function.Function,java.util.function.Function,io.github.senthilganeshs.fj.hkt.Higher)">
+<h3>dimap</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="type-parameters">&lt;W,<wbr>
+A,<wbr>
+B,<wbr>
+C,<wbr>
+D&gt;</span>&nbsp;<span class="return-type"><a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>A&gt;,<wbr>D&gt;</span>&nbsp;<span class="element-name">dimap</span><wbr><span class="parameters">(<a href="Profunctor.html" title="interface in io.github.senthilganeshs.fj.typeclass">Profunctor</a>&lt;W&gt;&nbsp;p,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;A,<wbr>B&gt;&nbsp;f,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;C,<wbr>D&gt;&nbsp;g,
+ <a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;<a href="../hkt/Higher.html" title="interface in io.github.senthilganeshs.fj.hkt">Higher</a>&lt;W,<wbr>B&gt;,<wbr>C&gt;&nbsp;pbc)</span></div>
+<div class="block">Static utility for dimap.</div>
 </section>
 </li>
 <li>
