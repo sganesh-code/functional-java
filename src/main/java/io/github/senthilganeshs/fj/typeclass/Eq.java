@@ -14,6 +14,13 @@ public interface Eq<T> {
         return (a, b) -> (a == b) || (a != null && a.equals(b));
     }
 
+    /**
+     * Static utility for inequality.
+     */
+    static <T> boolean notEq(Eq<T> eq, T a, T b) {
+        return !eq.eq(a, b);
+    }
+
     static <A, B> Eq<A> contramap(Eq<B> eq, java.util.function.Function<A, B> f) {
         return eq.contramap(f);
     }

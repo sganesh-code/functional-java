@@ -45,18 +45,25 @@ The following tickets break down the implementation of the epic to add static ut
       - *Created MonoidUtilsTest.java with TestNG to verify Semigroup and Monoid static utilities.*
 
 
-- [ ] **🎟️ [TICKET-002]: Eq, Ord, and Hashable Static Utilities**
+- [x] **🎟️ [TICKET-002]: Eq, Ord, and Hashable Static Utilities**
   - **Description:** Add static utility methods to `Eq`, `Ord`, and `Hashable` for comparison and hashing logic.
   - **Scope:**
     - **In scope:** `Eq`, `Ord`, `Hashable` interfaces in `@src/main/java/io/github/senthilganeshs/fj/typeclass/`.
   - **Implementation Tasks:**
-    - [ ] Add `static <T> boolean notEq(Eq<T> eq, T a, T b)` to `Eq`.
-    - [ ] Add `static <T> T min(Ord<T> ord, T a, T b)` and `max(Ord<T> ord, T a, T b)` to `Ord`.
-    - [ ] Add `static <T> T clamp(Ord<T> ord, T low, T high, T val)` to `Ord`.
-    - [ ] Add `static <T> boolean between(Ord<T> ord, T low, T high, T val)` to `Ord`.
-    - [ ] Add `static <A, B> Eq<A> contramap(Eq<B> eq, java.util.function.Function<A, B> f)` to `Eq`.
-    - [ ] Add `static <A, B> Ord<A> contramap(Ord<B> ord, java.util.function.Function<A, B> f)` to `Ord`.
-    - [ ] Create unit tests in `src/test/java/io/github/senthilganeshs/fj/typeclass/OrdUtilsTest.java`.
+    - [x] Add `static <T> boolean notEq(Eq<T> eq, T a, T b)` to `Eq`.
+      - *Added static notEq to Eq.java.*
+    - [x] Add `static <T> T min(Ord<T> ord, T a, T b)` and `max(Ord<T> ord, T a, T b)` to `Ord`.
+      - *Added static min and max to Ord.java.*
+    - [x] Add `static <T> T clamp(Ord<T> ord, T low, T high, T val)` to `Ord`.
+      - *Added static clamp to Ord.java.*
+    - [x] Add `static <T> boolean between(Ord<T> ord, T low, T high, T val)` to `Ord`.
+      - *Added static between to Ord.java.*
+    - [x] Add `static <A, B> Eq<A> contramap(Eq<B> eq, java.util.function.Function<A, B> f)` to `Eq`.
+      - *Added static contramap to Eq.java.*
+    - [x] Add `static <A, B> Ord<A> contramap(Ord<B> ord, java.util.function.Function<A, B> f)` to `Ord`.
+      - *Added static contramap to Ord.java.*
+    - [x] Create unit tests in `src/test/java/io/github/senthilganeshs/fj/typeclass/OrdUtilsTest.java`.
+      - *Created OrdUtilsTest.java with TestNG to verify Eq and Ord static utilities.*
 
 - [ ] **🎟️ [TICKET-003]: Functor and Bifunctor Static Utilities**
   - **Description:** Add static utility methods to `Functor` and `Bifunctor` for mapping operations.
