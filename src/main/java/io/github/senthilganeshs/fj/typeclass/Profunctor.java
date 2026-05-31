@@ -19,6 +19,13 @@ public interface Profunctor<W> {
     <A, B, C, D> Higher<Higher<W, A>, D> dimap(Function<A, B> f, Function<C, D> g, Higher<Higher<W, B>, C> pbc);
 
     /**
+     * Static utility for dimap.
+     */
+    static <W, A, B, C, D> Higher<Higher<W, A>, D> dimap(Profunctor<W> p, Function<A, B> f, Function<C, D> g, Higher<Higher<W, B>, C> pbc) {
+        return p.dimap(f, g, pbc);
+    }
+
+    /**
      * Maps a function over the first type argument (contravariantly).
      */
     default <A, B, C> Higher<Higher<W, A>, C> lmap(Function<A, B> f, Higher<Higher<W, B>, C> pbc) {

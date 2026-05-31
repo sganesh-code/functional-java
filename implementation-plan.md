@@ -103,12 +103,17 @@ The following tickets break down the implementation of the epic to add static ut
       - *Created MonadUtilsTest.java with TestNG to verify Applicative and Monad static utilities.*
 
 
-- [ ] **🎟️ [TICKET-005]: Traversable and Profunctor Static Utilities**
+- [x] **🎟️ [TICKET-005]: Traversable and Profunctor Static Utilities**
   - **Description:** Add static utility methods to `Traversable` and `Profunctor`.
   - **Scope:**
     - **In scope:** `Traversable`, `Profunctor` interfaces in `@src/main/java/io/github/senthilganeshs/fj/typeclass/`.
   - **Implementation Tasks:**
-    - [ ] Add `static <W, G, A, B> Higher<G, Higher<W, B>> traverse(Traversable<W> t, Applicative<G> app, java.util.function.Function<A, Higher<G, B>> fn, Higher<W, A> fa)` to `Traversable`.
-    - [ ] Add `static <W, G, A> Higher<G, Higher<W, A>> sequence(Traversable<W> t, Applicative<G> app, Higher<W, Higher<G, A>> fga)` to `Traversable`.
-    - [ ] Add `static <W, A, B, C, D> Higher<Higher<W, A>, D> dimap(Profunctor<W> p, java.util.function.Function<A, B> f, java.util.function.Function<C, D> g, Higher<Higher<W, B>, C> pbc)` to `Profunctor`.
-    - [ ] Create unit tests in `src/test/java/io/github/senthilganeshs/fj/typeclass/TraversableUtilsTest.java`.
+    - [x] Add `static <W, G, A, B> Higher<G, Higher<W, B>> traverse(Traversable<W> t, Applicative<G> app, java.util.function.Function<A, Higher<G, B>> fn, Higher<W, A> fa)` to `Traversable`.
+      - *Added static traverse to Traversable.java.*
+    - [x] Add `static <W, G, A> Higher<G, Higher<W, A>> sequence(Traversable<W> t, Applicative<G> app, Higher<W, Higher<G, A>> fga)` to `Traversable`.
+      - *Added static sequence to Traversable.java.*
+    - [x] Add `static <W, A, B, C, D> Higher<Higher<W, A>, D> dimap(Profunctor<W> p, java.util.function.Function<A, B> f, java.util.function.Function<C, D> g, Higher<Higher<W, B>, C> pbc)` to `Profunctor`.
+      - *Added static dimap to Profunctor.java.*
+    - [x] Create unit tests in `src/test/java/io/github/senthilganeshs/fj/typeclass/TraversableUtilsTest.java`.
+      - *Created TraversableUtilsTest.java with TestNG to verify Traversable and Profunctor static utilities.*
+
